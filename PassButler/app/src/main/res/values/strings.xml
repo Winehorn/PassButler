@@ -2,16 +2,33 @@
     <!-- General -->
     <string name="app_name">PassButler</string>
 
+    <!-- Accounts file -->
+    <string name="accounts_file_name">accounts.json</string>
+    <string name="account_list_key">account_list</string>
+
+    <string name="name_attribute_label">name</string>
+    <string name="value_attribute_label">value</string>
+    <string name="last_edited_attribute_label">last_edited</string>
+    <string name="checksum_attribute_label">checksum</string>
+
     <!-- LogoActivity -->
     <string name="logo_activity_label">@string/app_name</string>
 
     <!-- CreatePersistenceActivity -->
     <string name="create_persistence_activity_label">@string/app_name</string>
+    <string name="create_password_edit_hint">Insert password</string>
+    <string name="create_repeat_password_edit_hint">Repeat password</string>
+    <string name="create_button_label">Create</string>
+    <string name="password_match_error_msg">Your inserted passwords must match</string>
+    <string name="accounts_file_exists_error_msg">Internal error</string>
 
     <!-- UnlockActivity -->
     <string name="unlock_activity_label">@string/app_name</string>
-    <string name="password_edit_hint">Insert password</string>
+    <string name="unlock_password_edit_hint">Insert password</string>
     <string name="unlock_button_label">Unlock</string>
+    <string name="password_empty_error_msg">You must enter a password</string>
+    <string name="json_error_msg">Internal error</string>
+    <string name="accounts_file_does_not_exist_error_msg">Internal error</string>
 
     <!-- AccountListActivity -->
     <string name="account_list_activity_label">Accounts</string>
