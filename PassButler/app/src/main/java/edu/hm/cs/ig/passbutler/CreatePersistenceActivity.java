@@ -28,7 +28,7 @@ public class CreatePersistenceActivity extends AppCompatActivity {
             Log.i(TAG, "Inserted passwords do not match.");
             return;
         }
-        if(AccountList.accountFileExists(this))
+        if(AccountHandler.accountFileExists(this))
         {
             Toast.makeText(this, getString(R.string.accounts_file_exists_error_msg), Toast.LENGTH_SHORT).show();
             Log.wtf(TAG, "An accounts file must not exist when creating a new one.");
@@ -36,11 +36,11 @@ public class CreatePersistenceActivity extends AppCompatActivity {
         }
         else
         {
-            AccountList accountList = new AccountList();
-            accountList.saveToInternalSorage(this, getString(R.string.accounts_file_name));
+            AccountHandler accountHandler = new AccountHandler();
+            accountHandler.saveToInternalStorage(this, getString(R.string.accounts_file_name));
             Log.i(TAG, "New accounts file created.");
             Intent intent = new Intent(this, AccountListActivity.class);
-            intent.putExtra(getString(R.string.account_list_key), accountList);
+            intent.putExtra(getString(R.string.intent_key_account_handler), accountHandler);
             startActivity(intent);
             Log.i(TAG, "Proceeding " + AccountListActivity.class.getSimpleName() + ".");
         }

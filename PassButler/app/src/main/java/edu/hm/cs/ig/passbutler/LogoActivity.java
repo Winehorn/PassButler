@@ -19,7 +19,7 @@ public class LogoActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(AccountList.accountFileExists(LogoActivity.this)) {
+                if(AccountHandler.accountFileExists(LogoActivity.this)) {
                     Intent intent = new Intent(
                             LogoActivity.this,
                             UnlockActivity.class);

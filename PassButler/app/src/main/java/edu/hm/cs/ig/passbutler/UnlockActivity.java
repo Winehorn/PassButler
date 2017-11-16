@@ -1,21 +1,19 @@
 package edu.hm.cs.ig.passbutler;
 
 import android.content.Intent;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
 import org.json.JSONException;
-import org.json.JSONObject;
 
 public class UnlockActivity extends AppCompatActivity {
 
     private static final String TAG = UnlockActivity.class.getName();
     private EditText passwordEditText;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -30,15 +28,15 @@ public class UnlockActivity extends AppCompatActivity {
             Log.i(TAG, "Inserted password is empty.");
             return;
         }
-        if(AccountList.accountFileExists(this))
+        if(AccountHandler.accountFileExists(this))
         {
             // TODO: Check if password is right
-            AccountList accountList;
+            AccountHandler accountHandler;
             try {
                 String jsonString = FileUtil.loadStringFromInternalStorageFile(
                         this,
                         getString(R.string.accounts_file_name));
-                accountList = new AccountList(jsonString);
+                accountHandler = new AccountHandler(jsonString);
             }
             catch(JSONException e) {
                 Toast.makeText(this, getString(R.string.json_error_msg), Toast.LENGTH_SHORT).show();
@@ -47,7 +45,7 @@ public class UnlockActivity extends AppCompatActivity {
             }
             Log.i(TAG, "Accounts file loaded from internal storage.");
             Intent intent = new Intent(this, AccountListActivity.class);
-            intent.putExtra(getString(R.string.account_list_key), accountList);
+            intent.putExtra(getString(R.string.intent_key_account_handler), accountHandler);
             startActivity(intent);
             Log.i(TAG, "Proceeding to " + AccountListActivity.class.getSimpleName() + ".");
         }

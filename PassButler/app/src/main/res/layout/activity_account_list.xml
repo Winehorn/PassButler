@@ -6,4 +6,11 @@
     android:layout_height="match_parent"
     tools:context="edu.hm.cs.ig.passbutler.AccountListActivity">
 
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/accounts_recyclerview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clipToPadding="false"
+        android:paddingBottom="8dp"/>
+
 </android.support.constraint.ConstraintLayout>

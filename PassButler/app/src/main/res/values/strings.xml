@@ -1,11 +1,15 @@
 <resources>
     <!-- General -->
     <string name="app_name">PassButler</string>
+    <string name="intent_key_account_handler">account_list_key</string>
 
-    <!-- Accounts file -->
+    <!-- Accounts file (JSON) -->
     <string name="accounts_file_name">accounts.json</string>
-    <string name="account_list_key">account_list</string>
+    <string name="json_key_account_list">account_list</string>
+    <string name="json_key_account_name">account_name</string>
+    <string name="default_account_name">Nameless account</string>
 
+    <!-- TODO: Remove? -->
     <string name="name_attribute_label">name</string>
     <string name="value_attribute_label">value</string>
     <string name="last_edited_attribute_label">last_edited</string>
