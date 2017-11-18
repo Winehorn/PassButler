@@ -1,10 +1,13 @@
 package edu.hm.cs.ig.passbutler;
 
 import android.content.Context;
+import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
@@ -18,9 +21,11 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
     private static final String TAG = AccountDetailAdapter.class.getName();
     private Context context;
     private AccountItemHandler accountItemHandler;
+    private final AccountDetailAdapterOnMenuItemOnClickHandler menuItemClickHandler;
 
-    public AccountDetailAdapter(Context context) {
+    public AccountDetailAdapter(Context context, AccountDetailAdapterOnMenuItemOnClickHandler menuItemClickHandler) {
         this.context = context;
+        this.menuItemClickHandler = menuItemClickHandler;
     }
 
     @Override
@@ -52,15 +57,34 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
         notifyDataSetChanged();
     }
 
-    public class AccountDetailAdapterViewHolder extends RecyclerView.ViewHolder {
+    public class AccountDetailAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
         public final TextView accountAttributeKeyTextView;
         public final TextView accountAttributeValueTextView;
 
         public AccountDetailAdapterViewHolder(View view) {
             super(view);
-            accountAttributeKeyTextView = (TextView) view.findViewById(R.id.account_attribute_key_text_view);
-            accountAttributeValueTextView = (TextView) view.findViewById(R.id.account_attribute_value_text_view);
+            accountAttributeKeyTextView = view.findViewById(R.id.account_attribute_key_text_view);
+            accountAttributeValueTextView = view.findViewById(R.id.account_attribute_value_text_view);
+            ImageButton imageButton = view.findViewById(R.id.account_detail_item_image_button);
+            imageButton.setOnClickListener(this);
+            view.setOnClickListener(this);
+        }
+
+        @Override
+        public void onClick(View v) {
+            if(v.getId() == R.id.account_detail_item_image_button) {
+                final PopupMenu popupMenu = new PopupMenu(context, v);
+                popupMenu.getMenuInflater().inflate(R.menu.account_detail_more_menu, popupMenu.getMenu());
+                popupMenu.setOnMenuItemClickListener(this);
+                popupMenu.show();
+            }
+        }
+
+        @Override
+        public boolean onMenuItemClick(MenuItem item) {
+            final String attributeKey = accountItemHandler.getAttributeKey(context, getAdapterPosition());
+            return menuItemClickHandler.onMenuItemClick(item, attributeKey);
         }
     }
 }

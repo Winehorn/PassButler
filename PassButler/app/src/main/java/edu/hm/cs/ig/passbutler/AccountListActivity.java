@@ -25,7 +25,7 @@ import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.data.FileUtil;
 
-public class AccountListActivity extends AppCompatActivity implements AccountListAdapterOnClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
+public class AccountListActivity extends AppCompatActivity implements AccountListAdapterOnClickHandler, AccountListAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
 
     private static final String TAG = AccountListActivity.class.getName();
     private RecyclerView recyclerView;
@@ -50,7 +50,7 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
                 false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
-        accountListAdapter = new AccountListAdapter(this, this);
+        accountListAdapter = new AccountListAdapter(this, this, this);
         recyclerView.setAdapter(accountListAdapter);
 
         // Set data source of the adapter.
@@ -74,7 +74,7 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.account_list_menu, menu);
+        menuInflater.inflate(R.menu.account_list_action_bar_menu, menu);
         return true;
     }
 
@@ -177,11 +177,43 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
     }
 
     @Override
-    public void onClick(String accountName) {
+    public void onClick(View v, String accountName) {
         Intent intent = new Intent(this, AccountDetailActivity.class);
         intent.putExtra(AccountListActivity.this.getString(R.string.intent_extras_key_account_name), accountName);
         intent.putExtra(getString(R.string.intent_extras_key_create_new_account_item), false);
         startActivity(intent);
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item, final String accountName) {
+        switch(item.getItemId()) {
+            case R.id.delete_account_menu_item: {
+                AlertDialog.Builder builder = new AlertDialog.Builder(AccountListActivity.this);
+                builder.setTitle(getString(R.string.dialog_title_delete_account));
+                builder.setPositiveButton(getString(R.string.dialog_option_yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        accountListHandler.removeAccount(
+                                getApplicationContext(),
+                                accountListAdapter,
+                                accountName,
+                                true);
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+                return true;
+            }
+            default: {
+                return false;
+            }
+        }
     }
 
     @Override

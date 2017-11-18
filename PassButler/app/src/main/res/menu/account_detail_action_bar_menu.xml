@@ -6,6 +6,6 @@
         android:id="@+id/save_changes_menu_item"
         android:title="@string/save_changes_menu_item_label"
         android:icon="@drawable/ic_action_save_changes"
-        android:orderInCategory="1"
+        android:orderInCategory="100"
         app:showAsAction="always"/>
 </menu>
