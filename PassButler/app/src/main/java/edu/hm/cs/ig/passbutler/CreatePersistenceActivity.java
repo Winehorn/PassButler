@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import edu.hm.cs.ig.passbutler.data.AccountListHandler;
+
 public class CreatePersistenceActivity extends AppCompatActivity {
 
     private static final String TAG = CreatePersistenceActivity.class.getName();
@@ -28,7 +30,7 @@ public class CreatePersistenceActivity extends AppCompatActivity {
             Log.i(TAG, "Inserted passwords do not match.");
             return;
         }
-        if(AccountHandler.accountFileExists(this))
+        if(AccountListHandler.accountFileExists(this))
         {
             Toast.makeText(this, getString(R.string.accounts_file_exists_error_msg), Toast.LENGTH_SHORT).show();
             Log.wtf(TAG, "An accounts file must not exist when creating a new one.");
@@ -36,11 +38,10 @@ public class CreatePersistenceActivity extends AppCompatActivity {
         }
         else
         {
-            AccountHandler accountHandler = new AccountHandler();
-            accountHandler.saveToInternalStorage(this, getString(R.string.accounts_file_name));
+            AccountListHandler accountListHandler = new AccountListHandler(this);
+            accountListHandler.saveToInternalStorage(this, getString(R.string.accounts_file_name));
             Log.i(TAG, "New accounts file created.");
             Intent intent = new Intent(this, AccountListActivity.class);
-            intent.putExtra(getString(R.string.intent_key_account_handler), accountHandler);
             startActivity(intent);
             Log.i(TAG, "Proceeding " + AccountListActivity.class.getSimpleName() + ".");
         }

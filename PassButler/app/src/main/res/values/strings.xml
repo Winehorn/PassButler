@@ -1,19 +1,19 @@
 <resources>
     <!-- General -->
     <string name="app_name">PassButler</string>
-    <string name="intent_key_account_handler">account_list_key</string>
+    <string name="intent_extras_key_account_list_handler">account_list_handler</string>
+    <string name="intent_extras_key_account_name">account_name</string>
+    <string name="intent_extras_key_create_new_account_item">create_new_account_item</string>
+    <string name="json_error_msg">Internal error</string>
+    <string name="account_list_handler_loader_reload_action">edu.hm.cs.ig.passbutler.reload</string>
 
     <!-- Accounts file (JSON) -->
     <string name="accounts_file_name">accounts.json</string>
     <string name="json_key_account_list">account_list</string>
     <string name="json_key_account_name">account_name</string>
     <string name="default_account_name">Nameless account</string>
-
-    <!-- TODO: Remove? -->
-    <string name="name_attribute_label">name</string>
-    <string name="value_attribute_label">value</string>
-    <string name="last_edited_attribute_label">last_edited</string>
-    <string name="checksum_attribute_label">checksum</string>
+    <string name="json_key_account_attribute_list">attribute_list</string>
+    <string name="json_key_account_attribute_value">attribute_value</string>
 
     <!-- LogoActivity -->
     <string name="logo_activity_label">@string/app_name</string>
@@ -31,17 +31,22 @@
     <string name="unlock_password_edit_hint">Insert password</string>
     <string name="unlock_button_label">Unlock</string>
     <string name="password_empty_error_msg">You must enter a password</string>
-    <string name="json_error_msg">Internal error</string>
     <string name="accounts_file_does_not_exist_error_msg">Internal error</string>
 
     <!-- AccountListActivity -->
     <string name="account_list_activity_label">Accounts</string>
+    <string name="lock_menu_item_label">Lock</string>
     <string name="password_generator_menu_item_label">@string/password_generator_activity_label</string>
     <string name="sync_menu_item_label">@string/sync_activity_label</string>
     <string name="settings_menu_item_label">@string/settings_activity_label</string>
 
+
     <!-- AccountDetailActivity -->
     <string name="account_detail_activity_label">Default Account name</string>
+    <string name="save_changes_menu_item_label">Save</string>
+    <string name="account_attribute_login_key">Login</string>
+    <string name="account_attribute_password_key">Password</string>
+    <string name="add_attribute_error_msg">Internal error</string>
 
     <!-- PasswordGeneratorActivity -->
     <string name="password_generator_activity_label">Password generator</string>
@@ -51,4 +56,19 @@
 
     <!-- SettingsActivity -->
     <string name="settings_activity_label">Settings</string>
+
+    <!-- Dialogs -->
+    <string name="dialog_title_account_name">Please enter a name for the new account</string>
+    <string name="dialog_title_overwrite_account">An account with that name already exists. Do you want to overwrite it?</string>
+    <string name="dialog_title_overwrite_account_attribute">An attribute with that name already exists. Do you want to overwrite it?</string>
+    <string name="dialog_title_account_attribute">Please enter a name and a value for the new attribute</string>
+    <string name="dialog_option_create">Create</string>
+    <string name="dialog_option_cancel">Cancel</string>
+    <string name="dialog_option_yes">Yes</string>
+    <string name="dialog_option_no">No</string>
+    <string name="dialog_account_attribute_key_hint">Name</string>
+    <string name="dialog_account_attribute_value_hint">Value</string>
+    <string name="dialog_empty_name_error_msg">You must enter a name for the new account</string>
+    <string name="dialog_empty_attribute_error_msg">You must enter a name and a value for the new attribute</string>
+
 </resources>

@@ -1,23 +1,37 @@
 package edu.hm.cs.ig.passbutler;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
+import android.os.FileObserver;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.text.InputType;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.EditText;
+import android.widget.Toast;
 
-public class AccountListActivity extends AppCompatActivity {
+import edu.hm.cs.ig.passbutler.data.AccountListHandler;
+import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
+import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
+import edu.hm.cs.ig.passbutler.data.FileUtil;
+
+public class AccountListActivity extends AppCompatActivity implements AccountListAdapterOnClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
 
     private static final String TAG = AccountListActivity.class.getName();
     private RecyclerView recyclerView;
-    private AccountAdapter accountAdapter;
-    private AccountHandler accountHandler;
+    private AccountListAdapter accountListAdapter;
+    private AccountListHandler accountListHandler;
+    private BroadcastFileObserver broadcastFileObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,25 +42,33 @@ public class AccountListActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // Get account list from intent.
-        Intent intent = getIntent();
-        if(!intent.hasExtra(getString(R.string.intent_key_account_handler))) {
-            Log.wtf(TAG, "Intent must contain an account list.");
-            throw new IllegalStateException("Intent must contain an account list.");
-        }
-        accountHandler = intent.getExtras().getParcelable(getString(R.string.intent_key_account_handler));
-
         // Build up recycler view.
-        recyclerView = (RecyclerView) findViewById(R.id.accounts_recyclerview);
-        LinearLayoutManager linearLayoutManager =
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        recyclerView = findViewById(R.id.account_list_recycler_view);
+        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
+                this,
+                LinearLayoutManager.VERTICAL,
+                false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
-        accountAdapter = new AccountAdapter(this);
-        recyclerView.setAdapter(accountAdapter);
+        accountListAdapter = new AccountListAdapter(this, this);
+        recyclerView.setAdapter(accountListAdapter);
 
         // Set data source of the adapter.
-        accountAdapter.setAccountHandler(accountHandler);
+        accountListAdapter.setAccountListHandler(accountListHandler);
+
+        // Set up loader.
+        getSupportLoaderManager().initLoader(
+                getResources().getInteger(R.integer.account_list_handler_loader_id),
+                null,
+                this);
+        broadcastFileObserver = new BroadcastFileObserver(
+                getApplicationContext(),
+                getString(R.string.account_list_handler_loader_reload_action),
+                FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_name)),
+                FileObserver.MODIFY);
+        broadcastFileObserver.startWatching();
+
+        // TODO: Display loading indicator until loader has finished.
     }
 
     @Override
@@ -59,8 +81,10 @@ public class AccountListActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
-        if (id == android.R.id.home) {
-            NavUtils.navigateUpFromSameTask(this);
+        if (id == android.R.id.home || id == R.id.lock_menu_item) {
+            Intent intent = new Intent(this, UnlockActivity.class);
+            startActivity(intent);
+            // TODO: Remove saved decryption key (aka lock PassButler again). Better with an own Button?
             return true;
         }
         else if(id == R.id.password_generator_menu_item) {
@@ -79,5 +103,107 @@ public class AccountListActivity extends AppCompatActivity {
             return true;
         }
         return super.onOptionsItemSelected(item);
+    }
+
+    public void addAccountFabOnClick(View view) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.dialog_title_account_name));
+
+        // Set up the input for the dialog
+        final EditText input = new EditText(this);
+
+        // Specify the type of input expected.
+        input.setInputType(InputType.TYPE_CLASS_TEXT);
+        builder.setView(input);
+
+        // Set up the button options for the dialog.
+        builder.setPositiveButton(getString(R.string.dialog_option_create), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String accountName = input.getText().toString();
+                if(accountName == null || accountName.isEmpty()) {
+                    dialog.cancel();
+                    Toast.makeText(
+                            AccountListActivity.this,
+                            AccountListActivity.this.getString(R.string.dialog_empty_name_error_msg),
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    if(accountListHandler.accountExists(getApplicationContext(), accountName)) {
+                        AlertDialog.Builder builder = new AlertDialog.Builder(AccountListActivity.this);
+                        builder.setTitle(getString(R.string.dialog_title_overwrite_account));
+
+                        // Set up the button options for the dialog.
+                        builder.setPositiveButton(getString(R.string.dialog_option_yes), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                String accountName = input.getText().toString();
+                                dialog.dismiss();
+                                Intent intent = new Intent(AccountListActivity.this, AccountDetailActivity.class);
+                                intent.putExtra(AccountListActivity.this.getString(R.string.intent_extras_key_account_name), accountName);
+                                intent.putExtra(getString(R.string.intent_extras_key_create_new_account_item), true);
+                                startActivity(intent);
+                            }
+                        });
+                        builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                dialog.cancel();
+                            }
+                        });
+
+                        // Show the dialog.
+                        builder.show();
+                    }
+                    else {
+                        dialog.dismiss();
+                        Intent intent = new Intent(AccountListActivity.this, AccountDetailActivity.class);
+                        intent.putExtra(AccountListActivity.this.getString(R.string.intent_extras_key_account_name), accountName);
+                        intent.putExtra(getString(R.string.intent_extras_key_create_new_account_item), true);
+                        startActivity(intent);
+                    }
+                }
+            }
+        });
+        builder.setNegativeButton(getString(R.string.dialog_option_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // Show the dialog.
+        builder.show();
+    }
+
+    @Override
+    public void onClick(String accountName) {
+        Intent intent = new Intent(this, AccountDetailActivity.class);
+        intent.putExtra(AccountListActivity.this.getString(R.string.intent_extras_key_account_name), accountName);
+        intent.putExtra(getString(R.string.intent_extras_key_create_new_account_item), false);
+        startActivity(intent);
+    }
+
+    @Override
+    public Loader<AccountListHandler> onCreateLoader(int id, Bundle args) {
+        if(id == getResources().getInteger(R.integer.account_list_handler_loader_id)) {
+            Log.i(TAG, "Creating new " + AccountListHandlerLoader.class.getSimpleName() + ".");
+            return new AccountListHandlerLoader(this);
+        }
+        else {
+            throw new IllegalArgumentException("The loader ID must be valid.");
+        }
+    }
+
+    @Override
+    public void onLoadFinished(Loader<AccountListHandler> loader, AccountListHandler data) {
+        Log.i(TAG, "Processing data of finished loader.");
+        accountListAdapter.setAccountListHandler(data);
+        accountListHandler = data;
+    }
+
+    @Override
+    public void onLoaderReset(Loader<AccountListHandler> loader) {
+        Log.i(TAG, "Processing loader reset.");
     }
 }
