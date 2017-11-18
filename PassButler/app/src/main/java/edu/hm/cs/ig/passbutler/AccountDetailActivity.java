@@ -31,7 +31,7 @@ import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.data.FileUtil;
 import edu.hm.cs.ig.passbutler.gui.InstantAutoCompleteTextView;
 
-public class AccountDetailActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<AccountListHandler> {
+public class AccountDetailActivity extends AppCompatActivity implements AccountDetailAdapterOnMenuItemOnClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
 
     private static final String TAG = AccountDetailActivity.class.getName();
     private AccountListHandler accountListHandler;
@@ -67,7 +67,7 @@ public class AccountDetailActivity extends AppCompatActivity implements LoaderMa
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         recyclerView.setLayoutManager(linearLayoutManager);
         recyclerView.setHasFixedSize(true);
-        accountDetailAdapter = new AccountDetailAdapter(this);
+        accountDetailAdapter = new AccountDetailAdapter(this, this);
         recyclerView.setAdapter(accountDetailAdapter);
 
         // Set data source of the adapter.
@@ -91,7 +91,7 @@ public class AccountDetailActivity extends AppCompatActivity implements LoaderMa
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.account_detail_menu, menu);
+        menuInflater.inflate(R.menu.account_detail_action_bar_menu, menu);
         return true;
     }
 
@@ -201,6 +201,37 @@ public class AccountDetailActivity extends AppCompatActivity implements LoaderMa
 
         // Show the dialog.
         builder.show();
+    }
+
+    @Override
+    public boolean onMenuItemClick(MenuItem item, final String attributeKey) {
+        switch(item.getItemId()) {
+            case R.id.delete_attribute_menu_item: {
+                AlertDialog.Builder builder = new AlertDialog.Builder(AccountDetailActivity.this);
+                builder.setTitle(getString(R.string.dialog_title_delete_attribute));
+                builder.setPositiveButton(getString(R.string.dialog_option_yes), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                        accountItemHandler.removeAttribute(
+                                getApplicationContext(),
+                                accountDetailAdapter,
+                                attributeKey);
+                    }
+                });
+                builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.cancel();
+                    }
+                });
+                builder.show();
+                return true;
+            }
+            default: {
+                return false;
+            }
+        }
     }
 
     @Override
