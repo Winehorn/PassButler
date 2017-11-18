@@ -16,8 +16,8 @@ import android.widget.Toast;
 
 public class ClipboardUtil {
     private static final String TAG = ClipboardUtil.class.getName();
-    final Context mContext;
-    final ClipboardManager clipboardManager;
+    private final Context mContext;
+    private final ClipboardManager clipboardManager;
 
     public ClipboardUtil(Context mContext) {
         this.mContext = mContext;
