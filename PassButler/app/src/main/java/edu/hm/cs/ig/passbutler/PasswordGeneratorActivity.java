@@ -1,6 +1,7 @@
 package edu.hm.cs.ig.passbutler;
 
 import android.content.Intent;
+import android.os.SystemClock;
 import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
@@ -9,6 +10,11 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
 import android.widget.Toast;
+
+import edu.hm.cs.ig.passbutler.data.ClipboardUtil;
+
+// TODO: add Copybutton
+// TODO: add passwordgeneration
 
 public class PasswordGeneratorActivity extends AppCompatActivity {
 
@@ -32,8 +38,11 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
 
     }
 
+    // TODO: remove ClipboardUtil
     public void generateButtonOnClick(View view) {
-        Toast.makeText(this, "Generation in progress!", Toast.LENGTH_LONG).show();
+        Toast.makeText(this, "Generation in progress!", Toast.LENGTH_SHORT).show();
+        ClipboardUtil clipboardUtil = new ClipboardUtil(this);
+        clipboardUtil.copyAndDelete(String.valueOf(SystemClock.uptimeMillis()), "Testtext", 10);
     }
 
 
