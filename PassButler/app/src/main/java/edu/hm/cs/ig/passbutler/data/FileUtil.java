@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.data;
 
 import android.content.Context;
 import android.util.Log;
@@ -21,6 +21,11 @@ import static android.content.Context.MODE_PRIVATE;
 public class FileUtil {
 
     private static final String TAG = FileUtil.class.getName();
+
+    public static String combinePaths(String path1, String path2) {
+        File file = new File(path1, path2);
+        return file.getPath();
+    }
 
     public static boolean saveStringToInternalStorageFile(Context context, String fileName, String s)
     {

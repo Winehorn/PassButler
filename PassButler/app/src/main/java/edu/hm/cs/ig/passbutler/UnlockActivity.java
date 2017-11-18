@@ -10,6 +10,9 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import edu.hm.cs.ig.passbutler.data.AccountListHandler;
+import edu.hm.cs.ig.passbutler.data.FileUtil;
+
 public class UnlockActivity extends AppCompatActivity {
 
     private static final String TAG = UnlockActivity.class.getName();
@@ -28,15 +31,15 @@ public class UnlockActivity extends AppCompatActivity {
             Log.i(TAG, "Inserted password is empty.");
             return;
         }
-        if(AccountHandler.accountFileExists(this))
+        if(AccountListHandler.accountFileExists(this))
         {
-            // TODO: Check if password is right
-            AccountHandler accountHandler;
+            AccountListHandler accountListHandler;
             try {
                 String jsonString = FileUtil.loadStringFromInternalStorageFile(
                         this,
                         getString(R.string.accounts_file_name));
-                accountHandler = new AccountHandler(jsonString);
+                accountListHandler = new AccountListHandler(jsonString);
+                // TODO: Check if password is right (via static method in accountListHandler?). If possible remove creation of accountListHandler since it runs on the main thread.
             }
             catch(JSONException e) {
                 Toast.makeText(this, getString(R.string.json_error_msg), Toast.LENGTH_SHORT).show();
@@ -45,7 +48,6 @@ public class UnlockActivity extends AppCompatActivity {
             }
             Log.i(TAG, "Accounts file loaded from internal storage.");
             Intent intent = new Intent(this, AccountListActivity.class);
-            intent.putExtra(getString(R.string.intent_key_account_handler), accountHandler);
             startActivity(intent);
             Log.i(TAG, "Proceeding to " + AccountListActivity.class.getSimpleName() + ".");
         }

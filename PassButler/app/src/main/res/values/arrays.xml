@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <array name="account_attribute_keys">
+        <item>@string/account_attribute_login_key</item>
+        <item>@string/account_attribute_password_key</item>
+    </array>
+</resources>

@@ -28,7 +28,8 @@
         <activity
             android:name=".AccountListActivity"
             android:label="@string/account_list_activity_label"
-            android:parentActivityName=".UnlockActivity">
+            android:parentActivityName=".UnlockActivity"
+            >
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".UnlockActivity"/>

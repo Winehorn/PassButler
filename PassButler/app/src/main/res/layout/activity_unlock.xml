@@ -11,7 +11,9 @@
         android:id="@+id/password_edit_text"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:hint="@string/unlock_password_edit_hint"/>
+        android:hint="@string/unlock_password_edit_hint"
+        android:maxLines="1"
+        android:inputType="text"/>
 
     <Button
         android:id="@+id/unlock_button"

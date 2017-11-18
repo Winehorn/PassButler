@@ -1,16 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<android.support.design.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context="edu.hm.cs.ig.passbutler.AccountListActivity">
 
     <android.support.v7.widget.RecyclerView
-        android:id="@+id/accounts_recyclerview"
+        android:id="@+id/account_list_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:clipToPadding="false"
         android:paddingBottom="8dp"/>
 
-</android.support.constraint.ConstraintLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/add_account_fab"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_anchor="@id/account_list_recycler_view"
+        app:layout_anchorGravity="bottom|right|end"
+        android:layout_margin="16dp"
+        app:fabSize="normal"
+        android:src="@drawable/ic_action_add"
+        android:onClick="addAccountFabOnClick"/>
+
+</android.support.design.widget.CoordinatorLayout>
