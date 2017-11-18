@@ -45,6 +45,12 @@
 
     <!-- PasswordGeneratorActivity -->
     <string name="password_generator_activity_label">Password generator</string>
+    <string name="password_generator_default_text">Press The Button!</string>
+    <string name="password_generator_generate_button_label">Generate!</string>
+    <string name="password_generator_lowercase_label">a</string>
+    <string name="password_generator_uppercase_label">A</string>
+    <string name="password_generator_numbers_label">#</string>
+    <string name="password_generator_special_label">!$%&amp;</string>
 
     <!-- SyncActivity -->
     <string name="sync_activity_label">Sync</string>
