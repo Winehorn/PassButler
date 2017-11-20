@@ -1,33 +1,66 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.hm.cs.ig.passbutler.CreatePersistenceActivity"
-    android:orientation="vertical">
+    android:background="@color/background">
 
-    <EditText
-        android:id="@+id/password_edit_text"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/create_password_edit_hint"
-        android:maxLines="1"
-        android:inputType="text"/>
+        android:layout_height="match_parent"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
+        android:layout_marginTop="160dp">
 
-    <EditText
-        android:id="@+id/repeat_password_edit_text"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/create_repeat_password_edit_hint"
-        android:maxLines="1"
-        android:inputType="text"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical"
+            android:weightSum="100">
 
-    <Button
-        android:id="@+id/create_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/create_button_label"
-        android:onClick="createButtonOnClick"/>
+            <EditText
+                android:id="@+id/password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginBottom="4dp"
+                android:layout_weight="33"
+                android:hint="@string/create_password_edit_hint"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                android:background="@color/background_light"/>
 
-</LinearLayout>
+            <EditText
+                android:id="@+id/repeat_password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="4dp"
+                android:layout_weight="33"
+                android:hint="@string/create_repeat_password_edit_hint"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                android:background="@color/background_light"/>
+
+            <Button
+                android:id="@+id/create_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_weight="33"
+                android:text="@string/create_button_label"
+                android:onClick="createButtonOnClick"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>

@@ -1,25 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    tools:context="edu.hm.cs.ig.passbutler.UnlockActivity">
+    tools:context="edu.hm.cs.ig.passbutler.UnlockActivity"
+    android:background="@color/background">
 
-    <EditText
-        android:id="@+id/password_edit_text"
+    <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="@string/unlock_password_edit_hint"
-        android:maxLines="1"
-        android:inputType="text"/>
+        android:layout_height="match_parent"
+        android:layout_marginLeft="72dp"
+        android:layout_marginRight="72dp"
+        android:layout_marginTop="160dp">
 
-    <Button
-        android:id="@+id/unlock_button"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/unlock_button_label"
-        android:onClick="unlockButtonOnClick"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:orientation="vertical"
+            android:weightSum="100">
 
-</LinearLayout>
+            <EditText
+                android:id="@+id/password_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginBottom="4dp"
+                android:layout_weight="50"
+                android:hint="@string/unlock_password_edit_hint"
+                android:maxLines="1"
+                android:inputType="textPassword"
+                android:background="@color/background_light"/>
+
+            <ImageButton
+                android:id="@+id/unlock_button"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:padding="8dp"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="40dp"
+                android:layout_marginRight="40dp"
+                android:layout_weight="50"
+                android:text="@string/unlock_button_label"
+                android:src="@drawable/ic_action_unlock"
+                android:onClick="unlockButtonOnClick"/>
+
+        </LinearLayout>
+
+    </RelativeLayout>
+
+</FrameLayout>
