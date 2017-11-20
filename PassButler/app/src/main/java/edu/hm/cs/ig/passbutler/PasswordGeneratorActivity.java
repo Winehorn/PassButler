@@ -9,17 +9,30 @@ import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.SeekBar;
+import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
+
+import java.security.SecureRandom;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.hm.cs.ig.passbutler.data.ClipboardUtil;
 
 // TODO: add Copybutton
-// TODO: add passwordgeneration
+// TODO: use own Random
 
 public class PasswordGeneratorActivity extends AppCompatActivity {
 
     private SeekBar passwordLengthSeekBar;
     private Integer minLength, maxLength;
+
+    private Switch lowerSwitch;
+    private Switch upperSwitch;
+    private Switch numbersSwitch;
+    private Switch specialSwitch;
+
+    private TextView passwordTextView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -36,15 +49,68 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
         maxLength = getResources().getInteger(R.integer.password_generator_max_length);
         passwordLengthSeekBar.setMax(maxLength - minLength);
 
+        lowerSwitch = findViewById(R.id.sw_password_generator_lowercase);
+        upperSwitch = findViewById(R.id.sw_password_generator_uppercase);
+        numbersSwitch = findViewById(R.id.sw_password_generator_numbers);
+        specialSwitch = findViewById(R.id.sw_password_generator_special);
+
+        passwordTextView = findViewById(R.id.tv_password_generator_password);
     }
 
-    // TODO: remove ClipboardUtil
     public void generateButtonOnClick(View view) {
+        String password;
+
         Toast.makeText(this, "Generation in progress!", Toast.LENGTH_SHORT).show();
-        ClipboardUtil clipboardUtil = new ClipboardUtil(this);
-        clipboardUtil.copyAndDelete(String.valueOf(SystemClock.uptimeMillis()), "Testtext", 10);
+
+        int length = passwordLengthSeekBar.getProgress() + minLength;
+
+        password = generatePassword(lowerSwitch.isChecked(), upperSwitch.isChecked(),
+                numbersSwitch.isChecked(), specialSwitch.isChecked(),
+                length);
+
+        if(password.isEmpty()) {
+            Toast.makeText(this, "Check at least one switch!", Toast.LENGTH_LONG).show();
+        }
+        passwordTextView.setText(password);
     }
 
+    private String generatePassword(boolean useLower, boolean useUpper,
+                                    boolean useNumbers, boolean useSpecial,
+                                    int length) {
+        final String lower = "abcdefghijklmnopqrstuvwxyz";
+        final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        final String numbers = "0123456789";
+        final String special = "!@#$%&*()_+-=[]|,./?><";
+
+        StringBuilder passwordBuilder = new StringBuilder(length);
+        SecureRandom random = new SecureRandom();
+
+        List<String> charCategories = new ArrayList<>(4);
+        if (useLower) {
+            charCategories.add(lower);
+        }
+        if (useUpper) {
+            charCategories.add(upper);
+        }
+        if (useNumbers) {
+            charCategories.add(numbers);
+        }
+        if (useSpecial) {
+            charCategories.add(special);
+        }
+
+        if (!charCategories.isEmpty()) {
+            for (int i = 0; i < length; i++) {
+                String charCategory = charCategories.get(random.nextInt(charCategories.size()));
+                int position = random.nextInt(charCategory.length());
+                passwordBuilder.append(charCategory.charAt(position));
+            }
+        } else {
+            return "";
+        }
+
+        return new String(passwordBuilder);
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
