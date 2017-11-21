@@ -55,10 +55,15 @@
     <string name="password_generator_activity_label">Password generator</string>
     <string name="password_generator_default_text">Press The Button!</string>
     <string name="password_generator_generate_button_label">Generate!</string>
-    <string name="password_generator_lowercase_label">a</string>
-    <string name="password_generator_uppercase_label">A</string>
-    <string name="password_generator_numbers_label">#</string>
+    <string name="password_generator_lowercase_label">a-z</string>
+    <string name="password_generator_uppercase_label">A-Z</string>
+    <string name="password_generator_numbers_label">0&#8211;9</string>
     <string name="password_generator_special_label">!$%&amp;</string>
+    <string name="password_generator_chars_lowercase">abcdefghijklmnopqrstuvwxyz</string>
+    <string name="password_generator_chars_uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
+    <string name="password_generator_chars_numbers">0123456789</string>
+    <string name="password_generator_chars_special">!$%&amp;</string>
+    <string name="password_generator_no_switch_msg">Check at least one switch!</string>
 
     <!-- SyncActivity -->
     <string name="sync_activity_label">Sync</string>
