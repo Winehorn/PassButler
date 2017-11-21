@@ -8,6 +8,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.SeekBar;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -37,6 +38,11 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // Prevent screen capturing on non-rooted devices
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
+
         setContentView(R.layout.activity_password_generator);
         ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
@@ -60,8 +66,6 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
     public void generateButtonOnClick(View view) {
         String password;
 
-        Toast.makeText(this, "Generation in progress!", Toast.LENGTH_SHORT).show();
-
         int length = passwordLengthSeekBar.getProgress() + minLength;
 
         password = generatePassword(lowerSwitch.isChecked(), upperSwitch.isChecked(),
@@ -69,7 +73,7 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
                 length);
 
         if(password.isEmpty()) {
-            Toast.makeText(this, "Check at least one switch!", Toast.LENGTH_LONG).show();
+            Toast.makeText(this, getString(R.string.password_generator_no_switch_msg), Toast.LENGTH_LONG).show();
         }
         passwordTextView.setText(password);
     }
@@ -77,10 +81,10 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
     private String generatePassword(boolean useLower, boolean useUpper,
                                     boolean useNumbers, boolean useSpecial,
                                     int length) {
-        final String lower = "abcdefghijklmnopqrstuvwxyz";
-        final String upper = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        final String numbers = "0123456789";
-        final String special = "!@#$%&*()_+-=[]|,./?><";
+        final String lower = getString(R.string.password_generator_chars_lowercase);
+        final String upper = getString(R.string.password_generator_chars_uppercase);
+        final String numbers = getString(R.string.password_generator_chars_numbers);
+        final String special = getString((R.string.password_generator_chars_special));
 
         StringBuilder passwordBuilder = new StringBuilder(length);
         SecureRandom random = new SecureRandom();
