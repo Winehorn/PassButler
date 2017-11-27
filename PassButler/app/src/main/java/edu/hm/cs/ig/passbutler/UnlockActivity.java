@@ -10,8 +10,19 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.BadPaddingException;
+import javax.crypto.NoSuchPaddingException;
+import javax.security.auth.DestroyFailedException;
+
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
-import edu.hm.cs.ig.passbutler.data.FileUtil;
+import edu.hm.cs.ig.passbutler.data.ArrayUtil;
+import edu.hm.cs.ig.passbutler.encryption.CryptoUtil;
+import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 
 public class UnlockActivity extends AppCompatActivity {
 
@@ -31,31 +42,51 @@ public class UnlockActivity extends AppCompatActivity {
             Log.i(TAG, "Inserted password is empty.");
             return;
         }
-        if(AccountListHandler.accountFileExists(this))
-        {
-            AccountListHandler accountListHandler;
-            try {
-                String jsonString = FileUtil.loadStringFromInternalStorageFile(
-                        this,
-                        getString(R.string.accounts_file_name));
-                accountListHandler = new AccountListHandler(jsonString);
-                // TODO: Check if password is right (via static method in accountListHandler?). If possible remove creation of accountListHandler since it runs on the main thread.
-            }
-            catch(JSONException e) {
-                Toast.makeText(this, getString(R.string.json_error_msg), Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "Could not create JSON object from string.");
+        try {
+            if (!isPasswordCorrect()) {
+                Toast.makeText(this, getString(R.string.wrong_password_error_msg), Toast.LENGTH_SHORT).show();
+                Log.i(TAG, "Wrong password was entered.");
                 return;
             }
-            Log.i(TAG, "Accounts file loaded from internal storage.");
-            Intent intent = new Intent(this, AccountListActivity.class);
-            startActivity(intent);
-            Log.i(TAG, "Proceeding to " + AccountListActivity.class.getSimpleName() + ".");
         }
-        else
-        {
-            Toast.makeText(this, getString(R.string.accounts_file_does_not_exist_error_msg), Toast.LENGTH_SHORT).show();
-            Log.wtf(TAG, "An accounts file must exist when unlocking it.");
+        catch (JSONException
+                | NoSuchAlgorithmException
+                | InvalidKeyException
+                | NoSuchPaddingException
+                | DestroyFailedException
+                | IOException e) {
+            Toast.makeText(this, getString(R.string.unlock_error_msg), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Could not check password for correctness.");
             return;
+        }
+        Log.i(TAG, "Correct password was entered.");
+        Intent intent = new Intent(this, AccountListActivity.class);
+        startActivity(intent);
+        Log.i(TAG, "Proceeding to " + AccountListActivity.class.getSimpleName() + ".");
+    }
+
+    private boolean isPasswordCorrect() throws DestroyFailedException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, JSONException, FileNotFoundException, IOException {
+        byte[] password = ArrayUtil.getContentAsByteArray(passwordEditText);
+        byte[] nfcKey = new byte[1];    // TODO: Insert value from nfc tag here.
+        try {
+            /*
+             * CAUTION: The arrays from which the key is derived are cleared during key generation
+             * and should not be used afterwards!
+             */
+            KeyHolder.getInstance().setKeyAndClearOld(this, CryptoUtil.generateKey(
+                    getString(R.string.hash_func),
+                    getString(R.string.encryption_alg),
+                    password,
+                    nfcKey));
+            AccountListHandler.getFromFile(this, getString(R.string.accounts_file_name), KeyHolder.getInstance().getKey());
+            return true;
+        }
+        catch (IOException e) {
+            if(e.getCause() instanceof BadPaddingException) {
+                Log.i(TAG, "I/O error was caused by bad padding.");
+                return false;
+            }
+            throw e;
         }
     }
 }

@@ -4,11 +4,10 @@
     <string name="intent_extras_key_account_list_handler">account_list_handler</string>
     <string name="intent_extras_key_account_name">account_name</string>
     <string name="intent_extras_key_create_new_account_item">create_new_account_item</string>
-    <string name="json_error_msg">Internal error</string>
     <string name="account_list_handler_loader_reload_action">edu.hm.cs.ig.passbutler.reload</string>
 
     <!-- Accounts file (JSON) -->
-    <string name="accounts_file_name">accounts.json</string>
+    <string name="accounts_file_name">accounts</string>
     <string name="json_key_account_list">account_list</string>
     <string name="json_key_account_name">account_name</string>
     <string name="json_key_account_attribute_list">attribute_list</string>
@@ -22,15 +21,11 @@
     <string name="create_password_edit_hint">Insert password</string>
     <string name="create_repeat_password_edit_hint">Repeat password</string>
     <string name="create_button_label">Create</string>
-    <string name="password_match_error_msg">Your inserted passwords must match</string>
-    <string name="accounts_file_exists_error_msg">Internal error</string>
 
     <!-- UnlockActivity -->
     <string name="unlock_activity_label">@string/app_name</string>
     <string name="unlock_password_edit_hint">Insert password</string>
     <string name="unlock_button_label">Unlock</string>
-    <string name="password_empty_error_msg">You must enter a password</string>
-    <string name="accounts_file_does_not_exist_error_msg">Internal error</string>
 
     <!-- AccountListActivity -->
     <string name="account_list_activity_label">Accounts</string>
@@ -46,7 +41,6 @@
     <string name="save_changes_menu_item_label">Save</string>
     <string name="account_attribute_login_key">Login</string>
     <string name="account_attribute_password_key">Password</string>
-    <string name="add_attribute_error_msg">Internal error</string>
     <string name="default_attribute_name">Nameless attribute</string>
     <string name="default_attribute_value">Default attribute value</string>
     <string name="delete_attribute_menu_item_label">Delete</string>
@@ -63,13 +57,27 @@
     <string name="password_generator_chars_uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <string name="password_generator_chars_numbers">0123456789</string>
     <string name="password_generator_chars_special">!$%&amp;</string>
-    <string name="password_generator_no_switch_msg">Check at least one switch!</string>
 
     <!-- SyncActivity -->
     <string name="sync_activity_label">Sync</string>
 
     <!-- SettingsActivity -->
     <string name="settings_activity_label">Settings</string>
+
+    <!-- Error messages -->
+    <string name="internal_error">Internal error</string>
+    <string name="accounts_file_exists_error_msg">@string/internal_error</string>
+    <string name="password_match_error_msg">The inserted passwords must match</string>
+    <string name="unlock_error_msg">@string/internal_error</string>
+    <string name="password_empty_error_msg">You must enter a password</string>
+    <string name="wrong_password_error_msg">The inserted password is wrong</string>
+    <string name="json_error_msg">@string/internal_error</string>
+    <string name="loader_error_msg">@string/internal_error</string>
+    <string name="add_attribute_error_msg">@string/internal_error</string>
+    <string name="dialog_empty_name_error_msg">You must enter a name for the new account</string>
+    <string name="dialog_empty_attribute_error_msg">You must enter a name and a value for the new attribute</string>
+    <string name="destroy_failed_error_msg">@string/internal_error</string>
+    <string name="password_generator_no_switch_msg">Check at least one switch!</string>
 
     <!-- Dialogs -->
     <string name="dialog_title_account_name">Please enter a name for the new account</string>
@@ -84,7 +92,18 @@
     <string name="dialog_option_no">No</string>
     <string name="dialog_account_attribute_key_hint">Name</string>
     <string name="dialog_account_attribute_value_hint">Value</string>
-    <string name="dialog_empty_name_error_msg">You must enter a name for the new account</string>
-    <string name="dialog_empty_attribute_error_msg">You must enter a name and a value for the new attribute</string>
+
+    <!-- Encryption -->
+    <string name="hash_func_sha_256">SHA-256</string>
+    <string name="hash_func_sha_384">SHA-384</string>
+    <string name="hash_func_sha_512">SHA-512</string>
+    <string name="encryption_alg_aes">AES</string>
+    <string name="char_encoding_utf_8">UTF-8</string>
+    <string name="hash_func">@string/hash_func_sha_256</string>
+    <string name="encryption_alg">@string/encryption_alg_aes</string>
+    <string name="char_encoding">@string/char_encoding_utf_8</string>
+
+    <!-- Miscellaneous -->
+    <string name="secret_key_spec_internal_field_name">key</string>
 
 </resources>

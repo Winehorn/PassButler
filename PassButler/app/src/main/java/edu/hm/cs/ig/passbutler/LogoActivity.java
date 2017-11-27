@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.util.Log;
 
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
+import edu.hm.cs.ig.passbutler.data.FileUtil;
 
 public class LogoActivity extends AppCompatActivity {
 
@@ -21,7 +22,7 @@ public class LogoActivity extends AppCompatActivity {
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(AccountListHandler.accountFileExists(LogoActivity.this)) {
+                if(FileUtil.fileExists(LogoActivity.this, getString(R.string.accounts_file_name))) {
                     Intent intent = new Intent(
                             LogoActivity.this,
                             UnlockActivity.class);

@@ -29,6 +29,7 @@ import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.data.FileUtil;
+import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 import edu.hm.cs.ig.passbutler.gui.InstantAutoCompleteTextView;
 
 public class AccountDetailActivity extends AppCompatActivity implements AccountDetailAdapterOnMenuItemOnClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
@@ -103,7 +104,13 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
             return true;
         }
         else if(id == R.id.save_changes_menu_item) {
-            accountListHandler.addAccount(this, null, accountItemHandler, true);
+            accountListHandler.addAccount(
+                    this,
+                    null,
+                    accountItemHandler,
+                    true,
+                    getString(R.string.accounts_file_name),
+                    KeyHolder.getInstance().getKey());
             finish();
             return true;
         }
@@ -238,7 +245,7 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
     public Loader<AccountListHandler> onCreateLoader(int id, Bundle args) {
         if(id == getResources().getInteger(R.integer.account_list_handler_loader_id)) {
             Log.i(TAG, "Creating new " + AccountListHandlerLoader.class.getSimpleName() + ".");
-            return new AccountListHandlerLoader(this);
+            return new AccountListHandlerLoader(this, getString(R.string.accounts_file_name));
         }
         else {
             throw new IllegalArgumentException("The loader ID must be valid.");

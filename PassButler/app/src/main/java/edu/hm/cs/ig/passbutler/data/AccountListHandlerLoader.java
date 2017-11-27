@@ -7,9 +7,17 @@ import android.content.IntentFilter;
 import android.support.v4.content.AsyncTaskLoader;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
+
+import javax.crypto.NoSuchPaddingException;
+
+import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 import edu.hm.cs.ig.passbutler.R;
 
 /**
@@ -19,6 +27,7 @@ import edu.hm.cs.ig.passbutler.R;
 public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler> {
 
     private static final String TAG = AccountListHandlerLoader.class.getName();
+    private final String fileName;
     private AccountListHandler cachedData;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
         @Override
@@ -28,8 +37,9 @@ public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler
         }
     };
 
-    public AccountListHandlerLoader(Context context) {
+    public AccountListHandlerLoader(Context context, String fileName) {
         super(context);
+        this.fileName = fileName;
         LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
         IntentFilter intentFilter = new IntentFilter(getContext().getString(R.string.account_list_handler_loader_reload_action));
         Log.i(TAG, "Registering broadcast receiver.");
@@ -51,26 +61,18 @@ public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler
     @Override
     public AccountListHandler loadInBackground() {
         try {
-            if(AccountListHandler.accountFileExists(getContext())) {
-                Log.i(TAG, "Account file found. Returning "
-                        + AccountListHandler.class.getSimpleName()
-                        + " with data from the file.");
-                String jsonString = FileUtil.loadStringFromInternalStorageFile(
-                        getContext(),
-                        getContext().getString(R.string.accounts_file_name));
-                return new AccountListHandler(jsonString);
-            }
-            Log.i(TAG, "No account file found. Returning empty "
-                    + AccountListHandler.class.getSimpleName()
-                    + ".");
-            return new AccountListHandler(getContext());
+            return AccountListHandler.getFromFile(getContext(), fileName, KeyHolder.getInstance().getKey());
         }
-        catch(JSONException e) {
-            Log.e(TAG, "Could not create JSON object from string loaded from file "
-                            + getContext().getString(R.string.accounts_file_name)
-                            + ". Returning empty "
-                            + AccountListHandler.class.getSimpleName()
-                            + " instead.");
+        catch(JSONException
+                | NoSuchAlgorithmException
+                | InvalidKeyException
+                | NoSuchPaddingException
+                | IOException e) {
+            Toast.makeText(getContext(), getContext().getString(R.string.loader_error_msg), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Could not load " + AccountListHandler.class.getSimpleName()
+                    + " from file. Returning empty "
+                    + AccountListHandler.class.getSimpleName()
+                    + " instead.");
             return new AccountListHandler(getContext());
         }
     }

@@ -24,6 +24,7 @@ import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.data.FileUtil;
+import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 
 public class AccountListActivity extends AppCompatActivity implements AccountListAdapterOnClickHandler, AccountListAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
 
@@ -198,7 +199,9 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
                                 getApplicationContext(),
                                 accountListAdapter,
                                 accountName,
-                                true);
+                                true,
+                                getString(R.string.accounts_file_name),
+                                KeyHolder.getInstance().getKey());
                     }
                 });
                 builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {
@@ -220,7 +223,7 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
     public Loader<AccountListHandler> onCreateLoader(int id, Bundle args) {
         if(id == getResources().getInteger(R.integer.account_list_handler_loader_id)) {
             Log.i(TAG, "Creating new " + AccountListHandlerLoader.class.getSimpleName() + ".");
-            return new AccountListHandlerLoader(this);
+            return new AccountListHandlerLoader(this, getString(R.string.accounts_file_name));
         }
         else {
             throw new IllegalArgumentException("The loader ID must be valid.");

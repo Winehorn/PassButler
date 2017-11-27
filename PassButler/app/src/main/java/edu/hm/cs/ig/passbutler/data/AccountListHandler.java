@@ -9,10 +9,18 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.security.InvalidKeyException;
+import java.security.Key;
+import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.NoSuchPaddingException;
+
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.encryption.CryptoUtil;
 
 /**
  * Created by dennis on 15.11.17.
@@ -25,6 +33,7 @@ public class AccountListHandler implements Parcelable {
 
     public AccountListHandler(Context context)
     {
+        Log.i(TAG, "Creating empty " + AccountListHandler.class.getSimpleName() + ".");
         try {
             this.accountListAsJson = new JSONObject();
             JSONObject accounts = new JSONObject();
@@ -76,7 +85,47 @@ public class AccountListHandler implements Parcelable {
 
     public AccountListHandler(String accountListAsJson) throws JSONException
     {
+        Log.i(TAG, "Creating " + AccountListHandler.class.getSimpleName() + " from JSON string.");
         this.accountListAsJson = new JSONObject(accountListAsJson);
+    }
+
+    public static AccountListHandler getFromFile(Context context, String fileName, Key key) throws JSONException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {
+        Log.i(TAG, "Creating " + AccountListHandler.class.getSimpleName() + " from file content.");
+        try {
+            Log.i(TAG, "File found. Returning "
+                    + AccountListHandler.class.getSimpleName()
+                    + " with data from the file.");
+            String jsonString = CryptoUtil.readFromInternalStorage(
+                    context,
+                    fileName,
+                    key,
+                    context.getString(R.string.encryption_alg));
+            return new AccountListHandler(jsonString);
+        }
+        catch(JSONException e) {
+            Log.e(TAG, "Could not create " + AccountListHandler.class.getSimpleName() + " from string loaded from file.");
+            throw e;
+        }
+        catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "The algorithm for decrypting the file must be valid.");
+            throw e;
+        }
+        catch (InvalidKeyException e) {
+            Log.e(TAG, "The key for decrypting the file must be valid.");
+            throw e;
+        }
+        catch (NoSuchPaddingException e) {
+            Log.e(TAG, "The padding for decrypting the file must be valid.");
+            throw e;
+        }
+        catch (FileNotFoundException e) {
+            Log.e(TAG, "Could not find file to create " + AccountListHandler.class.getSimpleName() + " from.");
+            throw e;
+        }
+        catch (IOException e) {
+            Log.e(TAG, "I/O error while creating " + AccountListHandler.class.getSimpleName() + " from file.");
+            throw e;
+        }
     }
 
     public AccountListHandler(Parcel parcel) throws JSONException
@@ -84,15 +133,14 @@ public class AccountListHandler implements Parcelable {
         this.accountListAsJson = new JSONObject(parcel.readString());
     }
 
-    public static boolean accountFileExists(Context context) {
-        String basePath = context.getFilesDir().getAbsolutePath();
-        File file = new File(basePath, context.getString(R.string.accounts_file_name));
-        return file.exists();
-    }
-
-    public boolean saveToInternalStorage(Context context, String fileName)
+    public boolean saveToInternalStorage(Context context, String fileName, Key key)
     {
-        return FileUtil.saveStringToInternalStorageFile(context, fileName, accountListAsJson.toString());
+        return CryptoUtil.writeToInternalStorage(
+                context,
+                fileName,
+                accountListAsJson.toString(),
+                key,
+                context.getString(R.string.encryption_alg));
     }
 
     public boolean accountExists(Context context, String accountName) {
@@ -137,7 +185,7 @@ public class AccountListHandler implements Parcelable {
         }
     }
 
-    public boolean addAccount(Context context, RecyclerView.Adapter adapter, AccountItemHandler accountItemHandler, boolean persistChange) {
+    public boolean addAccount(Context context, RecyclerView.Adapter adapter, AccountItemHandler accountItemHandler, boolean persistChange, String fileName, Key key) {
         try {
             JSONObject accounts = accountListAsJson.getJSONObject(context.getString(R.string.json_key_account_list));
             accounts.put(
@@ -152,7 +200,7 @@ public class AccountListHandler implements Parcelable {
             return false;
         }
         if(persistChange) {
-            boolean changePersisted = saveToInternalStorage(context, context.getString(R.string.accounts_file_name));
+            boolean changePersisted = saveToInternalStorage(context, fileName, key);
             if(!changePersisted) {
                 Log.e(TAG, "Could not persist newly added account.");
             }
@@ -161,7 +209,7 @@ public class AccountListHandler implements Parcelable {
         return true;
     }
 
-    public boolean removeAccount(Context context, RecyclerView.Adapter adapter, String accountName, boolean persistChange) {
+    public boolean removeAccount(Context context, RecyclerView.Adapter adapter, String accountName, boolean persistChange, String fileName, Key key) {
         try {
             JSONObject accounts = accountListAsJson.getJSONObject(context.getString(R.string.json_key_account_list));
             accounts.remove(accountName);
@@ -174,7 +222,7 @@ public class AccountListHandler implements Parcelable {
             return false;
         }
         if(persistChange) {
-            boolean changePersisted = saveToInternalStorage(context, context.getString(R.string.accounts_file_name));
+            boolean changePersisted = saveToInternalStorage(context, fileName, key);
             if(!changePersisted) {
                 Log.e(TAG, "Could not persist removal of account.");
             }
