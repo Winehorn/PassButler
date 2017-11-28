@@ -8,4 +8,7 @@
     <color name="gray">#848484</color>
     <color name="lightGray">#dadada</color>
     <color name="white">#FFFFFF</color>
+    <color name="weakPassword">#ff3232</color>
+    <color name="okayPassword">#ffff66</color>
+    <color name="goodPassword">#66ff66</color>
 </resources>
