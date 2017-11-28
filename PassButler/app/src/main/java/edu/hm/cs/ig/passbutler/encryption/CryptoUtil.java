@@ -37,7 +37,7 @@ public class CryptoUtil {
         if (baseData.length == 0) {
             throw new IllegalArgumentException("Valid base data for key creation must be specified.");
         }
-        byte[] bytes = ArrayUtil.concatAndClearSrc(baseData);   // TODO: Test if this function works as intended.
+        byte[] bytes = ArrayUtil.concatAndClearSrc(baseData);
         final MessageDigest messageDigest;
         try {
             messageDigest = MessageDigest.getInstance(hashFunc);

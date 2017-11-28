@@ -67,7 +67,7 @@ public class UnlockActivity extends AppCompatActivity {
 
     private boolean isPasswordCorrect() throws DestroyFailedException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, JSONException, FileNotFoundException, IOException {
         byte[] password = ArrayUtil.getContentAsByteArray(passwordEditText);
-        byte[] nfcKey = new byte[1];    // TODO: Insert value from nfc tag here.
+        byte[] nfcKey = {7, 7, 7};    // TODO: Insert value from nfc tag here.
         try {
             /*
              * CAUTION: The arrays from which the key is derived are cleared during key generation
