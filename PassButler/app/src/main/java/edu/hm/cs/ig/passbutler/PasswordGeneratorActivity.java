@@ -91,6 +91,11 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
         passwordTextView.setText(password);
     }
 
+    public void copyButtonOnClick(View view) {
+        ClipboardUtil clipboardUtil = new ClipboardUtil(this);
+        clipboardUtil.copyAndDelete("Passwordgenerator", passwordTextView.getText().toString(), 20);
+    }
+
     private String generatePassword(boolean useLower, boolean useUpper,
                                     boolean useNumbers, boolean useSpecial,
                                     int length) {
