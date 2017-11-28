@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import edu.hm.cs.ig.passbutler.data.ClipboardUtil;
+import edu.hm.cs.ig.passbutler.data.PasswordUtil;
 
 // TODO: add Copybutton
 // TODO: use own Random
@@ -75,6 +76,18 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
         if(password.isEmpty()) {
             Toast.makeText(this, getString(R.string.password_generator_no_switch_msg), Toast.LENGTH_LONG).show();
         }
+        int strength = PasswordUtil.checkPassword(password);
+        switch (strength) {
+            case 0:
+            case 1: passwordTextView.setBackgroundColor(getResources().getColor(R.color.weakPassword));
+                    break;
+            case 2:
+            case 3: passwordTextView.setBackgroundColor(getResources().getColor(R.color.okayPassword));
+                    break;
+            case 4: passwordTextView.setBackgroundColor(getResources().getColor(R.color.goodPassword));
+
+        }
+
         passwordTextView.setText(password);
     }
 
