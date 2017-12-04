@@ -60,6 +60,12 @@
 
     <!-- SyncActivity -->
     <string name="sync_activity_label">Sync</string>
+    <string name="device_name_key">device_name</string>
+    <string name="device_hardware_address_key">device_hardware_address</string>
+    <string name="delete_bluetooth_sync_device">Delete</string>
+    <string name="default_bluetooth_sync_device_id">Default ID</string>
+    <string name="default_bluetooth_sync_device_name">Default name</string>
+    <string name="default_bluetooth_sync_device_hardware_address">Default hardware address</string>
 
     <!-- SettingsActivity -->
     <string name="settings_activity_label">Settings</string>
@@ -78,6 +84,9 @@
     <string name="dialog_empty_attribute_error_msg">You must enter a name and a value for the new attribute</string>
     <string name="destroy_failed_error_msg">@string/internal_error</string>
     <string name="password_generator_no_switch_msg">Check at least one switch!</string>
+    <string name="add_bluetooth_sync_device_error_msg">Device could not be added</string>
+    <string name="no_bluetooth_support_error_msg">Your device does not support Bluetooth</string>
+    <string name="enable_bluetooth_error_msg">@string/internal_error</string>
 
     <!-- Dialogs -->
     <string name="dialog_title_account_name">Please enter a name for the new account</string>
@@ -86,6 +95,8 @@
     <string name="dialog_title_account_attribute">Please enter a name and a value for the new attribute</string>
     <string name="dialog_title_delete_account">Do you really want to delete this account?</string>
     <string name="dialog_title_delete_attribute">Do you really want to delete this attribute?</string>
+    <string name="dialog_title_bluetooth_sync_device">Choose a paired device for syncing</string>
+    <string name="dialog_title_delete_bluetooth_sync_device">Do you really want to delete this sync device?</string>
     <string name="dialog_option_create">Create</string>
     <string name="dialog_option_cancel">Cancel</string>
     <string name="dialog_option_yes">Yes</string>

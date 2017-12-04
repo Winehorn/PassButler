@@ -32,7 +32,7 @@ import edu.hm.cs.ig.passbutler.data.FileUtil;
 import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 import edu.hm.cs.ig.passbutler.gui.InstantAutoCompleteTextView;
 
-public class AccountDetailActivity extends AppCompatActivity implements AccountDetailAdapterOnMenuItemOnClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
+public class AccountDetailActivity extends AppCompatActivity implements AccountDetailAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
 
     private static final String TAG = AccountDetailActivity.class.getName();
     private AccountListHandler accountListHandler;

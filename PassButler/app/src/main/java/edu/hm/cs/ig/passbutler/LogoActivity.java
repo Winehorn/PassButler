@@ -12,7 +12,7 @@ import edu.hm.cs.ig.passbutler.data.FileUtil;
 public class LogoActivity extends AppCompatActivity {
 
     private static final String TAG = LogoActivity.class.getName();
-    private static final int DELAY_IN_MILLIS = 4000;
+    private static final int DELAY_IN_MILLIS = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

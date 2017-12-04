@@ -13,10 +13,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-import javax.crypto.BadPaddingException;
-
-import edu.hm.cs.ig.passbutler.R;
-
 import static android.content.Context.MODE_PRIVATE;
 
 /**

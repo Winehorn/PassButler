@@ -21,9 +21,9 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
     private static final String TAG = AccountDetailAdapter.class.getName();
     private Context context;
     private AccountItemHandler accountItemHandler;
-    private final AccountDetailAdapterOnMenuItemOnClickHandler menuItemClickHandler;
+    private final AccountDetailAdapterOnMenuItemClickHandler menuItemClickHandler;
 
-    public AccountDetailAdapter(Context context, AccountDetailAdapterOnMenuItemOnClickHandler menuItemClickHandler) {
+    public AccountDetailAdapter(Context context, AccountDetailAdapterOnMenuItemClickHandler menuItemClickHandler) {
         this.context = context;
         this.menuItemClickHandler = menuItemClickHandler;
     }

@@ -1,7 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<manifest
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="edu.hm.cs.ig.passbutler">
+
+    <uses-permission android:name="android.permission.BLUETOOTH" />
+    <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
@@ -14,25 +18,23 @@
             android:label="@string/logo_activity_label">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity
             android:name=".CreatePersistenceActivity"
-            android:label="@string/create_persistence_activity_label">
-        </activity>
+            android:label="@string/create_persistence_activity_label"></activity>
         <activity
             android:name=".UnlockActivity"
-            android:label="@string/unlock_activity_label">
-        </activity>
+            android:label="@string/unlock_activity_label"></activity>
         <activity
             android:name=".AccountListActivity"
             android:label="@string/account_list_activity_label"
-            android:parentActivityName=".UnlockActivity"
-            >
+            android:parentActivityName=".UnlockActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".UnlockActivity"/>
+                android:value=".UnlockActivity" />
         </activity>
         <activity
             android:name=".AccountDetailActivity"
@@ -40,7 +42,7 @@
             android:parentActivityName=".AccountListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AccountListActivity"/>
+                android:value=".AccountListActivity" />
         </activity>
         <activity
             android:name=".PasswordGeneratorActivity"
@@ -48,7 +50,7 @@
             android:parentActivityName=".AccountListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AccountListActivity"/>
+                android:value=".AccountListActivity" />
         </activity>
         <activity
             android:name=".SyncActivity"
@@ -56,7 +58,7 @@
             android:parentActivityName=".AccountListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AccountListActivity"/>
+                android:value=".AccountListActivity" />
         </activity>
         <activity
             android:name=".SettingsActivity"
@@ -64,7 +66,14 @@
             android:parentActivityName=".AccountListActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
-                android:value=".AccountListActivity"/>
+                android:value=".AccountListActivity" />
         </activity>
+
+        <provider
+            android:name=".data.SyncContentProvider"
+            android:authorities="edu.hm.cs.ig.passbutler"
+            android:exported="false" />
+
     </application>
+
 </manifest>
