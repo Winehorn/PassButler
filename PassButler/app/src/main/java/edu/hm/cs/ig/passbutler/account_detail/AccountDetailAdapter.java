@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.account_detail;
 
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 
 /**

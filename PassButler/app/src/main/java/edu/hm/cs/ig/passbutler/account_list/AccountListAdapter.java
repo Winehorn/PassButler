@@ -1,18 +1,16 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.account_list;
 
 import android.content.Context;
-import android.content.Intent;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
-import android.view.ContextMenu;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
-import android.widget.Toast;
 
+import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 
 /**

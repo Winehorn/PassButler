@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.entry;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -10,10 +10,12 @@ import android.widget.Toast;
 
 import javax.security.auth.DestroyFailedException;
 
+import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.account_list.AccountListActivity;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
-import edu.hm.cs.ig.passbutler.data.ArrayUtil;
-import edu.hm.cs.ig.passbutler.data.FileUtil;
-import edu.hm.cs.ig.passbutler.encryption.CryptoUtil;
+import edu.hm.cs.ig.passbutler.util.ArrayUtil;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
+import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 
 public class CreatePersistenceActivity extends AppCompatActivity {

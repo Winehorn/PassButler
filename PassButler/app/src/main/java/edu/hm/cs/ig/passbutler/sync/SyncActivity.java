@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.sync;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
@@ -25,9 +25,8 @@ import android.widget.Toast;
 
 import java.util.Set;
 
+import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.SyncContract;
-import edu.hm.cs.ig.passbutler.sync.BluetoothSyncDeviceAdapter;
-import edu.hm.cs.ig.passbutler.sync.BluetoothSyncDeviceAdapterOnMenuItemClickHandler;
 
 public class SyncActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, BluetoothSyncDeviceAdapterOnMenuItemClickHandler {
 

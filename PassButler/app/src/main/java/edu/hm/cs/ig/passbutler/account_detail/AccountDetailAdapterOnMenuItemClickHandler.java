@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.account_detail;
 
 import android.view.MenuItem;
 

@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.account_detail;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -24,11 +24,12 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
-import edu.hm.cs.ig.passbutler.data.FileUtil;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 import edu.hm.cs.ig.passbutler.gui.InstantAutoCompleteTextView;
 

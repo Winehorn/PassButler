@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.entry;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -6,8 +6,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import edu.hm.cs.ig.passbutler.data.AccountListHandler;
-import edu.hm.cs.ig.passbutler.data.FileUtil;
+import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
 
 public class LogoActivity extends AppCompatActivity {
 

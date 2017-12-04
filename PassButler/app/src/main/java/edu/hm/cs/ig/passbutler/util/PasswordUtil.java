@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler.data;
+package edu.hm.cs.ig.passbutler.util;
 
 import com.nulabinc.zxcvbn.Strength;
 import com.nulabinc.zxcvbn.Zxcvbn;
