@@ -6,6 +6,10 @@
     <string name="intent_extras_key_create_new_account_item">create_new_account_item</string>
     <string name="account_list_handler_loader_reload_action">edu.hm.cs.ig.passbutler.reload</string>
 
+    <!-- Shared Preferences -->
+    <string name="shared_prefs_general_name">edu.hm.cs.ig.passbutler.shared_prefs_general</string>
+    <string name="shared_prefs_uuid_key">edu.hm.cs.ig.passbutler.shared_prefs_uuid</string>
+
     <!-- Accounts file (JSON) -->
     <string name="accounts_file_name">accounts</string>
     <string name="json_key_account_list">account_list</string>
