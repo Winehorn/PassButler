@@ -2,7 +2,6 @@ package edu.hm.cs.ig.passbutler.sync;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -83,40 +82,12 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode == getResources().getInteger(R.integer.bluetooth_device_request_code)) {
-            if(data.hasExtra(getString(R.string.device_name_key))
-                    && data.hasExtra(getString(R.string.device_hardware_address_key))) {
-                String deviceName = data.getStringExtra(getString(R.string.device_name_key));
-                String deviceHardwareAddress = getString(R.string.device_hardware_address_key);
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(
-                        SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_NAME, deviceName);
-                contentValues.put(
-                        SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_HARDWARE_ADDRESS, deviceHardwareAddress);
-                ContentResolver contentResolver = getContentResolver();
-                Uri uri = contentResolver.insert(SyncContract.BluetoothSyncDeviceEntry.CONTENT_URI, contentValues);
-                if(uri == null) {
-                    Toast.makeText(this, getString(R.string.add_bluetooth_sync_device_error_msg), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Bluetooth device with name "
-                            + deviceName
-                            + " and hardware address "
-                            + deviceHardwareAddress
-                            + " could not be added to list of sync devices.");
-                }
-                else {
-                    Log.i(TAG, "Added bluetooth device with name "
-                            + deviceName
-                            + " and hardware address "
-                            + deviceHardwareAddress
-                            + " to list of sync devices at URI "
-                            + uri.toString()
-                            + ".");
-                }
-            }
-        }
-        else if (requestCode == getResources().getInteger(R.integer.enable_bluetooth_request_code)) {
+        if (requestCode == getResources().getInteger(R.integer.enable_bluetooth_request_code) || requestCode == getResources().getInteger(R.integer.enable_bluetooth_and_add_sync_device_request_code)) {
             if(resultCode == RESULT_OK) {
                 Log.i(TAG, "Bluetooth has been enabled.");
+                if(requestCode == getResources().getInteger(R.integer.enable_bluetooth_and_add_sync_device_request_code)) {
+                    addBluetoothSyncDevice();
+                }
             }
             else if (resultCode == RESULT_CANCELED) {
                 Log.i(TAG, "Bluetooth has not been enabled..");
@@ -129,44 +100,15 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-    // TODO: REMOVE
-    public void testInsert_onClick(View view) {
-
-        String testDeviceName = "testDeviceName";
-        String testDeviceMac = "testDeviceMac";
-        String testUuid = "testUuid";
-        String testFileHash = "testFileHash";
-        Long testLastEditedUnixTime = System.currentTimeMillis() / 1000L;   // Unix time in seconds!
-
-        ContentValues contentValues1 = new ContentValues();
-        contentValues1.put(SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_NAME, testDeviceName);
-        contentValues1.put(SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_HARDWARE_ADDRESS, testDeviceMac);
-
-        ContentValues contentValues2 = new ContentValues();
-        contentValues2.put(SyncContract.SyncItemEntry.COLUMN_SOURCE_UUID, testUuid);
-        contentValues2.put(SyncContract.SyncItemEntry.COLUMN_FILE_HASH, testFileHash);
-        contentValues2.put(SyncContract.SyncItemEntry.COLUMN_LAST_EDITED_UNIX_TIME, testLastEditedUnixTime);
-
-        ContentResolver contentResolver = getContentResolver();
-        Uri uri1 = contentResolver.insert(SyncContract.BluetoothSyncDeviceEntry.CONTENT_URI, contentValues1);
-        Uri uri2 = contentResolver.insert(SyncContract.SyncItemEntry.CONTENT_URI, contentValues2);
-
-        if(uri1 != null) {
-            Toast.makeText(this, uri1.toString(), Toast.LENGTH_SHORT).show();
-        }
-        if(uri2 != null) {
-            Toast.makeText(this, uri2.toString(), Toast.LENGTH_SHORT).show();
-        }
+    public void addBluetoothSyncDeviceFabOnClick(View view) {
+        addBluetoothSyncDevice();
     }
 
-    // TODO: Remove
-    public void testShow_onClick(View view) {
-        getSupportLoaderManager().restartLoader(getResources().getInteger(R.integer.bluetooth_sync_device_loader_id),
-                null,
-                this);
-    }
-
-    public void addBluetoothSyncDeviceOnClick(View view) {
+    public void addBluetoothSyncDevice() {
+        if(!bluetoothAdapter.isEnabled()) {
+            enableBluetooth(getResources().getInteger(R.integer.enable_bluetooth_and_add_sync_device_request_code));
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.dialog_title_bluetooth_sync_device));
         builder.setItems(getBondedDeviceNames(), new DialogInterface.OnClickListener() {
@@ -200,10 +142,10 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
         builder.show();
     }
 
-    private void enableBluetooth() {
+    private void enableBluetooth(int requestCode) {
         Log.i(TAG, "Enabling Bluetooth.");
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(intent, getResources().getInteger(R.integer.enable_bluetooth_request_code));
+        startActivityForResult(intent, requestCode);
     }
 
     private String[] getBondedDeviceNames() {
