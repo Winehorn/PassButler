@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
@@ -45,7 +46,7 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter == null) {
             Log.i(TAG, "No Bluetooth support detected. Stopping activity.");
-            Toast.makeText(this, getString(R.string.no_bluetooth_support_error_msg), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.no_bluetooth_support_sync_error_msg), Toast.LENGTH_SHORT).show();
             NavUtils.navigateUpFromSameTask(this);
         }
 
@@ -100,6 +101,15 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
+    // TODO: Remove
+    public void syncNow_onClick(View view) {
+        //new BluetoothSynchronizer(this).syncAllDevices();
+    }
+
+    public void pairDevicesOnClick(View view) {
+        openBluetoothSettings();
+    }
+
     public void addBluetoothSyncDeviceFabOnClick(View view) {
         addBluetoothSyncDevice();
     }
@@ -146,6 +156,18 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
         Log.i(TAG, "Enabling Bluetooth.");
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
         startActivityForResult(intent, requestCode);
+    }
+
+    private void openBluetoothSettings() {
+        Log.i(TAG, "Opening Bluetooth settings.");
+        Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+        else {
+            Log.i(TAG, "Could not open Bluetooth settings. Device does not support Bluetooth.");
+            Toast.makeText(this, getString(R.string.no_bluetooth_support_pairing_error_msg), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String[] getBondedDeviceNames() {

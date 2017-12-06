@@ -70,6 +70,7 @@
     <string name="default_bluetooth_sync_device_id">Default ID</string>
     <string name="default_bluetooth_sync_device_name">Default name</string>
     <string name="default_bluetooth_sync_device_hardware_address">Default hardware address</string>
+    <string name="pair_devices_button_label">Pair devices</string>
 
     <!-- SettingsActivity -->
     <string name="settings_activity_label">Settings</string>
@@ -89,7 +90,8 @@
     <string name="destroy_failed_error_msg">@string/internal_error</string>
     <string name="password_generator_no_switch_msg">Check at least one switch!</string>
     <string name="add_bluetooth_sync_device_error_msg">Device could not be added</string>
-    <string name="no_bluetooth_support_error_msg">Your device does not support Bluetooth</string>
+    <string name="no_bluetooth_support_sync_error_msg">Your device is required to support Bluetooth for syncing</string>
+    <string name="no_bluetooth_support_pairing_error_msg">Your device is required to support Bluetooth for pairing</string>
     <string name="enable_bluetooth_error_msg">@string/internal_error</string>
 
     <!-- Dialogs -->

@@ -9,6 +9,18 @@
     android:background="@color/background"
     android:orientation="vertical">
 
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Sync now"
+        android:onClick="syncNow_onClick"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/pair_devices_button_label"
+        android:onClick="pairDevicesOnClick"/>
+
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
