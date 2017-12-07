@@ -114,6 +114,9 @@
     <string name="encryption_alg">@string/encryption_alg_aes</string>
     <string name="char_encoding">@string/char_encoding_utf_8</string>
 
+    <!-- NFC -->
+    <string name="nfc_app_mime_type">application/edu.hm.cs.ig.passbutler</string>
+
     <!-- Miscellaneous -->
     <string name="secret_key_spec_internal_field_name">key</string>
 
