@@ -1,6 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Loader IDs -->
     <integer name="account_list_handler_loader_id">1000</integer>
+    <integer name="bluetooth_sync_device_loader_id">2000</integer>
+
+    <!-- Request codes -->
+    <integer name="bluetooth_device_request_code">1000</integer>
+    <integer name="enable_bluetooth_request_code">2000</integer>
 
     <!-- PasswordGeneratorActivity -->
     <integer name="password_generator_max_length">18</integer>

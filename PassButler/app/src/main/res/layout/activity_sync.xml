@@ -1,10 +1,49 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
+<LinearLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.hm.cs.ig.passbutler.SyncActivity"
-    android:background="@color/background">
+    tools:context="edu.hm.cs.ig.passbutler.sync.SyncActivity"
+    android:background="@color/background"
+    android:orientation="vertical">
 
-</android.support.constraint.ConstraintLayout>
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TEST INSERT"
+        android:onClick="testInsert_onClick"/>
+
+    <Button
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="TEST SHOW"
+        android:onClick="testShow_onClick"/>
+
+    <android.support.design.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@color/background">
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/bluetooth_sync_devices_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"/>
+
+        <android.support.design.widget.FloatingActionButton
+            android:id="@+id/add_bluetooth_sync_device_fab"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_anchor="@id/bluetooth_sync_devices_recycler_view"
+            app:layout_anchorGravity="bottom|right|end"
+            android:layout_margin="16dp"
+            app:fabSize="normal"
+            android:src="@drawable/ic_action_add"
+            android:onClick="addBluetoothSyncDeviceOnClick"/>
+
+    </android.support.design.widget.CoordinatorLayout>
+
+</LinearLayout>

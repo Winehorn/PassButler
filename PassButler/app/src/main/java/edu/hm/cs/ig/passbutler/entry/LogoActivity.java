@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.entry;
 
 import android.content.Intent;
 import android.os.Handler;
@@ -6,13 +6,13 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 
-import edu.hm.cs.ig.passbutler.data.AccountListHandler;
-import edu.hm.cs.ig.passbutler.data.FileUtil;
+import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
 
 public class LogoActivity extends AppCompatActivity {
 
     private static final String TAG = LogoActivity.class.getName();
-    private static final int DELAY_IN_MILLIS = 4000;
+    private static final int DELAY_IN_MILLIS = 3000;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

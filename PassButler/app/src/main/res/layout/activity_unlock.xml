@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="edu.hm.cs.ig.passbutler.UnlockActivity"
+    tools:context="edu.hm.cs.ig.passbutler.entry.UnlockActivity"
     android:background="@color/background">
 
     <RelativeLayout

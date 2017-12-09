@@ -16,11 +16,10 @@ import java.security.Key;
 import java.security.NoSuchAlgorithmException;
 import java.util.Iterator;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.NoSuchPaddingException;
 
 import edu.hm.cs.ig.passbutler.R;
-import edu.hm.cs.ig.passbutler.encryption.CryptoUtil;
+import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 
 /**
  * Created by dennis on 15.11.17.

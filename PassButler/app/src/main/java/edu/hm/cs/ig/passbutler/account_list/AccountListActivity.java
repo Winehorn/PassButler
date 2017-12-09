@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.account_list;
 
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -20,10 +20,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import edu.hm.cs.ig.passbutler.password.PasswordGeneratorActivity;
+import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.settings.SettingsActivity;
+import edu.hm.cs.ig.passbutler.sync.SyncActivity;
+import edu.hm.cs.ig.passbutler.entry.UnlockActivity;
+import edu.hm.cs.ig.passbutler.account_detail.AccountDetailActivity;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
-import edu.hm.cs.ig.passbutler.data.FileUtil;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 
 public class AccountListActivity extends AppCompatActivity implements AccountListAdapterOnClickHandler, AccountListAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {

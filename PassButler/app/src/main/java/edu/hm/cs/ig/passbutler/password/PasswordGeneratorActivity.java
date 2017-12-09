@@ -1,8 +1,5 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.password;
 
-import android.content.Intent;
-import android.os.SystemClock;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -18,8 +15,8 @@ import java.security.SecureRandom;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.hm.cs.ig.passbutler.data.ClipboardUtil;
-import edu.hm.cs.ig.passbutler.data.PasswordUtil;
+import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.util.PasswordUtil;
 
 // TODO: add Copybutton
 // TODO: use own Random

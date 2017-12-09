@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.account_detail;
 
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 
 /**
@@ -21,9 +22,9 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
     private static final String TAG = AccountDetailAdapter.class.getName();
     private Context context;
     private AccountItemHandler accountItemHandler;
-    private final AccountDetailAdapterOnMenuItemOnClickHandler menuItemClickHandler;
+    private final AccountDetailAdapterOnMenuItemClickHandler menuItemClickHandler;
 
-    public AccountDetailAdapter(Context context, AccountDetailAdapterOnMenuItemOnClickHandler menuItemClickHandler) {
+    public AccountDetailAdapter(Context context, AccountDetailAdapterOnMenuItemClickHandler menuItemClickHandler) {
         this.context = context;
         this.menuItemClickHandler = menuItemClickHandler;
     }

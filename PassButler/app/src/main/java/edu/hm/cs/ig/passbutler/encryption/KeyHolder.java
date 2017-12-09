@@ -10,7 +10,7 @@ import javax.crypto.spec.SecretKeySpec;
 import javax.security.auth.DestroyFailedException;
 
 import edu.hm.cs.ig.passbutler.R;
-import edu.hm.cs.ig.passbutler.data.ArrayUtil;
+import edu.hm.cs.ig.passbutler.util.ArrayUtil;
 
 /**
  * Created by dennis on 23.11.17.

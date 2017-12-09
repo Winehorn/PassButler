@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler.encryption;
+package edu.hm.cs.ig.passbutler.util;
 
 import android.content.Context;
 import android.util.Log;
@@ -13,15 +13,11 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
-import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
-
-import edu.hm.cs.ig.passbutler.data.ArrayUtil;
-import edu.hm.cs.ig.passbutler.data.FileUtil;
 
 import static android.content.Context.MODE_PRIVATE;
 

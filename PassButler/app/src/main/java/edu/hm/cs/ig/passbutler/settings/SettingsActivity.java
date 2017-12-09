@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler;
+package edu.hm.cs.ig.passbutler.settings;
 
 import android.content.Intent;
 import android.support.v4.app.NavUtils;
@@ -6,6 +6,8 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
+
+import edu.hm.cs.ig.passbutler.R;
 
 public class SettingsActivity extends AppCompatActivity {
 
