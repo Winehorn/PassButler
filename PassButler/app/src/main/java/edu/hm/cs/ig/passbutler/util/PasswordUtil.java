@@ -28,7 +28,7 @@ public class PasswordUtil {
         final String numbers = context.getString(R.string.password_generator_chars_numbers);
         final String special = context.getString(R.string.password_generator_chars_special);
 
-        final int length = context.getResources().getInteger(R.integer.password_generator_standard_length);
+        final int length = context.getResources().getInteger(R.integer.password_generator_default_length);
 
         StringBuilder passwordBuilder = new StringBuilder(length);
         SecureRandom random = new SecureRandom();

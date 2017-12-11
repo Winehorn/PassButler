@@ -9,6 +9,7 @@
     <integer name="enable_bluetooth_request_code">2000</integer>
 
     <!-- PasswordGeneratorActivity -->
-    <integer name="password_generator_max_length">18</integer>
+    <integer name="password_generator_max_length">32</integer>
     <integer name="password_generator_min_length">4</integer>
+    <integer name="password_generator_default_length">16</integer>
 </resources>
