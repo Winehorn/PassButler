@@ -50,6 +50,26 @@ public class ClipboardUtil {
 
     }
 
+    public void copyAndDelete(final String label, CharSequence text, int seconds) {
+        Handler handler = new Handler(Looper.getMainLooper());
+
+        // Create ClipData
+        ClipData clip = ClipData.newPlainText(label, text);
+        // TODO: handle possible NullPointerException
+        clipboardManager.setPrimaryClip(clip);
+        Log.d(TAG, clip.getDescription().getLabel().toString());
+
+        // Overwrite clipboard after given time
+        handler.postDelayed(new Runnable() {
+
+            @Override
+            public void run() {
+                clearClipboard(label);
+            }
+        }, seconds * 1000);
+
+    }
+
     private void clearClipboard() {
 
         ClipData clip = ClipData.newPlainText("", "");
