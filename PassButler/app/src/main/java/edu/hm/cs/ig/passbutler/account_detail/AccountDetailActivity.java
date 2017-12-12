@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -65,6 +66,10 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
                 getString(R.string.bundle_key_create_new_account_item),
                 getResources().getBoolean(R.bool.intent_extras_default_value_create_new_account_item));
         setTitle(accountName);
+
+        // Disable screenshots
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
 
         // Build up recycler view.
         recyclerView = findViewById(R.id.account_detail_recycler_view);
