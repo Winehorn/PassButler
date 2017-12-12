@@ -19,4 +19,7 @@
     <integer name="password_generator_max_length">32</integer>
     <integer name="password_generator_min_length">4</integer>
     <integer name="password_generator_default_length">16</integer>
+
+    <!-- CopyUtil -->
+    <integer name="copy_delete_duration">20</integer>
 </resources>

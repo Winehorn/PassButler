@@ -22,15 +22,15 @@ public class PasswordUtil {
         return strength.getScore();
     }
 
-    public static String generatePassword(Context context) {
+    public static char[] generatePassword(Context context) {
         final String lower = context.getString(R.string.password_generator_chars_lowercase);
         final String upper = context.getString(R.string.password_generator_chars_uppercase);
         final String numbers = context.getString(R.string.password_generator_chars_numbers);
         final String special = context.getString(R.string.password_generator_chars_special);
 
         final int length = context.getResources().getInteger(R.integer.password_generator_default_length);
+        char[] password = new char[length];
 
-        StringBuilder passwordBuilder = new StringBuilder(length);
         SecureRandom random = new SecureRandom();
 
         List<String> charCategories = new ArrayList<>(4);
@@ -42,13 +42,13 @@ public class PasswordUtil {
         for (int i = 0; i < length; i++) {
             String charCategory = charCategories.get(random.nextInt(charCategories.size()));
             int position = random.nextInt(charCategory.length());
-            passwordBuilder.append(charCategory.charAt(position));
+            password[i] = charCategory.charAt(position);
         }
 
-        return new String(passwordBuilder);
+        return password;
     }
 
-    public static String generatePassword(boolean useLower, boolean useUpper,
+    public static char[] generatePassword(boolean useLower, boolean useUpper,
                                           boolean useNumbers, boolean useSpecial,
                                           int length, Context context) {
         final String lower = context.getString(R.string.password_generator_chars_lowercase);
@@ -56,8 +56,8 @@ public class PasswordUtil {
         final String numbers = context.getString(R.string.password_generator_chars_numbers);
         final String special = context.getString((R.string.password_generator_chars_special));
 
+        char[] password = new char[length];
 
-        StringBuilder passwordBuilder = new StringBuilder(length);
         SecureRandom random = new SecureRandom();
 
         List<String> charCategories = new ArrayList<>(4);
@@ -74,16 +74,13 @@ public class PasswordUtil {
             charCategories.add(special);
         }
 
-        if (!charCategories.isEmpty()) {
             for (int i = 0; i < length; i++) {
                 String charCategory = charCategories.get(random.nextInt(charCategories.size()));
                 int position = random.nextInt(charCategory.length());
-                passwordBuilder.append(charCategory.charAt(position));
+                password[i] = charCategory.charAt(position);
             }
-        } else {
-            return "";
-        }
 
-        return new String(passwordBuilder);
+
+        return password;
     }
 }

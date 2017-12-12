@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.Switch;
 import android.widget.Toast;
 
@@ -42,6 +43,11 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync);
+
+        // Disable screenshots
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
+
         bluetoothSyncSwitch = findViewById(R.id.bluetooth_sync_switch);
         ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {

@@ -17,6 +17,7 @@ import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -31,6 +32,7 @@ import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
+import edu.hm.cs.ig.passbutler.util.ClipboardUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 import edu.hm.cs.ig.passbutler.gui.InstantAutoCompleteTextView;
@@ -64,6 +66,10 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
                 getString(R.string.bundle_key_create_new_account_item),
                 getResources().getBoolean(R.bool.intent_extras_default_value_create_new_account_item));
         setTitle(accountName);
+
+        // Disable screenshots
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
+                WindowManager.LayoutParams.FLAG_SECURE);
 
         // Build up recycler view.
         recyclerView = findViewById(R.id.account_detail_recycler_view);
@@ -239,6 +245,13 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
                     }
                 });
                 builder.show();
+                return true;
+            }
+            case R.id.copy_attribute_menu_item: {
+                ClipboardUtil clipboardUtil = new ClipboardUtil(this);
+                clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type),
+                        accountItemHandler.getAttributeValue(this, attributeKey),
+                        getResources().getInteger(R.integer.copy_delete_duration));
                 return true;
             }
             default: {

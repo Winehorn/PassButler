@@ -16,6 +16,10 @@ public class ArrayUtil {
         Arrays.fill(array, (byte) 0);
     }
 
+    public static void clear (char[] array) {
+        Arrays.fill(array, (char) 0);
+    }
+
     public static char[] getContentAsCharArray(EditText editText) {
         int length = editText.length();
         char[] content = new char[length];
