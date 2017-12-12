@@ -3,10 +3,12 @@ package edu.hm.cs.ig.passbutler.password;
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+import android.text.Editable;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.CompoundButton;
+import android.widget.EditText;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -16,6 +18,7 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.util.ArrayUtil;
 import edu.hm.cs.ig.passbutler.util.ClipboardUtil;
 import edu.hm.cs.ig.passbutler.util.PasswordUtil;
 
@@ -29,7 +32,7 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
     private Switch specialSwitch;
     private Switch expertSwitch;
 
-    private TextView passwordTextView;
+    private EditText passwordEditText;
     private ExpandableLayout expertModeEL;
 
     @Override
@@ -54,7 +57,7 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
         specialSwitch = findViewById(R.id.sw_password_generator_special);
         expertSwitch = findViewById(R.id.sw_password_generator_expert_mode);
 
-        passwordTextView = findViewById(R.id.tv_password_generator_password);
+        passwordEditText = findViewById(R.id.et_password_generator_password);
         expertModeEL = findViewById(R.id.el_password_generator_expert_mode);
 
         expertSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -69,7 +72,7 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
     }
 
     public void generateButtonOnClick(View view) {
-        String password;
+        char[] password;
 
         if (expertSwitch.isChecked()) {
 
@@ -80,35 +83,40 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
                     numbersSwitch.isChecked(), specialSwitch.isChecked(),
                     length, this);
 
-            if (password.isEmpty()) {
+            if (!lowerSwitch.isChecked() && !upperSwitch.isChecked() &&
+                    !numbersSwitch.isChecked() && !specialSwitch.isChecked()) {
                 Toast.makeText(this, getString(R.string.password_generator_no_switch_msg), Toast.LENGTH_LONG).show();
             }
         } else {
             password = PasswordUtil.generatePassword(this);
         }
 
-        int strength = PasswordUtil.checkPassword(password);
+        // TODO: implement own passwordcheck
+/*        int strength = PasswordUtil.checkPassword(password);
         switch (strength) {
             case 0:
             case 1:
-                passwordTextView.setBackgroundColor(getResources().getColor(R.color.weakPassword));
+                passwordEditText.setBackgroundColor(getResources().getColor(R.color.weakPassword));
                 break;
             case 2:
             case 3:
-                passwordTextView.setBackgroundColor(getResources().getColor(R.color.okayPassword));
+                passwordEditText.setBackgroundColor(getResources().getColor(R.color.okayPassword));
                 break;
             case 4:
-                passwordTextView.setBackgroundColor(getResources().getColor(R.color.goodPassword));
+                passwordEditText.setBackgroundColor(getResources().getColor(R.color.goodPassword));
 
-        }
+        }*/
 
-        passwordTextView.setText(password);
+        passwordEditText.setText(password, 0, password.length);
+        ArrayUtil.clear(password);
     }
 
     public void copyButtonOnClick(View view) {
         ClipboardUtil clipboardUtil = new ClipboardUtil(this);
+        Editable password = passwordEditText.getText();
         clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type),
-                passwordTextView.getText().toString(), getResources().getInteger(R.integer.copy_delete_duration));
+                password, getResources().getInteger(R.integer.copy_delete_duration));
+        password.clear();
     }
 
 
