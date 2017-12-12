@@ -107,7 +107,8 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
 
     public void copyButtonOnClick(View view) {
         ClipboardUtil clipboardUtil = new ClipboardUtil(this);
-        clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type), passwordTextView.getText().toString(), 20);
+        clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type),
+                passwordTextView.getText().toString(), getResources().getInteger(R.integer.copy_delete_duration));
     }
 
 
