@@ -1,37 +1,36 @@
 package edu.hm.cs.ig.passbutler.password;
 
+import android.os.Bundle;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.WindowManager;
-import android.widget.SeekBar;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import java.security.SecureRandom;
-import java.util.ArrayList;
-import java.util.List;
+import net.cachapa.expandablelayout.ExpandableLayout;
+
+import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.util.ClipboardUtil;
 import edu.hm.cs.ig.passbutler.util.PasswordUtil;
-
-// TODO: add Copybutton
-// TODO: use own Random
 
 public class PasswordGeneratorActivity extends AppCompatActivity {
 
-    private SeekBar passwordLengthSeekBar;
-    private Integer minLength, maxLength;
+    private DiscreteSeekBar passwordLengthSeekBar;
 
     private Switch lowerSwitch;
     private Switch upperSwitch;
     private Switch numbersSwitch;
     private Switch specialSwitch;
+    private Switch expertSwitch;
 
     private TextView passwordTextView;
+    private ExpandableLayout expertModeEL;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -47,84 +46,70 @@ public class PasswordGeneratorActivity extends AppCompatActivity {
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
 
-        // Set number of values in seekbar according to integers.xml
         passwordLengthSeekBar = findViewById(R.id.sb_password_generator_length);
-        minLength = getResources().getInteger(R.integer.password_generator_min_length);
-        maxLength = getResources().getInteger(R.integer.password_generator_max_length);
-        passwordLengthSeekBar.setMax(maxLength - minLength);
 
         lowerSwitch = findViewById(R.id.sw_password_generator_lowercase);
         upperSwitch = findViewById(R.id.sw_password_generator_uppercase);
         numbersSwitch = findViewById(R.id.sw_password_generator_numbers);
         specialSwitch = findViewById(R.id.sw_password_generator_special);
+        expertSwitch = findViewById(R.id.sw_password_generator_expert_mode);
 
         passwordTextView = findViewById(R.id.tv_password_generator_password);
+        expertModeEL = findViewById(R.id.el_password_generator_expert_mode);
+
+        expertSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (isChecked) {
+                    expertModeEL.expand();
+                } else {
+                    expertModeEL.collapse();
+                }
+            }
+        });
     }
 
     public void generateButtonOnClick(View view) {
         String password;
 
-        int length = passwordLengthSeekBar.getProgress() + minLength;
+        if (expertSwitch.isChecked()) {
 
-        password = generatePassword(lowerSwitch.isChecked(), upperSwitch.isChecked(),
-                numbersSwitch.isChecked(), specialSwitch.isChecked(),
-                length);
 
-        if(password.isEmpty()) {
-            Toast.makeText(this, getString(R.string.password_generator_no_switch_msg), Toast.LENGTH_LONG).show();
+            int length = passwordLengthSeekBar.getProgress();
+
+            password = PasswordUtil.generatePassword(lowerSwitch.isChecked(), upperSwitch.isChecked(),
+                    numbersSwitch.isChecked(), specialSwitch.isChecked(),
+                    length, this);
+
+            if (password.isEmpty()) {
+                Toast.makeText(this, getString(R.string.password_generator_no_switch_msg), Toast.LENGTH_LONG).show();
+            }
+        } else {
+            password = PasswordUtil.generatePassword(this);
         }
+
         int strength = PasswordUtil.checkPassword(password);
         switch (strength) {
             case 0:
-            case 1: passwordTextView.setBackgroundColor(getResources().getColor(R.color.weakPassword));
-                    break;
+            case 1:
+                passwordTextView.setBackgroundColor(getResources().getColor(R.color.weakPassword));
+                break;
             case 2:
-            case 3: passwordTextView.setBackgroundColor(getResources().getColor(R.color.okayPassword));
-                    break;
-            case 4: passwordTextView.setBackgroundColor(getResources().getColor(R.color.goodPassword));
+            case 3:
+                passwordTextView.setBackgroundColor(getResources().getColor(R.color.okayPassword));
+                break;
+            case 4:
+                passwordTextView.setBackgroundColor(getResources().getColor(R.color.goodPassword));
 
         }
 
         passwordTextView.setText(password);
     }
 
-    private String generatePassword(boolean useLower, boolean useUpper,
-                                    boolean useNumbers, boolean useSpecial,
-                                    int length) {
-        final String lower = getString(R.string.password_generator_chars_lowercase);
-        final String upper = getString(R.string.password_generator_chars_uppercase);
-        final String numbers = getString(R.string.password_generator_chars_numbers);
-        final String special = getString((R.string.password_generator_chars_special));
-
-        StringBuilder passwordBuilder = new StringBuilder(length);
-        SecureRandom random = new SecureRandom();
-
-        List<String> charCategories = new ArrayList<>(4);
-        if (useLower) {
-            charCategories.add(lower);
-        }
-        if (useUpper) {
-            charCategories.add(upper);
-        }
-        if (useNumbers) {
-            charCategories.add(numbers);
-        }
-        if (useSpecial) {
-            charCategories.add(special);
-        }
-
-        if (!charCategories.isEmpty()) {
-            for (int i = 0; i < length; i++) {
-                String charCategory = charCategories.get(random.nextInt(charCategories.size()));
-                int position = random.nextInt(charCategory.length());
-                passwordBuilder.append(charCategory.charAt(position));
-            }
-        } else {
-            return "";
-        }
-
-        return new String(passwordBuilder);
+    public void copyButtonOnClick(View view) {
+        ClipboardUtil clipboardUtil = new ClipboardUtil(this);
+        clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type), passwordTextView.getText().toString(), 20);
     }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

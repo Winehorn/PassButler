@@ -12,39 +12,42 @@ import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
 import android.nfc.tech.NfcF;
 import android.os.Bundle;
+import android.os.Parcelable;
+import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
-import org.json.JSONException;
-
-import java.io.FileNotFoundException;
+<<<<<<< HEAD
+import java.util.Date;
+=======
 import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
+import java.security.SecureRandom;
+>>>>>>> 2510b5d53854160daf0a6aaaefce3ff7a34f388a
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.NoSuchPaddingException;
 import javax.security.auth.DestroyFailedException;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.account_list.AccountListActivity;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.util.ArrayUtil;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
 
-public class UnlockActivity extends AppCompatActivity {
+public class CreatePersistenceActivity extends AppCompatActivity {
 
-    private static final String TAG = UnlockActivity.class.getName();
+    private static final String TAG = CreatePersistenceActivity.class.getName();
     private EditText passwordEditText;
+    private EditText repeatPasswordEditText;
 
     private byte[] nfcKey = new byte[128];
 
     private boolean nfcAvailable = false;
-    private boolean nfcKeyRead = false;
+    private boolean nfcKeySet = false;
     private NfcAdapter mNfcAdapter;
     private PendingIntent mPendingIntent;
     private IntentFilter[] mFilters;
@@ -53,8 +56,12 @@ public class UnlockActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_unlock);
+        setContentView(R.layout.activity_create_persistence);
         passwordEditText = (EditText) findViewById(R.id.password_edit_text);
+        repeatPasswordEditText = (EditText) findViewById(R.id.repeat_password_edit_text);
+
+        SecureRandom secureRandom = new SecureRandom();
+        secureRandom.nextBytes(nfcKey);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
@@ -95,43 +102,37 @@ public class UnlockActivity extends AppCompatActivity {
         mTechLists = new String[][] { new String[] { NfcF.class.getName() } };
     }
 
-    public void unlockButtonOnClick(View view) {
-        if(passwordEditText.getText().toString().isEmpty()) {
-            Toast.makeText(this, getString(R.string.password_empty_error_msg), Toast.LENGTH_SHORT).show();
-            Log.i(TAG, "Inserted password is empty.");
+    public void createButtonOnClick(View view) {
+        if(!passwordEditText.getText().toString().equals(repeatPasswordEditText.getText().toString())) {
+            Toast.makeText(this, getString(R.string.password_match_error_msg), Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Inserted passwords do not match.");
             return;
         }
-        try {
-            if (!isPasswordCorrect()) {
-                Toast.makeText(this, getString(R.string.wrong_password_error_msg), Toast.LENGTH_SHORT).show();
-                Log.i(TAG, "Wrong password was entered.");
-                return;
-            }
-        }
-        catch (JSONException
-                | NoSuchAlgorithmException
-                | InvalidKeyException
-                | NoSuchPaddingException
-                | DestroyFailedException
-                | IOException e) {
-            Toast.makeText(this, getString(R.string.unlock_error_msg), Toast.LENGTH_SHORT).show();
-            Log.e(TAG, "Could not check password for correctness.");
+        if(FileUtil.internalStorageFileExists(this, getString(R.string.accounts_file_path)))
+        {
+            Toast.makeText(this, getString(R.string.accounts_file_exists_error_msg), Toast.LENGTH_SHORT).show();
+            Log.wtf(TAG, "An accounts file must not exist when creating a new one.");
             return;
         }
-        Log.i(TAG, "Correct password was entered.");
-        Intent intent = new Intent(this, AccountListActivity.class);
-        startActivity(intent);
-        Log.i(TAG, "Proceeding to " + AccountListActivity.class.getSimpleName() + ".");
+        else
+        {
+            createPersistence();
+            Intent intent = new Intent(this, AccountListActivity.class);
+            startActivity(intent);
+            Log.i(TAG, "Proceeding " + AccountListActivity.class.getSimpleName() + ".");
+        }
     }
 
-    private boolean isPasswordCorrect() throws DestroyFailedException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, JSONException, FileNotFoundException, IOException {
+    private void createPersistence() {
         byte[] password = ArrayUtil.getContentAsByteArray(passwordEditText);
 
         // If NFC is not available, use key substitute
-        if(!nfcAvailable || !nfcKeyRead) {
+        if(!nfcAvailable || !nfcKeySet) {
             nfcKey = null;
             nfcKey = new byte[]{7, 7, 7};
         }
+
+        Log.d(TAG, "createPersistence: nfcKey length: " + nfcKey.length);
 
         try {
             /*
@@ -143,18 +144,19 @@ public class UnlockActivity extends AppCompatActivity {
                     getString(R.string.encryption_alg),
                     password,
                     nfcKey));
-            AccountListHandler.getFromFile(this, getString(R.string.accounts_file_path), KeyHolder.getInstance().getKey());
-            nfcKeyRead = false;
-	    return true;
+        } catch (DestroyFailedException e) {
+            Toast.makeText(this, getString(R.string.destroy_failed_error_msg), Toast.LENGTH_SHORT).show();
+            Log.wtf(TAG, "Could not set new key in " + KeyHolder.class.getSimpleName() + ".");
+            return;
         }
-        catch (IOException e) {
-            if(e.getCause() instanceof BadPaddingException) {
-                Log.i(TAG, "I/O error was caused by bad padding.");
-                nfcKeyRead = false;
-                return false;
-            }
-            throw e;
-        }
+        AccountListHandler accountListHandler = new AccountListHandler(this);
+        accountListHandler.saveToInternalStorage(
+                this,
+                getString(R.string.accounts_file_path),
+                new Date(0L),   // Initialize with oldest date so that sync is possible with every other newer version.
+                KeyHolder.getInstance().getKey(),
+                false);
+        Log.i(TAG, "New accounts file created.");
     }
 
     @Override
@@ -175,33 +177,43 @@ public class UnlockActivity extends AppCompatActivity {
     protected void onNewIntent(Intent intent) {
         Log.i("Foreground dispatch", "Discovered tag in activity " + TAG);
 
-        if(intent.getAction().equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
-            Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
-            if (tag != null) {
-                Ndef ndef = Ndef.get(tag);
-                if (ndef != null) {
-                    try {
-                        ndef.connect();
-                        NdefMessage ndefMessage = ndef.getNdefMessage();
-                        Log.i(TAG, "onNewIntent: MIME type: " + ndefMessage.getRecords()[0].toMimeType());
-                        if(ndefMessage.getRecords()[0].toMimeType().equals(getString(R.string.nfc_app_mime_type))) {
-                            nfcKey = ndefMessage.getRecords()[0].getPayload();
-                            nfcKeyRead = true;
-                            Toast.makeText(this, "Read success!", Toast.LENGTH_LONG).show();
-                        } else {
-                            throw new IOException("Wrong MIME type: " + ndefMessage.getRecords()[0].toMimeType());
-                        }
-                        ndef.close();
+        // TODO: replace strings with string resources
+        String action = intent.getAction();
+        Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
 
-                    } catch (IOException | FormatException e) {
-                        e.printStackTrace();
-                        Toast.makeText(this, "This is the wrong tag or it's corrupted!", Toast.LENGTH_LONG).show();
-                    }
+        if(action.equals(NfcAdapter.ACTION_TAG_DISCOVERED)) {
+            NdefFormatable ndefFormatable = NdefFormatable.get(tag);
+            if(ndefFormatable != null) {
+                try {
+                    ndefFormatable.connect();
+                    NdefRecord mimeRecord = NdefRecord.createMime(getString(R.string.nfc_app_mime_type), nfcKey);
+                    NdefMessage ndefMessage = new NdefMessage(mimeRecord);
+                    ndefFormatable.format(ndefMessage);
+                    ndefFormatable.close();
+                    nfcKeySet = true;
+                    Toast.makeText(this, "Write success!", Toast.LENGTH_LONG).show();
+                } catch (IOException | FormatException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Write failed!", Toast.LENGTH_LONG).show();
                 }
             }
-
-        } else {
-            Toast.makeText(this, "This is the wrong tag or it's corrupted!", Toast.LENGTH_LONG).show();
+        } else if(action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+            Ndef ndef = Ndef.get(tag);
+            if(ndef != null) {
+                try {
+                    ndef.connect();
+                    NdefRecord mimeRecord = NdefRecord.createMime(getString(R.string.nfc_app_mime_type), nfcKey);
+                    NdefMessage ndefMessage = new NdefMessage(mimeRecord);
+                    ndef.writeNdefMessage(ndefMessage);
+                    ndef.close();
+                    nfcKeySet = true;
+                    Toast.makeText(this, "Write success!", Toast.LENGTH_LONG).show();
+                } catch (IOException | FormatException e) {
+                    e.printStackTrace();
+                    Toast.makeText(this, "Write failed!", Toast.LENGTH_LONG).show();
+                }
+            }
         }
     }
 }
+

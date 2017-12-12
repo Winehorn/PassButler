@@ -30,13 +30,18 @@ dependencies {
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     compile 'com.android.support:cardview-v7:26.1.0'
     compile 'org.apache.commons:commons-lang3:3.7'
+<<<<<<< HEAD
     compile 'commons-io:commons-io:2.6'
+    // TODO: test
+    compile 'com.nulab-inc:zxcvbn:1.2.3'
     compile 'com.firebase:firebase-jobdispatcher:0.8.4'
+=======
     // Passwordchecker
     compile 'com.nulab-inc:zxcvbn:1.2.3'
     // Expandable Layout
     compile 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
     // Discrete SeekBar
     compile 'org.adw.library:discrete-seekbar:1.0.1'
+>>>>>>> 2510b5d53854160daf0a6aaaefce3ff7a34f388a
     testCompile 'junit:junit:4.12'
 }
