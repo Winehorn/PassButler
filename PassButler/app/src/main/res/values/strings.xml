@@ -1,17 +1,31 @@
 <resources>
     <!-- General -->
     <string name="app_name">PassButler</string>
-    <string name="intent_extras_key_account_list_handler">account_list_handler</string>
-    <string name="intent_extras_key_account_name">account_name</string>
-    <string name="intent_extras_key_create_new_account_item">create_new_account_item</string>
+    <string name="bundle_key_account_list_handler">account_list_handler</string>
+    <string name="bundle_key_account_name">account_name</string>
+    <string name="bundle_key_create_new_account_item">create_new_account_item</string>
+    <string name="bundle_key_file_path">file_path</string>
+    <string name="bundle_key_hardware_address">hardware_address</string>
+    <string name="bundle_key_last_received_version_timestamp">last_received_version_timestamp</string>
+    <string name="bundle_key_last_incorporated_version_timestamp">last_incorporated_version_timestamp</string>
+    <string name="bundle_key_merge_date">merge_date</string>
     <string name="account_list_handler_loader_reload_action">edu.hm.cs.ig.passbutler.reload</string>
+    <string name="bluetooth_sync_channel_name">"passbutler_bluetooth_sync_channel"</string>
+    <string name="bluetooth_sync_channel_uuid">"efac1942-6c97-4a9a-b13d-44511c226603"</string>
+    <string name="sync_directory_name">sync</string>
+
+    <!-- Shared Preferences -->
+    <string name="shared_prefs_general_name">edu.hm.cs.ig.passbutler.shared_prefs_general</string>
+    <string name="shared_prefs_uuid_key">edu.hm.cs.ig.passbutler.shared_prefs_uuid</string>
 
     <!-- Accounts file (JSON) -->
-    <string name="accounts_file_name">accounts</string>
+    <string name="accounts_file_path">accounts</string>
     <string name="json_key_account_list">account_list</string>
     <string name="json_key_account_name">account_name</string>
+    <string name="json_key_account_last_modified">account_last_modified</string>
     <string name="json_key_account_attribute_list">attribute_list</string>
     <string name="json_key_account_attribute_value">attribute_value</string>
+    <string name="json_key_account_attribute_last_modified">attribute_last_modified</string>
 
     <!-- LogoActivity -->
     <string name="logo_activity_label">@string/app_name</string>
@@ -68,6 +82,11 @@
     <string name="default_bluetooth_sync_device_id">Default ID</string>
     <string name="default_bluetooth_sync_device_name">Default name</string>
     <string name="default_bluetooth_sync_device_hardware_address">Default hardware address</string>
+    <string name="pair_devices_button_label">Pair devices</string>
+    <string name="bluetooth_sync_switch_label">Bluetooth synchronization</string>
+    <string name="bluetooth_sync_switch_on_text">Activated</string>
+    <string name="bluetooth_sync_switch_off_text">Deactivated</string>
+    <string name="sync_now_button_label">Sync now</string>
 
     <!-- SettingsActivity -->
     <string name="settings_activity_label">Settings</string>
@@ -87,8 +106,10 @@
     <string name="destroy_failed_error_msg">@string/internal_error</string>
     <string name="password_generator_no_switch_msg">Check at least one switch!</string>
     <string name="add_bluetooth_sync_device_error_msg">Device could not be added</string>
-    <string name="no_bluetooth_support_error_msg">Your device does not support Bluetooth</string>
+    <string name="no_bluetooth_support_sync_error_msg">Your device is required to support Bluetooth for syncing</string>
+    <string name="no_bluetooth_support_pairing_error_msg">Your device is required to support Bluetooth for pairing</string>
     <string name="enable_bluetooth_error_msg">@string/internal_error</string>
+    <string name="missing_bluetooth_bond_error_msg">Synchronization failed. Bluetooth Pairing with device is required.</string>
 
     <!-- Dialogs -->
     <string name="dialog_title_account_name">Please enter a name for the new account</string>

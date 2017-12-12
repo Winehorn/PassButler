@@ -143,9 +143,13 @@ public class UnlockActivity extends AppCompatActivity {
                     getString(R.string.encryption_alg),
                     password,
                     nfcKey));
+<<<<<<< HEAD
             AccountListHandler.getFromFile(this, getString(R.string.accounts_file_path), KeyHolder.getInstance().getKey());
+=======
+            AccountListHandler.getFromFile(this, getString(R.string.accounts_file_name), KeyHolder.getInstance().getKey());
             nfcKeyRead = false;
-	    return true;
+>>>>>>> 2510b5d53854160daf0a6aaaefce3ff7a34f388a
+            return true;
         }
         catch (IOException e) {
             if(e.getCause() instanceof BadPaddingException) {

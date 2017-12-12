@@ -3,17 +3,20 @@ package edu.hm.cs.ig.passbutler.util;
 import android.content.Context;
 import android.util.Log;
 
+import org.apache.commons.io.FileUtils;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 
-import static android.content.Context.MODE_PRIVATE;
+import edu.hm.cs.ig.passbutler.data.FileMetaData;
 
 /**
  * Created by dennis on 15.11.17.
@@ -28,19 +31,112 @@ public class FileUtil {
         return file.getPath();
     }
 
-    public static boolean fileExists(Context context, String fileName) {
-        String basePath = context.getFilesDir().getAbsolutePath();
-        File file = new File(basePath, fileName);
-        return file.exists();
+    public static String combinePaths(String path1, String path2, String path3) {
+        String newPath = combinePaths(path1, path2);
+        return combinePaths(newPath, path3);
     }
 
-    public static boolean writeToInternalStorage(Context context, String fileName, String s)
+    public static boolean internalStorageFileExists(Context context, String filePath) {
+        return getFromInternalStorage(context, filePath).exists();
+    }
+
+    public static File getFromInternalStorage(Context context, String filePath) {
+        String basePath = context.getFilesDir().getAbsolutePath();
+        File file = new File(basePath, filePath);
+        return file;
+    }
+
+    public static boolean writeToInternalStorage(
+            Context context,
+            String filePath,
+            String s) {
+        return writeToInternalStorage(
+                context,
+                new FileMetaData(filePath, null, null),
+                s,
+                false);
+    }
+
+    public static boolean writeToInternalStorage(
+            Context context,
+            String filePath,
+            byte[] bytes) {
+        return writeToInternalStorage(
+                context,
+                new FileMetaData(filePath, null, null),
+                bytes,
+                false);
+    }
+
+    public static boolean writeToInternalStorage(
+            Context context,
+            FileMetaData fileMetaData,
+            String s,
+            boolean persistMetaData)
     {
+        return writeToInternalStorage(
+                context,
+                new File(combinePaths(context.getFilesDir().getPath(), fileMetaData.getFilePath())),
+                fileMetaData,
+                s,
+                persistMetaData);
+    }
+
+    public static boolean writeToInternalStorage(
+            Context context,
+            FileMetaData fileMetaData,
+            byte[] bytes,
+            boolean persistMetaData)
+    {
+        return writeToInternalStorage(
+                context,
+                new File(combinePaths(context.getFilesDir().getPath(), fileMetaData.getFilePath())),
+                fileMetaData,
+                bytes,
+                persistMetaData);
+    }
+
+    public static boolean writeToInternalStorage(
+            Context context,
+            File file,
+            FileMetaData fileMetaData,
+            String s,
+            boolean persistMetaData)
+    {
+        file.getParentFile().mkdirs();
         try {
-            return writeToOutputStream(context, context.openFileOutput(fileName, MODE_PRIVATE), s);
+            boolean isWritten = writeToOutputStream(
+                    context,
+                    new FileOutputStream(file),
+                    s);
+            if(isWritten && persistMetaData) {
+                SyncContentProviderUtil.persistFileMetaData(context, fileMetaData);
+            }
+            return isWritten;
         }
         catch(FileNotFoundException e) {
             Log.e(TAG, "Could not find file to write to in internal storage.");
+            return false;
+        }
+    }
+
+    public static boolean writeToInternalStorage(
+            Context context,
+            File file,
+            FileMetaData fileMetaData,
+            byte[] bytes,
+            boolean persistMetaData)
+    {
+        file.getParentFile().mkdirs();
+        try {
+            FileUtils.writeByteArrayToFile(file, bytes);
+            if(persistMetaData) {
+                SyncContentProviderUtil.persistFileMetaData(context, fileMetaData);
+            }
+            return true;
+        }
+        catch(IOException e) {
+            Log.e(TAG, "I/O error while writing byte array to file.");
             return false;
         }
     }
@@ -56,8 +152,11 @@ public class FileUtil {
         return true;
     }
 
-    public static String readFromInternalStorage(Context context, String fileName) {
-        File file = getInternalStorageFile(context, fileName);
+    public static String readFromInternalStorage(Context context, String filePath) {
+        return readFromInternalStorage(getInternalStorageFile(context, filePath));
+    }
+
+    public static String readFromInternalStorage(File file) {
         try {
             return readFromInputStream(new FileInputStream(file));
         }
@@ -71,9 +170,9 @@ public class FileUtil {
         }
     }
 
-    public static File getInternalStorageFile(Context context, String fileName) {
+    public static File getInternalStorageFile(Context context, String filePath) {
         String basePath = context.getFilesDir().getAbsolutePath();
-        return new File(basePath, fileName);
+        return new File(basePath, filePath);
     }
 
     public static String readFromInputStream(InputStream inputStream) throws IOException {

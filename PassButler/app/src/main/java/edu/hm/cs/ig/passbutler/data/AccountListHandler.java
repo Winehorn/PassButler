@@ -1,5 +1,6 @@
 package edu.hm.cs.ig.passbutler.data;
 
+import android.content.ContentValues;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -14,11 +15,17 @@ import java.io.IOException;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.NoSuchAlgorithmException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Set;
 
 import javax.crypto.NoSuchPaddingException;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.util.SyncContentProviderUtil;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 
 /**
@@ -46,18 +53,22 @@ public class AccountListHandler implements Parcelable {
             // TODO: Just for testing purposes
             JSONObject amazon = new JSONObject();
             amazon.put(context.getString(R.string.json_key_account_attribute_list), new JSONObject());
+            amazon.put(context.getString(R.string.json_key_account_last_modified), 1513031718890L);
             accounts.put("AMAZON", amazon);
 
             JSONObject google = new JSONObject();
             google.put(context.getString(R.string.json_key_account_attribute_list), new JSONObject());
+            google.put(context.getString(R.string.json_key_account_last_modified), 1513031718890L);
             accounts.put("GOOGLE", google);
 
             JSONObject paypal = new JSONObject();
             paypal.put(context.getString(R.string.json_key_account_attribute_list), new JSONObject());
+            paypal.put(context.getString(R.string.json_key_account_last_modified), 1513031718890L);
             accounts.put("PayPal", paypal);
 
             JSONObject battleNet = new JSONObject();
             battleNet.put(context.getString(R.string.json_key_account_attribute_list), new JSONObject());
+            battleNet.put(context.getString(R.string.json_key_account_last_modified), 1513031718890L);
             accounts.put("BattleNet", battleNet);
 
 
@@ -69,7 +80,7 @@ public class AccountListHandler implements Parcelable {
             accountListAsJson.put(context.getString(R.string.json_key_account_list), accounts);
         }
         catch(JSONException e) {
-            // TODO
+            // TODO Logging
             throw new IllegalStateException("Inserting JSON test values for accounts failed.");
         }
 
@@ -79,7 +90,6 @@ public class AccountListHandler implements Parcelable {
 
 
 
-        // TODO: Insert fixed element that serves to check if decryption key is right.
     }
 
     public AccountListHandler(String accountListAsJson) throws JSONException
@@ -88,7 +98,7 @@ public class AccountListHandler implements Parcelable {
         this.accountListAsJson = new JSONObject(accountListAsJson);
     }
 
-    public static AccountListHandler getFromFile(Context context, String fileName, Key key) throws JSONException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {
+    public static AccountListHandler getFromFile(Context context, String filePath, Key key) throws JSONException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {
         Log.i(TAG, "Creating " + AccountListHandler.class.getSimpleName() + " from file content.");
         try {
             Log.i(TAG, "File found. Returning "
@@ -96,7 +106,7 @@ public class AccountListHandler implements Parcelable {
                     + " with data from the file.");
             String jsonString = CryptoUtil.readFromInternalStorage(
                     context,
-                    fileName,
+                    filePath,
                     key,
                     context.getString(R.string.encryption_alg));
             return new AccountListHandler(jsonString);
@@ -132,14 +142,24 @@ public class AccountListHandler implements Parcelable {
         this.accountListAsJson = new JSONObject(parcel.readString());
     }
 
-    public boolean saveToInternalStorage(Context context, String fileName, Key key)
+    public synchronized boolean saveToInternalStorage(Context context, String filePath, Date lastModified, Key key, boolean persistMetaData)
     {
-        return CryptoUtil.writeToInternalStorage(
+        String hashDummy = "haschIstSuper"; // TODO: Calculate Hash here instead of passing dummy
+        boolean isSaved =  CryptoUtil.writeToInternalStorage(
                 context,
-                fileName,
+                new FileMetaData(filePath, lastModified, hashDummy),
                 accountListAsJson.toString(),
                 key,
-                context.getString(R.string.encryption_alg));
+                context.getString(R.string.encryption_alg),
+                persistMetaData);
+        if(isSaved) {
+            ContentValues contentValues = new ContentValues();
+            contentValues.put(SyncContract.DataSourceEntry.COLUMN_FILE_PATH, filePath);
+            contentValues.put(SyncContract.DataSourceEntry.COLUMN_LAST_MODIFIED_TIMESTAMP, lastModified.getTime());
+            contentValues.put(SyncContract.DataSourceEntry.COLUMN_FILE_HASH, hashDummy);
+            context.getContentResolver().insert(SyncContract.DataSourceEntry.CONTENT_URI, contentValues);
+        }
+        return isSaved;
     }
 
     public boolean accountExists(Context context, String accountName) {
@@ -184,7 +204,15 @@ public class AccountListHandler implements Parcelable {
         }
     }
 
-    public boolean addAccount(Context context, RecyclerView.Adapter adapter, AccountItemHandler accountItemHandler, boolean persistChange, String fileName, Key key) {
+    public boolean addAccount(
+            Context context,
+            RecyclerView.Adapter adapter,
+            AccountItemHandler accountItemHandler,
+            boolean persistChange,
+            String filePath,
+            Date modificationDate,
+            Key key,
+            boolean persistMetaData) {
         try {
             JSONObject accounts = accountListAsJson.getJSONObject(context.getString(R.string.json_key_account_list));
             accounts.put(
@@ -199,7 +227,7 @@ public class AccountListHandler implements Parcelable {
             return false;
         }
         if(persistChange) {
-            boolean changePersisted = saveToInternalStorage(context, fileName, key);
+            boolean changePersisted = saveToInternalStorage(context, filePath, modificationDate, key, persistMetaData);
             if(!changePersisted) {
                 Log.e(TAG, "Could not persist newly added account.");
             }
@@ -208,7 +236,15 @@ public class AccountListHandler implements Parcelable {
         return true;
     }
 
-    public boolean removeAccount(Context context, RecyclerView.Adapter adapter, String accountName, boolean persistChange, String fileName, Key key) {
+    public boolean removeAccount(
+            Context context,
+            RecyclerView.Adapter adapter,
+            String accountName,
+            boolean persistChange,
+            String filePath,
+            Date modificationDate,
+            Key key,
+            boolean persistMetaData) {
         try {
             JSONObject accounts = accountListAsJson.getJSONObject(context.getString(R.string.json_key_account_list));
             accounts.remove(accountName);
@@ -221,7 +257,7 @@ public class AccountListHandler implements Parcelable {
             return false;
         }
         if(persistChange) {
-            boolean changePersisted = saveToInternalStorage(context, fileName, key);
+            boolean changePersisted = saveToInternalStorage(context, filePath, modificationDate, key, persistMetaData);
             if(!changePersisted) {
                 Log.e(TAG, "Could not persist removal of account.");
             }
@@ -230,15 +266,103 @@ public class AccountListHandler implements Parcelable {
         return true;
     }
 
+    public List<AccountItemHandler> getAccounts(Context context) {
+        try {
+            JSONObject accounts = accountListAsJson.getJSONObject(context.getString(R.string.json_key_account_list));
+            List<AccountItemHandler> accountItemHandlers = new ArrayList<>();
+            Iterator<String> iterator = accounts.keys();
+            String accountName;
+            while(iterator.hasNext()) {
+                accountName = iterator.next();
+                accountItemHandlers.add(getAccount(context, accountName));
+            }
+            return accountItemHandlers;
+        }
+        catch(JSONException e) {
+            Log.e(TAG, "Could not retrieve list of accounts.");
+            return null;
+        }
+    }
+
     public AccountItemHandler getAccount(Context context, String accountName) {
         try {
             JSONObject accounts = accountListAsJson.getJSONObject(context.getString(R.string.json_key_account_list));
-            return new AccountItemHandler(accountName, accounts.getJSONObject(accountName));
+            return new AccountItemHandler(context, accountName, accounts.getJSONObject(accountName));
         }
         catch(JSONException e) {
             Log.e(TAG, "Could not retrieve requested account.");
             return null;
         }
+    }
+
+    public boolean merge(
+            Context context,
+            String accountsFilePath,
+            AccountListHandler accountsToMerge,
+            Date mergeDataVersion,
+            Date mergeDate) {
+        Log.i(TAG, "Starting to merge account list with existing data.");
+        final List<AccountItemHandler> localAccounts = getAccounts(context);
+        final Set<String> processedCommonAccounts = new HashSet<>();
+        boolean somethingChanged = false;
+
+        // Process accounts that have been deleted or have changed.
+        for(final AccountItemHandler localAccount : localAccounts) {
+            final AccountItemHandler accountToMerge = accountsToMerge.getAccount(context, localAccount.getAccountName(context));
+            // Deleted
+            if(accountToMerge == null) {
+                if(mergeDataVersion.after(localAccount.getLastModified(context))) {
+                    Log.i(TAG, "Deleting account with name " + localAccount.getAccountName(context) + ".");
+                    removeAccount(
+                            context,
+                            null,
+                            localAccount.getAccountName(context),
+                            false,
+                            null,
+                            null,
+                            null,
+                            false);
+                    somethingChanged = true;
+                }
+            }
+            // Changed
+            else {
+                if (accountToMerge.getLastModified(context).after(localAccount.getLastModified(context))) {
+                    Log.i(TAG, "The account with name " + localAccount.getAccountName(context) + " needs a merge for itself.");
+                    somethingChanged |= localAccount.merge(context, accountToMerge, mergeDate);
+                }
+                processedCommonAccounts.add(localAccount.getAccountName(context));
+            }
+        }
+
+        // Process accounts that are new.
+        for(final AccountItemHandler accountToMerge : accountsToMerge.getAccounts(context)) {
+            if(!processedCommonAccounts.contains(accountToMerge.getAccountName(context))) {
+                if(accountToMerge.getLastModified(context).after(SyncContentProviderUtil.getLastModified(context, accountsFilePath))) {
+                    Log.i(TAG, "Adding new account with name " + accountToMerge.getAccountName(context) + ".");
+                    addAccount(
+                            context,
+                            null,
+                            accountToMerge,
+                            false,
+                            null,
+                            null,
+                            null,
+                            false);
+                    somethingChanged = true;
+                }
+            }
+        }
+
+        Log.i(TAG, "Merge of account list completed. Changes have been made: " + somethingChanged + ".");
+        return somethingChanged;
+
+        // TODO: testen
+    }
+
+    @Override
+    public String toString() {
+        return this.accountListAsJson.toString();
     }
 
     @Override

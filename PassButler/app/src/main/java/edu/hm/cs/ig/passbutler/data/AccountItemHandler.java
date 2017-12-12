@@ -7,7 +7,10 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.Date;
+import java.util.HashSet;
 import java.util.Iterator;
+import java.util.Set;
 
 import edu.hm.cs.ig.passbutler.R;
 
@@ -20,17 +23,20 @@ public class AccountItemHandler {
     private static final String TAG = AccountItemHandler.class.getName();
     private JSONObject accountItemAsJson;
     private final String accountName;
+    private Date lastModified;
 
-    public AccountItemHandler(Context context, String accountName) throws JSONException
-    {
+    public AccountItemHandler(Context context, String accountName, Date lastModified) throws JSONException {
         this.accountName = accountName;
+        this.lastModified = lastModified;
         this.accountItemAsJson = new JSONObject();
         this.accountItemAsJson.put(context.getString(R.string.json_key_account_attribute_list), new JSONObject());
+        this.accountItemAsJson.put(context.getString(R.string.json_key_account_last_modified), lastModified.getTime());
     }
 
-    public AccountItemHandler(String accountName, JSONObject accountItemAsJson) {
+    public AccountItemHandler(Context context, String accountName, JSONObject accountItemAsJson) {
         this.accountName = accountName;
         this.accountItemAsJson = accountItemAsJson;
+        this.lastModified = getLastModified(context);
     }
 
     public String getAccountName(Context context) {
@@ -39,6 +45,30 @@ public class AccountItemHandler {
 
     public JSONObject getAccountItemAsJson() {
         return accountItemAsJson;
+    }
+
+    public Date getLastModified(Context context) {
+        if(this.lastModified == null) {
+            try {
+                this.lastModified = new Date(accountItemAsJson.getLong(context.getString(R.string.json_key_account_last_modified)));
+            }
+            catch(JSONException e) {
+                Log.e(TAG, "Could not retrieve date of last modification.");
+                return null;
+            }
+        }
+        return this.lastModified;
+    }
+
+    public void setLastModified(Context context, Date newLastModified) throws JSONException {
+        try {
+            this.accountItemAsJson.put(context.getString(R.string.json_key_account_last_modified), newLastModified.getTime());
+        }
+        catch(JSONException e) {
+            Log.e(TAG, "Could not set date of last modification.");
+            throw e;
+        }
+        this.lastModified = newLastModified;
     }
 
     public boolean attributeExists(Context context, String attributeKey) {
@@ -52,13 +82,14 @@ public class AccountItemHandler {
         }
     }
 
-    public boolean addAttribute(Context context, RecyclerView.Adapter adapter, String attributeKey, String attributeValue) {
+    public boolean addAttribute(Context context, RecyclerView.Adapter adapter, String attributeKey, String attributeValue, Date lastModified) {
         try {
             JSONObject attributes = accountItemAsJson.getJSONObject(context.getString(R.string.json_key_account_attribute_list));
             JSONObject newAttribute = new JSONObject();
             newAttribute.put(context.getString(R.string.json_key_account_attribute_value), attributeValue);
-            // TODO: Add "lastEdited"-date
+            newAttribute.put(context.getString(R.string.json_key_account_attribute_last_modified), lastModified.getTime());
             attributes.put(attributeKey, newAttribute);
+            setLastModified(context, lastModified);
             if(adapter != null) {
                 adapter.notifyDataSetChanged();
             }
@@ -70,10 +101,11 @@ public class AccountItemHandler {
         return true;
     }
 
-    public boolean removeAttribute(Context context, RecyclerView.Adapter adapter, String attributeKey) {
+    public boolean removeAttribute(Context context, RecyclerView.Adapter adapter, String attributeKey, Date lastModified) {
         try {
             JSONObject attributes = accountItemAsJson.getJSONObject(context.getString(R.string.json_key_account_attribute_list));
             attributes.remove(attributeKey);
+            setLastModified(context, lastModified);
             if(adapter != null) {
                 adapter.notifyDataSetChanged();
             }
@@ -109,13 +141,27 @@ public class AccountItemHandler {
     }
 
     public String getAttributeValue(Context context, String attributeKey) {
+        return getAttributeProperty(
+                context,
+                attributeKey,
+                context.getString(R.string.json_key_account_attribute_value));
+    }
+
+    public Date getAttributeLastModified(Context context, String attributeKey) {
+        return new Date(Long.parseLong(getAttributeProperty(
+                context,
+                attributeKey,
+                context.getString(R.string.json_key_account_attribute_last_modified))));
+    }
+
+    private String getAttributeProperty(Context context, String attributeKey, String attributePropertyKey) {
         try {
             JSONObject attributes = accountItemAsJson.getJSONObject(context.getString(R.string.json_key_account_attribute_list));
             JSONObject attribute = attributes.getJSONObject(attributeKey);
-            return attribute.getString(context.getString(R.string.json_key_account_attribute_value));
+            return attribute.getString(attributePropertyKey);
         }
         catch(JSONException e) {
-            Log.e(TAG, "Could not retrieve attribute value.");
+            Log.e(TAG, "Could not retrieve attribute property.");
             return null;
         }
     }
@@ -128,5 +174,56 @@ public class AccountItemHandler {
             Log.e(TAG, "List of account attributes could not be retrieved for determining its length.");
             return 0;
         }
+    }
+
+    public boolean merge(Context context, AccountItemHandler accountToMerge, Date mergeDate) {
+        Log.i(TAG, "Starting to merge account with name " + accountToMerge.getAccountName(context) + " with existing data.");
+        final Iterator<String> localAttributesIterator = getAttributeKeys(context);
+        final Iterator<String> mergeAttributesIterator = accountToMerge.getAttributeKeys(context);
+        final Set<String> processedCommonAttributes = new HashSet<>();
+        boolean somethingChanged = false;
+
+        // Process attributes that have been deleted or have changed.
+        while(localAttributesIterator.hasNext()) {
+            final String attributeKey = localAttributesIterator.next();
+            final Date localLastModified = getAttributeLastModified(context, attributeKey);
+            final String mergeValue = accountToMerge.getAttributeValue(context, attributeKey);
+            final Date mergeLastModified = accountToMerge.getAttributeLastModified(context, attributeKey);
+            // Deleted
+            if(mergeValue == null || mergeLastModified == null) {
+                if(accountToMerge.getLastModified(context).after(localLastModified)) {
+                    Log.i(TAG, "Deleting attribute " + attributeKey + ".");
+                    removeAttribute(context, null, attributeKey, mergeDate);
+                    somethingChanged = true;
+                }
+            }
+            // Changed
+            else {
+                if (mergeLastModified.after(localLastModified)) {
+                    Log.i(TAG, "Changing value of attribute " + attributeKey + " to " + mergeValue + ".");
+                    addAttribute(context, null, attributeKey, mergeValue, mergeDate);
+                    somethingChanged = true;
+                }
+                processedCommonAttributes.add(attributeKey);
+            }
+        }
+
+        // Process attributes that are new.
+        while(mergeAttributesIterator.hasNext()) {
+            final String attributeKey = mergeAttributesIterator.next();
+            if(!processedCommonAttributes.contains(attributeKey)) {
+                if(accountToMerge.getAttributeLastModified(context, attributeKey).after(this.lastModified)) {
+                    String value = accountToMerge.getAttributeValue(context, attributeKey);
+                    Log.i(TAG, "Adding new attribute " + attributeKey + " with value " + value + ".");
+                    addAttribute(context, null, attributeKey, value, mergeDate);
+                    somethingChanged = true;
+                }
+            }
+        }
+
+        Log.i(TAG, "Merge of account completed. Changes have been made: " + somethingChanged + ".");
+        return somethingChanged;
+
+        // TODO: testen
     }
 }

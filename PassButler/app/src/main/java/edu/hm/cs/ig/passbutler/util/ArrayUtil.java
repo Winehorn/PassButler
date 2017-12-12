@@ -50,4 +50,17 @@ public class ArrayUtil {
         }
         return ret;
     }
+
+    public static byte[] reverseToString(String arrayAsString) {
+        arrayAsString = arrayAsString.replace("[", "");
+        arrayAsString = arrayAsString.replace("]", "");
+        arrayAsString = arrayAsString.replace(" ", "");
+        String[] bytesAsStrings = arrayAsString.split(",");
+        byte[] bytes = new byte[bytesAsStrings.length];
+        for(int i = 0; i < bytesAsStrings.length; i++) {
+            String byteAsString = bytesAsStrings[i];
+            bytes[i] = Byte.parseByte(byteAsString);
+        }
+        return bytes;
+    }
 }

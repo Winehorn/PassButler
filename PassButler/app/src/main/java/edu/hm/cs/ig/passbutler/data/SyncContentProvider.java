@@ -14,6 +14,8 @@ import android.support.annotation.Nullable;
 
 import org.apache.commons.lang3.NotImplementedException;
 
+import edu.hm.cs.ig.passbutler.util.SqlUtil;
+
 /**
  * Created by dennis on 03.12.17.
  */
@@ -22,16 +24,27 @@ public class SyncContentProvider extends ContentProvider {
 
     public static final String PATH_WILDCARD_INT = "/#";
     public static final String PATH_WILDCARD_STRING = "/*";
-    public static final String SELECTION_PLACEHOLDER_SUFFIX = "=?";
-    public static final int BLUETOOTH_SYNC_DEVICES_ALL = 100;
-    public static final int BLUETOOTH_SYNC_DEVICES_SINGLE = 101;
-    public static final int SYNC_ITEMS_ALL = 200;
-    public static final int SYNC_ITEMS_SINGLE = 201;
+    public static final int DATA_SOURCES_ALL = 100;
+    public static final int DATA_SOURCES_SINGLE = 101;
+    public static final int BLUETOOTH_SYNC_DEVICES_ALL = 200;
+    public static final int BLUETOOTH_SYNC_DEVICES_SINGLE = 201;
+    public static final int RECEIVED_SYNC_ITEMS_ALL = 300;
+    public static final int RECEIVED_SYNC_ITEMS_SINGLE = 301;
+    public static final int SENT_SYNC_ITEMS_ALL = 400;
+    public static final int SENT_SYNC_ITEMS_SINGLE = 401;
     public static final UriMatcher uriMatcher = buildUriMatcher();
     private SyncDbHelper syncDbHelper;
 
     public static UriMatcher buildUriMatcher() {
         UriMatcher uriMatcher = new UriMatcher(UriMatcher.NO_MATCH);
+        uriMatcher.addURI(
+                SyncContract.AUTHORITY,
+                SyncContract.PATH_DATA_SOURCES,
+                DATA_SOURCES_ALL);
+        uriMatcher.addURI(
+                SyncContract.AUTHORITY,
+                SyncContract.PATH_DATA_SOURCES + PATH_WILDCARD_INT,
+                DATA_SOURCES_SINGLE);
         uriMatcher.addURI(
                 SyncContract.AUTHORITY,
                 SyncContract.PATH_BLUETOOTH_SYNC_DEVICES,
@@ -42,12 +55,20 @@ public class SyncContentProvider extends ContentProvider {
                 BLUETOOTH_SYNC_DEVICES_SINGLE);
         uriMatcher.addURI(
                 SyncContract.AUTHORITY,
-                SyncContract.PATH_SYNC_ITEMS,
-                SYNC_ITEMS_ALL);
+                SyncContract.PATH_RECEIVED_SYNC_ITEMS,
+                RECEIVED_SYNC_ITEMS_ALL);
         uriMatcher.addURI(
                 SyncContract.AUTHORITY,
-                SyncContract.PATH_SYNC_ITEMS + PATH_WILDCARD_INT,
-                SYNC_ITEMS_SINGLE);
+                SyncContract.PATH_RECEIVED_SYNC_ITEMS + PATH_WILDCARD_INT,
+                RECEIVED_SYNC_ITEMS_SINGLE);
+        uriMatcher.addURI(
+                SyncContract.AUTHORITY,
+                SyncContract.PATH_SENT_SYNC_ITEMS,
+                SENT_SYNC_ITEMS_ALL);
+        uriMatcher.addURI(
+                SyncContract.AUTHORITY,
+                SyncContract.PATH_SENT_SYNC_ITEMS + PATH_WILDCARD_INT,
+                SENT_SYNC_ITEMS_SINGLE);
         return uriMatcher;
     }
 
@@ -70,6 +91,31 @@ public class SyncContentProvider extends ContentProvider {
         int match = uriMatcher.match(uri);
         Cursor ret;
         switch (match) {
+            case DATA_SOURCES_ALL: {
+                ret = dataBase.query(
+                        SyncContract.DataSourceEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
+            case DATA_SOURCES_SINGLE: {
+                String id = uri.getPathSegments().get(1);
+                String newSelection = SyncContract.DataSourceEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX;
+                String[] newSelectionArgs = new String[]{id};
+                ret = dataBase.query(
+                        SyncContract.DataSourceEntry.TABLE_NAME,
+                        projection,
+                        newSelection,
+                        newSelectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
             case BLUETOOTH_SYNC_DEVICES_ALL: {
                 ret = dataBase.query(
                         SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME,
@@ -83,7 +129,7 @@ public class SyncContentProvider extends ContentProvider {
             }
             case BLUETOOTH_SYNC_DEVICES_SINGLE: {
                 String id = uri.getPathSegments().get(1);
-                String newSelection = SyncContract.BluetoothSyncDeviceEntry._ID + SELECTION_PLACEHOLDER_SUFFIX;
+                String newSelection = SyncContract.BluetoothSyncDeviceEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX;
                 String[] newSelectionArgs = new String[]{id};
                 ret = dataBase.query(
                         SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME,
@@ -95,9 +141,9 @@ public class SyncContentProvider extends ContentProvider {
                         sortOrder);
                 break;
             }
-            case SYNC_ITEMS_ALL: {
+            case RECEIVED_SYNC_ITEMS_ALL: {
                 ret = dataBase.query(
-                        SyncContract.SyncItemEntry.TABLE_NAME,
+                        SyncContract.ReceivedSyncItemEntry.TABLE_NAME,
                         projection,
                         selection,
                         selectionArgs,
@@ -106,12 +152,37 @@ public class SyncContentProvider extends ContentProvider {
                         sortOrder);
                 break;
             }
-            case SYNC_ITEMS_SINGLE: {
+            case RECEIVED_SYNC_ITEMS_SINGLE: {
                 String id = uri.getPathSegments().get(1);
-                String newSelection = SyncContract.SyncItemEntry._ID + SELECTION_PLACEHOLDER_SUFFIX;
+                String newSelection = SyncContract.ReceivedSyncItemEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX;
                 String[] newSelectionArgs = new String[]{id};
                 ret = dataBase.query(
-                        SyncContract.SyncItemEntry.TABLE_NAME,
+                        SyncContract.ReceivedSyncItemEntry.TABLE_NAME,
+                        projection,
+                        newSelection,
+                        newSelectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
+            case SENT_SYNC_ITEMS_ALL: {
+                ret = dataBase.query(
+                        SyncContract.SentSyncItemEntry.TABLE_NAME,
+                        projection,
+                        selection,
+                        selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
+                break;
+            }
+            case SENT_SYNC_ITEMS_SINGLE: {
+                String id = uri.getPathSegments().get(1);
+                String newSelection = SyncContract.SentSyncItemEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX;
+                String[] newSelectionArgs = new String[]{id};
+                ret = dataBase.query(
+                        SyncContract.SentSyncItemEntry.TABLE_NAME,
                         projection,
                         newSelection,
                         newSelectionArgs,
@@ -135,6 +206,19 @@ public class SyncContentProvider extends ContentProvider {
         int match = uriMatcher.match(uri);
         Uri ret;
         switch (match) {
+            case DATA_SOURCES_ALL: {
+                long id = database.insert(
+                        SyncContract.DataSourceEntry.TABLE_NAME,
+                        null,
+                        values);
+                if(id > 0) {
+                    ret = ContentUris.withAppendedId(SyncContract.DataSourceEntry.CONTENT_URI, id);
+                }
+                else {
+                    throw new SQLiteException("Failed to insert row into " + uri + ".");
+                }
+                break;
+            }
             case BLUETOOTH_SYNC_DEVICES_ALL: {
                 long id = database.insert(
                         SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME,
@@ -148,13 +232,26 @@ public class SyncContentProvider extends ContentProvider {
                 }
                 break;
             }
-            case SYNC_ITEMS_ALL: {
+            case RECEIVED_SYNC_ITEMS_ALL: {
                 long id = database.insert(
-                        SyncContract.SyncItemEntry.TABLE_NAME,
+                        SyncContract.ReceivedSyncItemEntry.TABLE_NAME,
                         null,
                         values);
                 if(id > 0) {
-                    ret = ContentUris.withAppendedId(SyncContract.SyncItemEntry.CONTENT_URI, id);
+                    ret = ContentUris.withAppendedId(SyncContract.ReceivedSyncItemEntry.CONTENT_URI, id);
+                }
+                else {
+                    throw new SQLiteException("Failed to insert row into " + uri + ".");
+                }
+                break;
+            }
+            case SENT_SYNC_ITEMS_ALL: {
+                long id = database.insert(
+                        SyncContract.SentSyncItemEntry.TABLE_NAME,
+                        null,
+                        values);
+                if(id > 0) {
+                    ret = ContentUris.withAppendedId(SyncContract.SentSyncItemEntry.CONTENT_URI, id);
                 }
                 else {
                     throw new SQLiteException("Failed to insert row into " + uri + ".");
@@ -175,19 +272,35 @@ public class SyncContentProvider extends ContentProvider {
         int match = uriMatcher.match(uri);
         int tasksDeleted;
         switch (match) {
+            case DATA_SOURCES_SINGLE: {
+                String id = uri.getPathSegments().get(1);
+                tasksDeleted = database.delete(
+                        SyncContract.DataSourceEntry.TABLE_NAME,
+                        SyncContract.DataSourceEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
+                        new String[]{id});
+                break;
+            }
             case BLUETOOTH_SYNC_DEVICES_SINGLE: {
                 String id = uri.getPathSegments().get(1);
                 tasksDeleted = database.delete(
                         SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME,
-                        SyncContract.BluetoothSyncDeviceEntry._ID + SELECTION_PLACEHOLDER_SUFFIX,
+                        SyncContract.BluetoothSyncDeviceEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
                         new String[]{id});
                 break;
             }
-            case SYNC_ITEMS_SINGLE: {
+            case RECEIVED_SYNC_ITEMS_SINGLE: {
                 String id = uri.getPathSegments().get(1);
                 tasksDeleted = database.delete(
-                        SyncContract.SyncItemEntry.TABLE_NAME,
-                        SyncContract.SyncItemEntry._ID + SELECTION_PLACEHOLDER_SUFFIX,
+                        SyncContract.ReceivedSyncItemEntry.TABLE_NAME,
+                        SyncContract.ReceivedSyncItemEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
+                        new String[]{id});
+                break;
+            }
+            case SENT_SYNC_ITEMS_SINGLE: {
+                String id = uri.getPathSegments().get(1);
+                tasksDeleted = database.delete(
+                        SyncContract.SentSyncItemEntry.TABLE_NAME,
+                        SyncContract.SentSyncItemEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
                         new String[]{id});
                 break;
             }
@@ -212,25 +325,42 @@ public class SyncContentProvider extends ContentProvider {
         int match = uriMatcher.match(uri);
 
         switch (match) {
+            case DATA_SOURCES_SINGLE: {
+                String id = uri.getPathSegments().get(1);
+                tasksUpdated = database.update(
+                        SyncContract.DataSourceEntry.TABLE_NAME,
+                        values,
+                        SyncContract.DataSourceEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
+                        new String[]{id});
+                break;
+            }
             case BLUETOOTH_SYNC_DEVICES_SINGLE: {
                 String id = uri.getPathSegments().get(1);
                 tasksUpdated = database.update(
                         SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME,
                         values,
-                        SyncContract.BluetoothSyncDeviceEntry._ID + SELECTION_PLACEHOLDER_SUFFIX,
+                        SyncContract.BluetoothSyncDeviceEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
                         new String[]{id});
                 break;
             }
-            case SYNC_ITEMS_SINGLE: {
+            case RECEIVED_SYNC_ITEMS_SINGLE: {
                 String id = uri.getPathSegments().get(1);
                 tasksUpdated = database.update(
-                        SyncContract.SyncItemEntry.TABLE_NAME,
+                        SyncContract.ReceivedSyncItemEntry.TABLE_NAME,
                         values,
-                        SyncContract.SyncItemEntry._ID + SELECTION_PLACEHOLDER_SUFFIX,
+                        SyncContract.ReceivedSyncItemEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
                         new String[]{id});
                 break;
             }
-
+            case SENT_SYNC_ITEMS_SINGLE: {
+                String id = uri.getPathSegments().get(1);
+                tasksUpdated = database.update(
+                        SyncContract.SentSyncItemEntry.TABLE_NAME,
+                        values,
+                        SyncContract.SentSyncItemEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
+                        new String[]{id});
+                break;
+            }
             default: {
                 throw new UnsupportedOperationException("The URI " + uri + " is unknown.");
             }

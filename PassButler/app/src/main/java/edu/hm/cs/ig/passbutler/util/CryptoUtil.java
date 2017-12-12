@@ -19,7 +19,7 @@ import javax.crypto.CipherOutputStream;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
-import static android.content.Context.MODE_PRIVATE;
+import edu.hm.cs.ig.passbutler.data.FileMetaData;
 
 /**
  * Created by dennis on 24.11.17.
@@ -52,15 +52,36 @@ public class CryptoUtil {
 
     public static boolean writeToInternalStorage(
             Context context,
-            String fileName,
+            String filePath,
             String s,
             Key encryptionKey,
             String encryptionAlg) {
+        return writeToInternalStorage(
+                context,
+                new FileMetaData(filePath, null, null),
+                s,
+                encryptionKey,
+                encryptionAlg,
+                false);
+    }
+
+    public static boolean writeToInternalStorage(
+            Context context,
+            FileMetaData fileMetaData,
+            String s,
+            Key encryptionKey,
+            String encryptionAlg,
+            boolean persistMetaData) {
         try {
-            FileOutputStream fileOutputStream = context.openFileOutput(fileName, MODE_PRIVATE);
+            FileOutputStream fileOutputStream =
+                    new FileOutputStream(FileUtil.combinePaths(context.getFilesDir().getPath(), fileMetaData.getFilePath()));
             Cipher cipher = Cipher.getInstance(encryptionAlg);
             cipher.init(Cipher.ENCRYPT_MODE, encryptionKey);
-            return FileUtil.writeToOutputStream(context, new CipherOutputStream(fileOutputStream, cipher), s);
+            boolean isWritten = FileUtil.writeToOutputStream(context, new CipherOutputStream(fileOutputStream, cipher), s);
+            if(isWritten && persistMetaData) {
+                SyncContentProviderUtil.persistFileMetaData(context, fileMetaData);
+            }
+            return isWritten;
         } catch (FileNotFoundException e) {
             Log.e(TAG, "Could not find file to write to in internal storage.");
             return false;
@@ -78,10 +99,19 @@ public class CryptoUtil {
 
     public static String readFromInternalStorage(
             Context context,
-            String fileName,
+            String filePath,
             Key decryptionKey,
             String encryptionAlg) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {
-        File file = FileUtil.getInternalStorageFile(context, fileName);
+        return readFromInternalStorage(
+                FileUtil.getInternalStorageFile(context, filePath),
+                decryptionKey,
+                encryptionAlg);
+    }
+
+    public static String readFromInternalStorage(
+            File file,
+            Key decryptionKey,
+            String encryptionAlg) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {
         try {
             Cipher cipher = Cipher.getInstance(encryptionAlg);
             cipher.init(Cipher.DECRYPT_MODE, decryptionKey);

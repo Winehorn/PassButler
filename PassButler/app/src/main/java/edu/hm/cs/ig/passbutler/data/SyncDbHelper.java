@@ -19,27 +19,52 @@ public class SyncDbHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
+
+        final String CREATE_TABLE_DATA_SOURCES =
+                "CREATE TABLE "  + SyncContract.DataSourceEntry.TABLE_NAME               + " (" +
+                        SyncContract.DataSourceEntry._ID                                 + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                        SyncContract.DataSourceEntry.COLUMN_FILE_PATH                    + " TEXT NOT NULL, " +
+                        SyncContract.DataSourceEntry.COLUMN_FILE_HASH                    + " TEXT NOT NULL, " +
+                        SyncContract.DataSourceEntry.COLUMN_LAST_MODIFIED_TIMESTAMP      + " INTEGER NOT NULL, " +
+                        " UNIQUE (" + SyncContract.DataSourceEntry.COLUMN_FILE_PATH      + ") ON CONFLICT REPLACE);";
+        db.execSQL(CREATE_TABLE_DATA_SOURCES);
+
         final String CREATE_TABLE_BLUETOOTH_SYNC_DEVICES =
-                "CREATE TABLE "  + SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME + " (" +
-                SyncContract.BluetoothSyncDeviceEntry._ID                               + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_NAME                + " TEXT NOT NULL, " +
-                SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_HARDWARE_ADDRESS    + " TEXT NOT NULL, " +
-                " UNIQUE (" + SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_HARDWARE_ADDRESS + ") ON CONFLICT REPLACE);";
+                "CREATE TABLE "  + SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME                 + " (" +
+                SyncContract.BluetoothSyncDeviceEntry._ID                                           + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_NAME                            + " TEXT NOT NULL, " +
+                SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_HARDWARE_ADDRESS                + " TEXT NOT NULL, " +
+                " UNIQUE (" + SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_HARDWARE_ADDRESS  + ") ON CONFLICT REPLACE);";
         db.execSQL(CREATE_TABLE_BLUETOOTH_SYNC_DEVICES);
-        final String CREATE_TABLE_SYNC_ITEMS =
-                "CREATE TABLE "  + SyncContract.SyncItemEntry.TABLE_NAME + " (" +
-                SyncContract.SyncItemEntry._ID                  + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
-                SyncContract.SyncItemEntry.COLUMN_SOURCE_UUID   + " TEXT NOT NULL, " +
-                SyncContract.SyncItemEntry.COLUMN_FILE_HASH     + " TEXT NOT NULL, " +
-                SyncContract.SyncItemEntry.COLUMN_LAST_EDITED_UNIX_TIME + " INTEGER NOT NULL, " +
-                " UNIQUE (" + SyncContract.SyncItemEntry.COLUMN_SOURCE_UUID + ") ON CONFLICT REPLACE);";
-        db.execSQL(CREATE_TABLE_SYNC_ITEMS);
+
+        final String CREATE_TABLE_RECEIVED_SYNC_ITEMS =
+                "CREATE TABLE "  + SyncContract.ReceivedSyncItemEntry.TABLE_NAME                    + " (" +
+                SyncContract.ReceivedSyncItemEntry._ID                                              + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS                   + " TEXT NOT NULL, " +
+                SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH                                 + " TEXT NOT NULL, " +
+                SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_RECEIVED_VERSION_TIMESTAMP           + " INTEGER NOT NULL, " +
+                SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_INCORPORATED_VERSION_TIMESTAMP       + " INTEGER, " +
+                " UNIQUE (" + SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS     + ", "
+                        + SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH                       + ") ON CONFLICT REPLACE);";
+        db.execSQL(CREATE_TABLE_RECEIVED_SYNC_ITEMS);
+
+        final String CREATE_TABLE_SENT_SYNC_ITEMS =
+                "CREATE TABLE "  + SyncContract.SentSyncItemEntry.TABLE_NAME                        + " (" +
+                SyncContract.SentSyncItemEntry._ID                                                  + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                SyncContract.SentSyncItemEntry.COLUMN_DESTINATION_HARDWARE_ADDRESS                  + " TEXT NOT NULL, " +
+                SyncContract.SentSyncItemEntry.COLUMN_FILE_PATH                                     + " TEXT NOT NULL, " +
+                SyncContract.SentSyncItemEntry.COLUMN_LAST_SENT_VERSION_TIMESTAMP                   + " INTEGER NOT NULL, " +
+                " UNIQUE (" + SyncContract.SentSyncItemEntry.COLUMN_DESTINATION_HARDWARE_ADDRESS    + ", "
+                + SyncContract.SentSyncItemEntry.COLUMN_FILE_PATH                                   + ") ON CONFLICT REPLACE);";
+        db.execSQL(CREATE_TABLE_SENT_SYNC_ITEMS);
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
+        db.execSQL("DROP TABLE IF EXISTS " + SyncContract.DataSourceEntry.TABLE_NAME);
         db.execSQL("DROP TABLE IF EXISTS " + SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME);
-        db.execSQL("DROP TABLE IF EXISTS " + SyncContract.SyncItemEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SyncContract.ReceivedSyncItemEntry.TABLE_NAME);
+        db.execSQL("DROP TABLE IF EXISTS " + SyncContract.SentSyncItemEntry.TABLE_NAME);
         onCreate(db);
     }
 }

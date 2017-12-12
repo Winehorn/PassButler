@@ -2,13 +2,13 @@ package edu.hm.cs.ig.passbutler.sync;
 
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
-import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.app.NavUtils;
 import android.support.v4.content.CursorLoader;
@@ -21,16 +21,19 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.Set;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.SyncContract;
+import edu.hm.cs.ig.passbutler.util.ServiceUtil;
 
 public class SyncActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, BluetoothSyncDeviceAdapterOnMenuItemClickHandler {
 
     public static final String TAG = SyncActivity.class.getName();
+    private Switch bluetoothSyncSwitch;
     private RecyclerView recyclerView;
     private BluetoothSyncDeviceAdapter bluetoothSyncDeviceAdapter;
     BluetoothAdapter bluetoothAdapter;
@@ -39,6 +42,7 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync);
+        bluetoothSyncSwitch = findViewById(R.id.bluetooth_sync_switch);
         ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -46,7 +50,7 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
         bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if(bluetoothAdapter == null) {
             Log.i(TAG, "No Bluetooth support detected. Stopping activity.");
-            Toast.makeText(this, getString(R.string.no_bluetooth_support_error_msg), Toast.LENGTH_SHORT).show();
+            Toast.makeText(this, getString(R.string.no_bluetooth_support_sync_error_msg), Toast.LENGTH_SHORT).show();
             NavUtils.navigateUpFromSameTask(this);
         }
 
@@ -83,43 +87,15 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data)
     {
-        if (requestCode == getResources().getInteger(R.integer.bluetooth_device_request_code)) {
-            if(data.hasExtra(getString(R.string.device_name_key))
-                    && data.hasExtra(getString(R.string.device_hardware_address_key))) {
-                String deviceName = data.getStringExtra(getString(R.string.device_name_key));
-                String deviceHardwareAddress = getString(R.string.device_hardware_address_key);
-                ContentValues contentValues = new ContentValues();
-                contentValues.put(
-                        SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_NAME, deviceName);
-                contentValues.put(
-                        SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_HARDWARE_ADDRESS, deviceHardwareAddress);
-                ContentResolver contentResolver = getContentResolver();
-                Uri uri = contentResolver.insert(SyncContract.BluetoothSyncDeviceEntry.CONTENT_URI, contentValues);
-                if(uri == null) {
-                    Toast.makeText(this, getString(R.string.add_bluetooth_sync_device_error_msg), Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "Bluetooth device with name "
-                            + deviceName
-                            + " and hardware address "
-                            + deviceHardwareAddress
-                            + " could not be added to list of sync devices.");
-                }
-                else {
-                    Log.i(TAG, "Added bluetooth device with name "
-                            + deviceName
-                            + " and hardware address "
-                            + deviceHardwareAddress
-                            + " to list of sync devices at URI "
-                            + uri.toString()
-                            + ".");
-                }
-            }
-        }
-        else if (requestCode == getResources().getInteger(R.integer.enable_bluetooth_request_code)) {
+        if (requestCode == getResources().getInteger(R.integer.enable_bluetooth_request_code) || requestCode == getResources().getInteger(R.integer.enable_bluetooth_and_add_sync_device_request_code)) {
             if(resultCode == RESULT_OK) {
                 Log.i(TAG, "Bluetooth has been enabled.");
+                if(requestCode == getResources().getInteger(R.integer.enable_bluetooth_and_add_sync_device_request_code)) {
+                    addBluetoothSyncDevice();
+                }
             }
             else if (resultCode == RESULT_CANCELED) {
-                Log.i(TAG, "Bluetooth has not been enabled..");
+                Log.i(TAG, "Bluetooth has not been enabled.");
             }
             else {
                 Log.e(TAG, "The result code must be valid.");
@@ -129,44 +105,39 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-    // TODO: REMOVE
-    public void testInsert_onClick(View view) {
+    public void syncNowButtonOnClick(View view) {
+        //new BluetoothSyncSenderJobService.BluetoothSyncSenderAsyncTask(getApplicationContext(), null).execute();
 
-        String testDeviceName = "testDeviceName";
-        String testDeviceMac = "testDeviceMac";
-        String testUuid = "testUuid";
-        String testFileHash = "testFileHash";
-        Long testLastEditedUnixTime = System.currentTimeMillis() / 1000L;   // Unix time in seconds!
+        // TODO: Remove
+        Toast.makeText(this, "Sync try", Toast.LENGTH_LONG).show();
+    }
 
-        ContentValues contentValues1 = new ContentValues();
-        contentValues1.put(SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_NAME, testDeviceName);
-        contentValues1.put(SyncContract.BluetoothSyncDeviceEntry.COLUMN_DEVICE_HARDWARE_ADDRESS, testDeviceMac);
+    public void pairDevicesButtonOnClick(View view) {
+        openBluetoothSettings();
+    }
 
-        ContentValues contentValues2 = new ContentValues();
-        contentValues2.put(SyncContract.SyncItemEntry.COLUMN_SOURCE_UUID, testUuid);
-        contentValues2.put(SyncContract.SyncItemEntry.COLUMN_FILE_HASH, testFileHash);
-        contentValues2.put(SyncContract.SyncItemEntry.COLUMN_LAST_EDITED_UNIX_TIME, testLastEditedUnixTime);
+    public void bluetoothSyncSwitchOnClick(View view) {
+        // TODO: Wird switch state bei erzeugen neuer activity auf default gesetzt?
 
-        ContentResolver contentResolver = getContentResolver();
-        Uri uri1 = contentResolver.insert(SyncContract.BluetoothSyncDeviceEntry.CONTENT_URI, contentValues1);
-        Uri uri2 = contentResolver.insert(SyncContract.SyncItemEntry.CONTENT_URI, contentValues2);
-
-        if(uri1 != null) {
-            Toast.makeText(this, uri1.toString(), Toast.LENGTH_SHORT).show();
+        if(bluetoothSyncSwitch.isChecked()) {
+            ServiceUtil.startSyncReceiverService(this);
+            ServiceUtil.startSyncSenderService(this);
         }
-        if(uri2 != null) {
-            Toast.makeText(this, uri2.toString(), Toast.LENGTH_SHORT).show();
+        else {
+            ServiceUtil.cancelSyncReceiverService(this);
+            ServiceUtil.cancelSyncSenderService(this);
         }
     }
 
-    // TODO: Remove
-    public void testShow_onClick(View view) {
-        getSupportLoaderManager().restartLoader(getResources().getInteger(R.integer.bluetooth_sync_device_loader_id),
-                null,
-                this);
+    public void addBluetoothSyncDeviceFabOnClick(View view) {
+        addBluetoothSyncDevice();
     }
 
-    public void addBluetoothSyncDeviceOnClick(View view) {
+    public void addBluetoothSyncDevice() {
+        if(!bluetoothAdapter.isEnabled()) {
+            enableBluetooth(getResources().getInteger(R.integer.enable_bluetooth_and_add_sync_device_request_code));
+            return;
+        }
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(getString(R.string.dialog_title_bluetooth_sync_device));
         builder.setItems(getBondedDeviceNames(), new DialogInterface.OnClickListener() {
@@ -200,10 +171,22 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
         builder.show();
     }
 
-    private void enableBluetooth() {
+    private void enableBluetooth(int requestCode) {
         Log.i(TAG, "Enabling Bluetooth.");
         Intent intent = new Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE);
-        startActivityForResult(intent, getResources().getInteger(R.integer.enable_bluetooth_request_code));
+        startActivityForResult(intent, requestCode);
+    }
+
+    private void openBluetoothSettings() {
+        Log.i(TAG, "Opening Bluetooth settings.");
+        Intent intent = new Intent(Settings.ACTION_BLUETOOTH_SETTINGS);
+        if (intent.resolveActivity(getPackageManager()) != null) {
+            startActivity(intent);
+        }
+        else {
+            Log.i(TAG, "Could not open Bluetooth settings. Device does not support Bluetooth.");
+            Toast.makeText(this, getString(R.string.no_bluetooth_support_pairing_error_msg), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private String[] getBondedDeviceNames() {
