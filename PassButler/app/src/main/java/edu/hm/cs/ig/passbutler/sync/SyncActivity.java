@@ -21,16 +21,19 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Switch;
 import android.widget.Toast;
 
 import java.util.Set;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.SyncContract;
+import edu.hm.cs.ig.passbutler.util.ServiceUtil;
 
 public class SyncActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, BluetoothSyncDeviceAdapterOnMenuItemClickHandler {
 
     public static final String TAG = SyncActivity.class.getName();
+    private Switch bluetoothSyncSwitch;
     private RecyclerView recyclerView;
     private BluetoothSyncDeviceAdapter bluetoothSyncDeviceAdapter;
     BluetoothAdapter bluetoothAdapter;
@@ -39,6 +42,7 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync);
+        bluetoothSyncSwitch = findViewById(R.id.bluetooth_sync_switch);
         ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -91,7 +95,7 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
                 }
             }
             else if (resultCode == RESULT_CANCELED) {
-                Log.i(TAG, "Bluetooth has not been enabled..");
+                Log.i(TAG, "Bluetooth has not been enabled.");
             }
             else {
                 Log.e(TAG, "The result code must be valid.");
@@ -101,13 +105,28 @@ public class SyncActivity extends AppCompatActivity implements LoaderManager.Loa
         }
     }
 
-    // TODO: Remove
-    public void syncNow_onClick(View view) {
-        //new BluetoothSynchronizer(this).syncAllDevices();
+    public void syncNowButtonOnClick(View view) {
+        //new BluetoothSyncSenderJobService.BluetoothSyncSenderAsyncTask(getApplicationContext(), null).execute();
+
+        // TODO: Remove
+        Toast.makeText(this, "Sync try", Toast.LENGTH_LONG).show();
     }
 
-    public void pairDevicesOnClick(View view) {
+    public void pairDevicesButtonOnClick(View view) {
         openBluetoothSettings();
+    }
+
+    public void bluetoothSyncSwitchOnClick(View view) {
+        // TODO: Wird switch state bei erzeugen neuer activity auf default gesetzt?
+
+        if(bluetoothSyncSwitch.isChecked()) {
+            ServiceUtil.startSyncReceiverService(this);
+            ServiceUtil.startSyncSenderService(this);
+        }
+        else {
+            ServiceUtil.cancelSyncReceiverService(this);
+            ServiceUtil.cancelSyncSenderService(this);
+        }
     }
 
     public void addBluetoothSyncDeviceFabOnClick(View view) {

@@ -74,6 +74,24 @@
             android:authorities="edu.hm.cs.ig.passbutler"
             android:exported="false" />
 
+        <service
+            android:name=".sync.BluetoothSyncSenderJobService"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+            </intent-filter>
+        </service>
+
+        <service
+            android:name=".sync.BluetoothSyncReceiverIntentService"
+            android:exported="false">
+        </service>
+
+        <service
+            android:name=".sync.SyncFileMergerIntentService"
+            android:exported="false">
+        </service>
+
     </application>
 
 </manifest>

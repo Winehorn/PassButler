@@ -24,6 +24,8 @@ import android.widget.Toast;
 
 import org.json.JSONException;
 
+import java.util.Date;
+
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
@@ -53,13 +55,13 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
             actionBar.setDisplayHomeAsUpEnabled(true);
         }
         final Intent intent = getIntent();
-        if(!intent.hasExtra(getString(R.string.intent_extras_key_account_name))
-                || !intent.hasExtra(getString(R.string.intent_extras_key_create_new_account_item))) {
+        if(!intent.hasExtra(getString(R.string.bundle_key_account_name))
+                || !intent.hasExtra(getString(R.string.bundle_key_create_new_account_item))) {
             throw new IllegalStateException("The intent must contain the required extras.");
         }
-        accountName = intent.getStringExtra(getString(R.string.intent_extras_key_account_name));
+        accountName = intent.getStringExtra(getString(R.string.bundle_key_account_name));
         createNewAccountItem = intent.getBooleanExtra(
-                getString(R.string.intent_extras_key_create_new_account_item),
+                getString(R.string.bundle_key_create_new_account_item),
                 getResources().getBoolean(R.bool.intent_extras_default_value_create_new_account_item));
         setTitle(accountName);
 
@@ -83,7 +85,7 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
         broadcastFileObserver = new BroadcastFileObserver(
                 getApplicationContext(),
                 getString(R.string.account_list_handler_loader_reload_action),
-                FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_name)),
+                FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_path)),
                 FileObserver.MODIFY);
         broadcastFileObserver.startWatching();
 
@@ -110,8 +112,10 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
                     null,
                     accountItemHandler,
                     true,
-                    getString(R.string.accounts_file_name),
-                    KeyHolder.getInstance().getKey());
+                    getString(R.string.accounts_file_path),
+                    new Date(),
+                    KeyHolder.getInstance().getKey(),
+                    true);
             finish();
             return true;
         }
@@ -170,7 +174,7 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
                                 dialog.dismiss();
                                 String key = keyInput.getText().toString();
                                 String value = valueInput.getText().toString();
-                                if(!accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value)) {
+                                if(!accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
                                     Toast.makeText(
                                             AccountDetailActivity.this,
                                             AccountDetailActivity.this.getString(R.string.add_attribute_error_msg),
@@ -190,7 +194,7 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
                     }
                     else {
                         dialog.dismiss();
-                        if(!accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value)) {
+                        if(!accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
                             Toast.makeText(
                                     AccountDetailActivity.this,
                                     AccountDetailActivity.this.getString(R.string.add_attribute_error_msg),
@@ -224,7 +228,8 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
                         accountItemHandler.removeAttribute(
                                 getApplicationContext(),
                                 accountDetailAdapter,
-                                attributeKey);
+                                attributeKey,
+                                new Date());
                     }
                 });
                 builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {
@@ -246,7 +251,7 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
     public Loader<AccountListHandler> onCreateLoader(int id, Bundle args) {
         if(id == getResources().getInteger(R.integer.account_list_handler_loader_id)) {
             Log.i(TAG, "Creating new " + AccountListHandlerLoader.class.getSimpleName() + ".");
-            return new AccountListHandlerLoader(this, getString(R.string.accounts_file_name));
+            return new AccountListHandlerLoader(this, getString(R.string.accounts_file_path));
         }
         else {
             throw new IllegalArgumentException("The loader ID must be valid.");
@@ -259,12 +264,12 @@ public class AccountDetailActivity extends AppCompatActivity implements AccountD
         accountListHandler = data;
         try {
             if(createNewAccountItem && accountItemHandler == null) {
-                accountItemHandler = new AccountItemHandler(getApplicationContext(), accountName);
+                accountItemHandler = new AccountItemHandler(getApplicationContext(), accountName, new Date());
             }
             else if(!createNewAccountItem) {
                 accountItemHandler = accountListHandler.getAccount(getApplicationContext(), accountName);
                 if(accountItemHandler == null) {
-                    this.accountItemHandler = new AccountItemHandler(getApplicationContext(), accountName);
+                    this.accountItemHandler = new AccountItemHandler(getApplicationContext(), accountName, new Date());
                 }
             }
         }

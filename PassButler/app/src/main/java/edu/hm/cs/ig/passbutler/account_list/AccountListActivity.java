@@ -20,6 +20,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Date;
+
 import edu.hm.cs.ig.passbutler.password.PasswordGeneratorActivity;
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.settings.SettingsActivity;
@@ -71,7 +73,7 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
         broadcastFileObserver = new BroadcastFileObserver(
                 getApplicationContext(),
                 getString(R.string.account_list_handler_loader_reload_action),
-                FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_name)),
+                FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_path)),
                 FileObserver.MODIFY);
         broadcastFileObserver.startWatching();
 
@@ -147,8 +149,8 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
                                 String accountName = input.getText().toString();
                                 dialog.dismiss();
                                 Intent intent = new Intent(AccountListActivity.this, AccountDetailActivity.class);
-                                intent.putExtra(AccountListActivity.this.getString(R.string.intent_extras_key_account_name), accountName);
-                                intent.putExtra(getString(R.string.intent_extras_key_create_new_account_item), true);
+                                intent.putExtra(AccountListActivity.this.getString(R.string.bundle_key_account_name), accountName);
+                                intent.putExtra(getString(R.string.bundle_key_create_new_account_item), true);
                                 startActivity(intent);
                             }
                         });
@@ -165,8 +167,8 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
                     else {
                         dialog.dismiss();
                         Intent intent = new Intent(AccountListActivity.this, AccountDetailActivity.class);
-                        intent.putExtra(AccountListActivity.this.getString(R.string.intent_extras_key_account_name), accountName);
-                        intent.putExtra(getString(R.string.intent_extras_key_create_new_account_item), true);
+                        intent.putExtra(AccountListActivity.this.getString(R.string.bundle_key_account_name), accountName);
+                        intent.putExtra(getString(R.string.bundle_key_create_new_account_item), true);
                         startActivity(intent);
                     }
                 }
@@ -186,8 +188,8 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
     @Override
     public void onClick(View v, String accountName) {
         Intent intent = new Intent(this, AccountDetailActivity.class);
-        intent.putExtra(AccountListActivity.this.getString(R.string.intent_extras_key_account_name), accountName);
-        intent.putExtra(getString(R.string.intent_extras_key_create_new_account_item), false);
+        intent.putExtra(AccountListActivity.this.getString(R.string.bundle_key_account_name), accountName);
+        intent.putExtra(getString(R.string.bundle_key_create_new_account_item), false);
         startActivity(intent);
     }
 
@@ -206,8 +208,10 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
                                 accountListAdapter,
                                 accountName,
                                 true,
-                                getString(R.string.accounts_file_name),
-                                KeyHolder.getInstance().getKey());
+                                getString(R.string.accounts_file_path),
+                                new Date(),
+                                KeyHolder.getInstance().getKey(),
+                                true);
                     }
                 });
                 builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {
@@ -229,7 +233,7 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
     public Loader<AccountListHandler> onCreateLoader(int id, Bundle args) {
         if(id == getResources().getInteger(R.integer.account_list_handler_loader_id)) {
             Log.i(TAG, "Creating new " + AccountListHandlerLoader.class.getSimpleName() + ".");
-            return new AccountListHandlerLoader(this, getString(R.string.accounts_file_name));
+            return new AccountListHandlerLoader(this, getString(R.string.accounts_file_path));
         }
         else {
             throw new IllegalArgumentException("The loader ID must be valid.");

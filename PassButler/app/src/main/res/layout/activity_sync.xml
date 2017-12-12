@@ -9,17 +9,27 @@
     android:background="@color/background"
     android:orientation="vertical">
 
+    <Switch
+        android:id="@+id/bluetooth_sync_switch"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:checked="false"
+        android:text="@string/bluetooth_sync_switch_label"
+        android:textOn="@string/bluetooth_sync_switch_on_text"
+        android:textOff="@string/bluetooth_sync_switch_off_text"
+        android:onClick="bluetoothSyncSwitchOnClick" />
+
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Sync now"
-        android:onClick="syncNow_onClick"/>
+        android:text="@string/sync_now_button_label"
+        android:onClick="syncNowButtonOnClick"/>
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="@string/pair_devices_button_label"
-        android:onClick="pairDevicesOnClick"/>
+        android:onClick="pairDevicesButtonOnClick"/>
 
     <android.support.design.widget.CoordinatorLayout
         android:layout_width="match_parent"

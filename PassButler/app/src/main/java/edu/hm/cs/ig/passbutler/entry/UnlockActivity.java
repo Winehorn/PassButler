@@ -80,7 +80,7 @@ public class UnlockActivity extends AppCompatActivity {
                     getString(R.string.encryption_alg),
                     password,
                     nfcKey));
-            AccountListHandler.getFromFile(this, getString(R.string.accounts_file_name), KeyHolder.getInstance().getKey());
+            AccountListHandler.getFromFile(this, getString(R.string.accounts_file_path), KeyHolder.getInstance().getKey());
             return true;
         }
         catch (IOException e) {

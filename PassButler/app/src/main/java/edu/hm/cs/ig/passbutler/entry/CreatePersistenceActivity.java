@@ -8,6 +8,8 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import java.util.Date;
+
 import javax.security.auth.DestroyFailedException;
 
 import edu.hm.cs.ig.passbutler.R;
@@ -38,7 +40,7 @@ public class CreatePersistenceActivity extends AppCompatActivity {
             Log.i(TAG, "Inserted passwords do not match.");
             return;
         }
-        if(FileUtil.fileExists(this, getString(R.string.accounts_file_name)))
+        if(FileUtil.internalStorageFileExists(this, getString(R.string.accounts_file_path)))
         {
             Toast.makeText(this, getString(R.string.accounts_file_exists_error_msg), Toast.LENGTH_SHORT).show();
             Log.wtf(TAG, "An accounts file must not exist when creating a new one.");
@@ -72,7 +74,12 @@ public class CreatePersistenceActivity extends AppCompatActivity {
             return;
         }
         AccountListHandler accountListHandler = new AccountListHandler(this);
-        accountListHandler.saveToInternalStorage(this, getString(R.string.accounts_file_name), KeyHolder.getInstance().getKey());
+        accountListHandler.saveToInternalStorage(
+                this,
+                getString(R.string.accounts_file_path),
+                new Date(0L),   // Initialize with oldest date so that sync is possible with every other newer version.
+                KeyHolder.getInstance().getKey(),
+                false);
         Log.i(TAG, "New accounts file created.");
     }
 }

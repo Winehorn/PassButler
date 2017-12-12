@@ -8,6 +8,7 @@ import android.util.Log;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
+import edu.hm.cs.ig.passbutler.util.ServiceUtil;
 
 public class LogoActivity extends AppCompatActivity {
 
@@ -19,10 +20,11 @@ public class LogoActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logo);
         final Handler handler = new Handler();
+        ServiceUtil.startSyncMergerService(getApplicationContext());
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
-                if(FileUtil.fileExists(LogoActivity.this, getString(R.string.accounts_file_name))) {
+                if(FileUtil.internalStorageFileExists(LogoActivity.this, getString(R.string.accounts_file_path))) {
                     Intent intent = new Intent(
                             LogoActivity.this,
                             UnlockActivity.class);
