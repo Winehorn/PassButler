@@ -41,4 +41,9 @@ public class LogoActivity extends AppCompatActivity {
             }
         }, DELAY_IN_MILLIS);
     }
+
+    @Override
+    public void onBackPressed() {
+        // Do nothing here.
+    }
 }

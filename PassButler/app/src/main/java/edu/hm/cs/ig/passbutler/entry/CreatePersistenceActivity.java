@@ -12,29 +12,26 @@ import android.nfc.tech.Ndef;
 import android.nfc.tech.NdefFormatable;
 import android.nfc.tech.NfcF;
 import android.os.Bundle;
-import android.os.Parcelable;
-import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
 import java.security.SecureRandom;
+import java.util.Date;
 
 import javax.security.auth.DestroyFailedException;
-
-import java.util.Date;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.account_list.AccountListActivity;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
-import edu.hm.cs.ig.passbutler.util.ArrayUtil;
-import edu.hm.cs.ig.passbutler.util.FileUtil;
-import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
+import edu.hm.cs.ig.passbutler.util.ArrayUtil;
+import edu.hm.cs.ig.passbutler.util.CryptoUtil;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
+import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 public class CreatePersistenceActivity extends AppCompatActivity {
 
@@ -98,6 +95,11 @@ public class CreatePersistenceActivity extends AppCompatActivity {
 
         // Setup a tech list for all NfcF tags
         mTechLists = new String[][] { new String[] { NfcF.class.getName() } };
+    }
+
+    @Override
+    public void onBackPressed() {
+        NavigationUtil.goToHomeScreen(this);
     }
 
     public void createButtonOnClick(View view) {

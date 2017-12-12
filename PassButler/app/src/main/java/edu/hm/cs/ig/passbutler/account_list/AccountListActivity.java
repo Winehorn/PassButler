@@ -22,17 +22,17 @@ import android.widget.Toast;
 
 import java.util.Date;
 
-import edu.hm.cs.ig.passbutler.password.PasswordGeneratorActivity;
 import edu.hm.cs.ig.passbutler.R;
-import edu.hm.cs.ig.passbutler.settings.SettingsActivity;
-import edu.hm.cs.ig.passbutler.sync.SyncActivity;
-import edu.hm.cs.ig.passbutler.entry.UnlockActivity;
 import edu.hm.cs.ig.passbutler.account_detail.AccountDetailActivity;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
-import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
+import edu.hm.cs.ig.passbutler.password.PasswordGeneratorActivity;
+import edu.hm.cs.ig.passbutler.settings.SettingsActivity;
+import edu.hm.cs.ig.passbutler.sync.SyncActivity;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
+import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 public class AccountListActivity extends AppCompatActivity implements AccountListAdapterOnClickHandler, AccountListAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
 
@@ -88,11 +88,15 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
     }
 
     @Override
+    public void onBackPressed() {
+        NavigationUtil.goToUnlockActivity(this);
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home || id == R.id.lock_menu_item) {
-            Intent intent = new Intent(this, UnlockActivity.class);
-            startActivity(intent);
+            NavigationUtil.goToUnlockActivity(this);
             // TODO: Remove saved decryption key (aka lock PassButler again). Better with an own Button?
             return true;
         }

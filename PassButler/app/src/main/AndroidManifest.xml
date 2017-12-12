@@ -25,14 +25,19 @@
         </activity>
         <activity
             android:name=".entry.CreatePersistenceActivity"
-            android:label="@string/create_persistence_activity_label"></activity>
+            android:label="@string/create_persistence_activity_label">
+
+        </activity>
         <activity
             android:name=".entry.UnlockActivity"
-            android:label="@string/unlock_activity_label"></activity>
+            android:label="@string/unlock_activity_label">
+
+        </activity>
         <activity
             android:name=".account_list.AccountListActivity"
             android:label="@string/account_list_activity_label"
-            android:parentActivityName=".entry.UnlockActivity">
+            android:parentActivityName=".entry.UnlockActivity"
+            android:launchMode="singleTop">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".entry.UnlockActivity" />
