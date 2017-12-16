@@ -1,6 +1,7 @@
 package edu.hm.cs.ig.passbutler.util;
 
 import android.content.Context;
+import android.os.Environment;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
@@ -15,7 +16,11 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.nio.channels.FileChannel;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
+import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.FileMetaData;
 
 /**
@@ -175,6 +180,11 @@ public class FileUtil {
         return new File(basePath, filePath);
     }
 
+    public static File getExternalAppDir(Context context) {
+        File extDir = new File(Environment.getExternalStorageDirectory(), context.getString(R.string.external_directory_name));
+        return extDir;
+    }
+
     public static String readFromInputStream(InputStream inputStream) throws IOException {
         try (InputStream streamToRead = inputStream) {
             String ret = convertStreamToString(streamToRead);
@@ -199,5 +209,91 @@ public class FileUtil {
             Log.e(TAG, "I/O error while reading from buffered reader.");
             throw e;
         }
+    }
+
+    public static String getFullInternalPath(Context context, String filePath) {
+        return combinePaths(context.getFilesDir().getAbsolutePath(), filePath);
+    }
+
+    public static File importFile(File srcFile, File dstFile) throws IOException {
+
+
+        if(!srcFile.exists()) {
+            throw new FileNotFoundException("srcFile not found!");
+        }
+        
+        FileChannel inChannel = null;
+        FileChannel outChannel = null;
+
+        try {
+            inChannel = new FileInputStream(srcFile).getChannel();
+            outChannel = new FileOutputStream(dstFile).getChannel();
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+        } finally {
+            if (inChannel != null)
+                inChannel.close();
+            if (outChannel != null)
+                outChannel.close();
+        }
+
+        return dstFile;
+    }
+
+    public static File exportFile(Context context, File srcFile, File dstDir) throws IOException {
+
+        //if folder does not exist
+        if (!dstDir.exists()) {
+            if (!dstDir.mkdir()) {
+                Log.d(TAG, "exportFile: dstDir is null");
+                return null;
+            }
+        }
+
+        File expFile = new File(dstDir.getPath() + "/" + context.getString(R.string.backup_file_name));
+
+        if(expFile.exists()) {
+            Log.i(TAG, "exportFile: External file exists.");
+            if(expFile.delete()) {
+                Log.i(TAG, "exportFile: External file deleted.");
+            }
+        }
+
+        FileChannel inChannel = null;
+        FileChannel outChannel = null;
+
+
+        inChannel = new FileInputStream(srcFile).getChannel();
+        outChannel = new FileOutputStream(expFile).getChannel();
+
+
+        try {
+            inChannel.transferTo(0, inChannel.size(), outChannel);
+        } finally {
+            if (inChannel != null)
+                inChannel.close();
+            if (outChannel != null)
+                outChannel.close();
+        }
+
+        return expFile;
+    }
+
+    /* Checks if external storage is available for read and write */
+    public static boolean isExternalStorageWritable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state)) {
+            return true;
+        }
+        return false;
+    }
+
+    /* Checks if external storage is available to at least read */
+    public static boolean isExternalStorageReadable() {
+        String state = Environment.getExternalStorageState();
+        if (Environment.MEDIA_MOUNTED.equals(state) ||
+                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
+            return true;
+        }
+        return false;
     }
 }

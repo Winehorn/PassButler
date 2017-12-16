@@ -3,6 +3,7 @@ package edu.hm.cs.ig.passbutler.util;
 import android.content.Context;
 import android.content.Intent;
 
+import edu.hm.cs.ig.passbutler.entry.LogoActivity;
 import edu.hm.cs.ig.passbutler.entry.UnlockActivity;
 
 /**
@@ -20,6 +21,11 @@ public class NavigationUtil {
 
     public static void goToUnlockActivity(Context context) {
         Intent intent = new Intent(context, UnlockActivity.class);
+        context.startActivity(intent);
+    }
+
+    public static void goToLogoActivity(Context context) {
+        Intent intent = new Intent(context, LogoActivity.class);
         context.startActivity(intent);
     }
 }

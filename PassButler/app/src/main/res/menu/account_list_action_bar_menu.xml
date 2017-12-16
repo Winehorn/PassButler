@@ -25,4 +25,9 @@
         android:title="@string/settings_menu_item_label"
         android:orderInCategory="400"
         app:showAsAction="never"/>
+    <item
+        android:id="@+id/backup_menu_item"
+        android:title="@string/backup_activity_label"
+        android:orderInCategory="350"
+        app:showAsAction="never"/>
 </menu>

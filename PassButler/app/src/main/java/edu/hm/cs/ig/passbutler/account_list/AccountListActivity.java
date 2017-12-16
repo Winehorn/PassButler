@@ -25,6 +25,7 @@ import java.util.Date;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.account_detail.AccountDetailActivity;
+import edu.hm.cs.ig.passbutler.backup.BackupActivity;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
@@ -117,6 +118,11 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
         }
         else if(id == R.id.settings_menu_item) {
             Intent intent = new Intent(this, SettingsActivity.class);
+            startActivity(intent);
+            return true;
+        }
+        else if(id == R.id.backup_menu_item) {
+            Intent intent = new Intent(this, BackupActivity.class);
             startActivity(intent);
             return true;
         }
