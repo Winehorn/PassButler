@@ -32,6 +32,7 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.7'
     compile 'commons-io:commons-io:2.6'
     compile 'com.firebase:firebase-jobdispatcher:0.8.4'
+    compile 'com.android.support:preference-v7:26.1.0'
     // Passwordchecker
     compile 'com.nulab-inc:zxcvbn:1.2.3'
     // Expandable Layout

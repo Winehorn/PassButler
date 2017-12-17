@@ -1,16 +1,14 @@
 package edu.hm.cs.ig.passbutler.settings;
 
-import android.content.Intent;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.WindowManager;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 
-public class SettingsActivity extends AppCompatActivity {
+public class SettingsActivity extends PostAuthActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

@@ -2,7 +2,6 @@ package edu.hm.cs.ig.passbutler.password;
 
 import android.os.Bundle;
 import android.support.v7.app.ActionBar;
-import android.support.v7.app.AppCompatActivity;
 import android.text.Editable;
 import android.view.MenuItem;
 import android.view.View;
@@ -10,7 +9,6 @@ import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import net.cachapa.expandablelayout.ExpandableLayout;
@@ -18,11 +16,12 @@ import net.cachapa.expandablelayout.ExpandableLayout;
 import org.adw.library.widgets.discreteseekbar.DiscreteSeekBar;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 import edu.hm.cs.ig.passbutler.util.ArrayUtil;
 import edu.hm.cs.ig.passbutler.util.ClipboardUtil;
 import edu.hm.cs.ig.passbutler.util.PasswordUtil;
 
-public class PasswordGeneratorActivity extends AppCompatActivity {
+public class PasswordGeneratorActivity extends PostAuthActivity {
 
     private DiscreteSeekBar passwordLengthSeekBar;
 

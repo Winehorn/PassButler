@@ -2,6 +2,7 @@ package edu.hm.cs.ig.passbutler.util;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 
 import java.util.UUID;
 
@@ -13,9 +14,7 @@ import edu.hm.cs.ig.passbutler.R;
 
 public class PreferencesUtil {
     public static UUID getUserUuid(Context context) {
-        SharedPreferences prefs = context.getSharedPreferences(context.getString(
-                R.string.shared_prefs_general_name),
-                Context.MODE_PRIVATE);
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         if(!prefs.contains(context.getString(R.string.shared_prefs_uuid_key))) {
             SharedPreferences.Editor editor = prefs.edit();
             editor.putString(context.getString(

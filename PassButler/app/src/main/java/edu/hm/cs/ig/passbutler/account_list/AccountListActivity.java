@@ -1,14 +1,12 @@
 package edu.hm.cs.ig.passbutler.account_list;
 
 import android.content.DialogInterface;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.FileObserver;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -24,18 +22,15 @@ import android.widget.Toast;
 import java.util.Date;
 
 import edu.hm.cs.ig.passbutler.R;
-import edu.hm.cs.ig.passbutler.account_detail.AccountDetailActivity;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
-import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
-import edu.hm.cs.ig.passbutler.password.PasswordGeneratorActivity;
-import edu.hm.cs.ig.passbutler.settings.SettingsActivity;
-import edu.hm.cs.ig.passbutler.sync.SyncActivity;
+import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
+import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
-public class AccountListActivity extends AppCompatActivity implements AccountListAdapterOnClickHandler, AccountListAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
+public class AccountListActivity extends PostAuthActivity implements AccountListAdapterOnClickHandler, AccountListAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
 
     private static final String TAG = AccountListActivity.class.getName();
     private RecyclerView recyclerView;
@@ -106,18 +101,15 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
             return true;
         }
         else if(id == R.id.password_generator_menu_item) {
-            Intent intent = new Intent(this, PasswordGeneratorActivity.class);
-            startActivity(intent);
+            NavigationUtil.goToPasswordGeneratorActivity(this);
             return true;
         }
         else if(id == R.id.sync_menu_item) {
-            Intent intent = new Intent(this, SyncActivity.class);
-            startActivity(intent);
+            NavigationUtil.goToSyncActivity(this);
             return true;
         }
         else if(id == R.id.settings_menu_item) {
-            Intent intent = new Intent(this, SettingsActivity.class);
-            startActivity(intent);
+            NavigationUtil.goToSettingsActivity(this);
             return true;
         }
         return super.onOptionsItemSelected(item);
@@ -157,10 +149,10 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
                             public void onClick(DialogInterface dialog, int which) {
                                 String accountName = input.getText().toString();
                                 dialog.dismiss();
-                                Intent intent = new Intent(AccountListActivity.this, AccountDetailActivity.class);
-                                intent.putExtra(AccountListActivity.this.getString(R.string.bundle_key_account_name), accountName);
-                                intent.putExtra(getString(R.string.bundle_key_create_new_account_item), true);
-                                startActivity(intent);
+                                NavigationUtil.goToAccountDetailActivity(
+                                        AccountListActivity.this,
+                                        accountName,
+                                        true);
                             }
                         });
                         builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {
@@ -175,10 +167,10 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
                     }
                     else {
                         dialog.dismiss();
-                        Intent intent = new Intent(AccountListActivity.this, AccountDetailActivity.class);
-                        intent.putExtra(AccountListActivity.this.getString(R.string.bundle_key_account_name), accountName);
-                        intent.putExtra(getString(R.string.bundle_key_create_new_account_item), true);
-                        startActivity(intent);
+                        NavigationUtil.goToAccountDetailActivity(
+                                AccountListActivity.this,
+                                accountName,
+                                false);
                     }
                 }
             }
@@ -196,10 +188,7 @@ public class AccountListActivity extends AppCompatActivity implements AccountLis
 
     @Override
     public void onClick(View v, String accountName) {
-        Intent intent = new Intent(this, AccountDetailActivity.class);
-        intent.putExtra(AccountListActivity.this.getString(R.string.bundle_key_account_name), accountName);
-        intent.putExtra(getString(R.string.bundle_key_create_new_account_item), false);
-        startActivity(intent);
+        NavigationUtil.goToAccountDetailActivity(this, accountName, false);
     }
 
     @Override

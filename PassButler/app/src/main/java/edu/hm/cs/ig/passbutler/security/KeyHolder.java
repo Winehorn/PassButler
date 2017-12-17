@@ -1,4 +1,4 @@
-package edu.hm.cs.ig.passbutler.encryption;
+package edu.hm.cs.ig.passbutler.security;
 
 import android.content.Context;
 import android.util.Log;

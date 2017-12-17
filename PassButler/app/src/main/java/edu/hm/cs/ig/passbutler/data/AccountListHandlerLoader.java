@@ -17,7 +17,7 @@ import java.security.NoSuchAlgorithmException;
 
 import javax.crypto.NoSuchPaddingException;
 
-import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.R;
 
 /**

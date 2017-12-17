@@ -15,8 +15,15 @@
     <string name="sync_directory_name">sync</string>
 
     <!-- Shared Preferences -->
-    <string name="shared_prefs_general_name">edu.hm.cs.ig.passbutler.shared_prefs_general</string>
     <string name="shared_prefs_uuid_key">edu.hm.cs.ig.passbutler.shared_prefs_uuid</string>
+    <string name="shared_prefs_auto_lock_enabled_key">edu.hm.cs.ig.passbutler.shared_prefs_auto_lock_enabled</string>
+    <string name="shared_prefs_auto_lock_enabled_summary_on">On</string>
+    <string name="shared_prefs_auto_lock_enabled_summary_off">Off</string>
+    <string name="shared_prefs_auto_lock_enabled_title">Automatically lock PassButler when inactive</string>
+    <string name="shared_prefs_auto_lock_time_key">edu.hm.cs.ig.passbutler.shared_prefs_auto_lock_time</string>
+    <string name="shared_prefs_auto_lock_time_title">Auto lock inactivity threshold (minutes)</string>
+    <string name="shared_prefs_auto_lock_time_summary_default">Invalid time</string>
+    <string name="shared_prefs_auto_lock_time_default">5</string>
 
     <!-- Accounts file (JSON) -->
     <string name="accounts_file_path">accounts</string>
@@ -110,6 +117,7 @@
     <string name="no_bluetooth_support_pairing_error_msg">Your device is required to support Bluetooth for pairing</string>
     <string name="enable_bluetooth_error_msg">@string/internal_error</string>
     <string name="missing_bluetooth_bond_error_msg">Synchronization failed. Bluetooth Pairing with device is required.</string>
+    <string name="auto_lock_time_error_msg">The auto lock time must be an integer between %d and %d</string>
 
     <!-- Dialogs -->
     <string name="dialog_title_account_name">Please enter a name for the new account</string>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <CheckBoxPreference
+        android:defaultValue="@bool/shared_prefs_auto_lock_enabled_default"
+        android:key="@string/shared_prefs_auto_lock_enabled_key"
+        android:summaryOn="@string/shared_prefs_auto_lock_enabled_summary_on"
+        android:summaryOff="@string/shared_prefs_auto_lock_enabled_summary_off"
+        android:title="@string/shared_prefs_auto_lock_enabled_title" />
+
+    <EditTextPreference
+        android:defaultValue="@string/shared_prefs_auto_lock_time_default"
+        android:key="@string/shared_prefs_auto_lock_time_key"
+        android:title="@string/shared_prefs_auto_lock_time_title" />
+
+</PreferenceScreen>

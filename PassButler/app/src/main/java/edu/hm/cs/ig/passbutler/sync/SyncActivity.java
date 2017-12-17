@@ -15,7 +15,6 @@ import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -29,9 +28,10 @@ import java.util.Set;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.SyncContract;
+import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 import edu.hm.cs.ig.passbutler.util.ServiceUtil;
 
-public class SyncActivity extends AppCompatActivity implements LoaderManager.LoaderCallbacks<Cursor>, BluetoothSyncDeviceAdapterOnMenuItemClickHandler {
+public class SyncActivity extends PostAuthActivity implements LoaderManager.LoaderCallbacks<Cursor>, BluetoothSyncDeviceAdapterOnMenuItemClickHandler {
 
     public static final String TAG = SyncActivity.class.getName();
     private Switch bluetoothSyncSwitch;

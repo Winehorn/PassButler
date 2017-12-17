@@ -22,7 +22,7 @@ import javax.crypto.NoSuchPaddingException;
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.SyncContract;
-import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.util.SyncContentProviderUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.SqlUtil;

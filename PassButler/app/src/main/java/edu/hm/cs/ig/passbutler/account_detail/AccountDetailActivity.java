@@ -8,7 +8,6 @@ import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -32,12 +31,13 @@ import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
+import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 import edu.hm.cs.ig.passbutler.util.ClipboardUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
-import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.gui.InstantAutoCompleteTextView;
 
-public class AccountDetailActivity extends AppCompatActivity implements AccountDetailAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
+public class AccountDetailActivity extends PostAuthActivity implements AccountDetailAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
 
     private static final String TAG = AccountDetailActivity.class.getName();
     private AccountListHandler accountListHandler;

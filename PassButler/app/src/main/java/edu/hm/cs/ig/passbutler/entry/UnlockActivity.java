@@ -10,7 +10,6 @@ import android.nfc.Tag;
 import android.nfc.tech.Ndef;
 import android.nfc.tech.NfcF;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
@@ -29,14 +28,14 @@ import javax.crypto.NoSuchPaddingException;
 import javax.security.auth.DestroyFailedException;
 
 import edu.hm.cs.ig.passbutler.R;
-import edu.hm.cs.ig.passbutler.account_list.AccountListActivity;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
-import edu.hm.cs.ig.passbutler.encryption.KeyHolder;
+import edu.hm.cs.ig.passbutler.gui.PreAuthActivity;
+import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.util.ArrayUtil;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
-public class UnlockActivity extends AppCompatActivity {
+public class UnlockActivity extends PreAuthActivity {
 
     private static final String TAG = UnlockActivity.class.getName();
     private EditText passwordEditText;
@@ -58,7 +57,7 @@ public class UnlockActivity extends AppCompatActivity {
         // Disable screenshots
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
                 WindowManager.LayoutParams.FLAG_SECURE);
-        passwordEditText = (EditText) findViewById(R.id.password_edit_text);
+        passwordEditText = findViewById(R.id.password_edit_text);
 
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
@@ -128,9 +127,7 @@ public class UnlockActivity extends AppCompatActivity {
             return;
         }
         Log.i(TAG, "Correct password was entered.");
-        Intent intent = new Intent(this, AccountListActivity.class);
-        startActivity(intent);
-        Log.i(TAG, "Proceeding to " + AccountListActivity.class.getSimpleName() + ".");
+        NavigationUtil.goToAccountListActivity(this);
     }
 
     private boolean isPasswordCorrect() throws DestroyFailedException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, JSONException, FileNotFoundException, IOException {
