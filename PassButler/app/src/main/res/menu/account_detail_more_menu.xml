@@ -4,8 +4,12 @@
     <item
         android:id="@+id/copy_attribute_menu_item"
         android:title="@string/copy_attribute_menu_item_label"
-        android:orderInCategory="90"
+        android:orderInCategory="50"
         />
+    <item
+        android:id="@+id/edit_attribute_menu_item"
+        android:title="@string/edit_attribute_menu_item_label"
+        android:orderInCategory="75" />
     <item
         android:id="@+id/delete_attribute_menu_item"
         android:title="@string/delete_attribute_menu_item_label"

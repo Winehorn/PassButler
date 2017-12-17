@@ -117,6 +117,15 @@ public class AccountItemHandler {
         return true;
     }
 
+    public boolean changeAttributeValue(
+            Context context,
+            RecyclerView.Adapter adapter,
+            String attributeKey,
+            String newAttributeValue,
+            Date lastModified) {
+        return addAttribute(context, adapter, attributeKey, newAttributeValue, lastModified);
+    }
+
     public Iterator<String> getAttributeKeys(Context context) {
         try {
             return accountItemAsJson.getJSONObject(context.getString(R.string.json_key_account_attribute_list)).keys();

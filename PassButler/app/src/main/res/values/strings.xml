@@ -69,8 +69,9 @@
     <string name="account_attribute_password_key">Password</string>
     <string name="default_attribute_name">Nameless attribute</string>
     <string name="default_attribute_value">Default attribute value</string>
-    <string name="delete_attribute_menu_item_label">Delete</string>
     <string name="copy_attribute_menu_item_label">Copy</string>
+    <string name="edit_attribute_menu_item_label">Edit</string>
+    <string name="delete_attribute_menu_item_label">Delete</string>
     <string name="last_modified_identifier_text_view_label">Last modified:</string>
     <string name="default_last_modified_date">Default date</string>
 
@@ -120,8 +121,10 @@
     <string name="json_error_msg">@string/internal_error</string>
     <string name="loader_error_msg">@string/internal_error</string>
     <string name="add_attribute_error_msg">@string/internal_error</string>
+    <string name="edit_attribute_error_msg">@string/internal_error</string>
     <string name="dialog_empty_name_error_msg">You must enter a name for the new account</string>
-    <string name="dialog_empty_attribute_error_msg">You must enter a name and a value for the new attribute</string>
+    <string name="dialog_add_attribute_empty_input_error_msg">You must enter a name and a value for the new attribute</string>
+    <string name="dialog_edit_attribute_empty_input_error_msg">You must enter a new value for the attribute</string>
     <string name="destroy_failed_error_msg">@string/internal_error</string>
     <string name="password_generator_no_switch_msg">Check at least one switch!</string>
     <string name="add_bluetooth_sync_device_error_msg">Device could not be added</string>
@@ -135,13 +138,15 @@
     <string name="dialog_title_account_name">Please enter a name for the new account</string>
     <string name="dialog_title_overwrite_account">An account with that name already exists. Do you want to overwrite it?</string>
     <string name="dialog_title_overwrite_account_attribute">An attribute with that name already exists. Do you want to overwrite it?</string>
-    <string name="dialog_title_account_attribute">Please enter a name and a value for the new attribute</string>
+    <string name="dialog_title_add_account_attribute">Please enter a name and a value for the new attribute</string>
+    <string name="dialog_title_edit_account_attribute">Please enter a new value for the attribute</string>
     <string name="dialog_title_delete_account">Do you really want to delete this account?</string>
     <string name="dialog_title_delete_attribute">Do you really want to delete this attribute?</string>
     <string name="dialog_title_bluetooth_sync_device">Choose a paired device for syncing</string>
     <string name="dialog_title_delete_bluetooth_sync_device">Do you really want to delete this sync device?</string>
     <string name="dialog_title_backup_import">Do you really want to import a backup?</string>
     <string name="dialog_option_create">Create</string>
+    <string name="dialog_option_edit">Edit</string>
     <string name="dialog_option_cancel">Cancel</string>
     <string name="dialog_option_yes">Yes</string>
     <string name="dialog_option_no">No</string>

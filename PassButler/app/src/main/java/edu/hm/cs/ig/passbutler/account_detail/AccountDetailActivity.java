@@ -129,9 +129,12 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
     }
 
     public void addAccountAttributeFabOnClick(View view) {
+        showAddAttributeDialog();
+    }
 
+    private void showAddAttributeDialog() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(getString(R.string.dialog_title_account_attribute));
+        builder.setTitle(getString(R.string.dialog_title_add_account_attribute));
 
         // Set up the input for the dialog
         final InstantAutoCompleteTextView keyInput = new InstantAutoCompleteTextView(this);
@@ -165,7 +168,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                     dialog.cancel();
                     Toast.makeText(
                             AccountDetailActivity.this,
-                            AccountDetailActivity.this.getString(R.string.dialog_empty_attribute_error_msg),
+                            AccountDetailActivity.this.getString(R.string.dialog_add_attribute_empty_input_error_msg),
                             Toast.LENGTH_SHORT).show();
                 }
                 else {
@@ -224,6 +227,17 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
     @Override
     public boolean onMenuItemClick(MenuItem item, final String attributeKey) {
         switch(item.getItemId()) {
+            case R.id.copy_attribute_menu_item: {
+                ClipboardUtil clipboardUtil = new ClipboardUtil(this);
+                clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type),
+                        accountItemHandler.getAttributeValue(this, attributeKey),
+                        getResources().getInteger(R.integer.copy_delete_duration));
+                return true;
+            }
+            case R.id.edit_attribute_menu_item: {
+                showEditAttributeDialog(attributeKey, accountItemHandler.getAttributeValue(this, attributeKey));
+                return true;
+            }
             case R.id.delete_attribute_menu_item: {
                 AlertDialog.Builder builder = new AlertDialog.Builder(AccountDetailActivity.this);
                 builder.setTitle(getString(R.string.dialog_title_delete_attribute));
@@ -247,17 +261,61 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                 builder.show();
                 return true;
             }
-            case R.id.copy_attribute_menu_item: {
-                ClipboardUtil clipboardUtil = new ClipboardUtil(this);
-                clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type),
-                        accountItemHandler.getAttributeValue(this, attributeKey),
-                        getResources().getInteger(R.integer.copy_delete_duration));
-                return true;
-            }
             default: {
                 return false;
             }
         }
+    }
+
+    private void showEditAttributeDialog(final String attributeKey, String oldAttributeValue) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(getString(R.string.dialog_title_edit_account_attribute));
+
+        // Set up the input for the dialog
+        final EditText valueInput = new EditText(this);
+        valueInput.setText(oldAttributeValue);
+
+        // Specify the type of input expected.
+        valueInput.setInputType(InputType.TYPE_CLASS_TEXT);
+        valueInput.setHint(R.string.dialog_account_attribute_value_hint);
+
+        // Add the input to the dialog.
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+        layout.addView(valueInput);
+        builder.setView(layout);
+
+        // Set up the button options for the dialog.
+        builder.setPositiveButton(getString(R.string.dialog_option_edit), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                String newAttributeValue = valueInput.getText().toString();
+                if(newAttributeValue == null || newAttributeValue.isEmpty()) {
+                    dialog.cancel();
+                    Toast.makeText(
+                            AccountDetailActivity.this,
+                            AccountDetailActivity.this.getString(R.string.dialog_edit_attribute_empty_input_error_msg),
+                            Toast.LENGTH_SHORT).show();
+                }
+                else {
+                    if(!accountItemHandler.changeAttributeValue(AccountDetailActivity.this, accountDetailAdapter, attributeKey, newAttributeValue, new Date())) {
+                        Toast.makeText(
+                                AccountDetailActivity.this,
+                                AccountDetailActivity.this.getString(R.string.edit_attribute_error_msg),
+                                Toast.LENGTH_SHORT).show();
+                    }
+                }
+            }
+        });
+        builder.setNegativeButton(getString(R.string.dialog_option_cancel), new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+
+        // Show the dialog.
+        builder.show();
     }
 
     @Override
