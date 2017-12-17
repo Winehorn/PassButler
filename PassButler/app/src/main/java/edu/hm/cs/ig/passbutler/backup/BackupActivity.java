@@ -1,7 +1,6 @@
 package edu.hm.cs.ig.passbutler.backup;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
 import android.widget.TextView;
@@ -12,10 +11,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
-import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
-public class BackupActivity extends AppCompatActivity {
+public class BackupActivity extends PostAuthActivity {
 
     private TextView textView;
     private static final String TAG = BackupActivity.class.getName();
