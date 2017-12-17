@@ -71,6 +71,8 @@
     <string name="default_attribute_value">Default attribute value</string>
     <string name="delete_attribute_menu_item_label">Delete</string>
     <string name="copy_attribute_menu_item_label">Copy</string>
+    <string name="last_modified_identifier_text_view_label">Last modified:</string>
+    <string name="default_last_modified_date">Default date</string>
 
     <!-- PasswordGeneratorActivity -->
     <string name="password_generator_activity_label">Password generator</string>

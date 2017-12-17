@@ -41,8 +41,10 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
     public void onBindViewHolder(AccountDetailAdapterViewHolder holder, int position) {
         String key = accountItemHandler.getAttributeKey(context, position);
         String value = accountItemHandler.getAttributeValue(context, key);
+        String lastModified = accountItemHandler.getAttributeLastModified(context, key).toString();
         holder.accountAttributeKeyTextView.setText(key);
         holder.accountAttributeValueTextView.setText(value);
+        holder.accountAttributeLastModifiedTextView.setText(lastModified);
     }
 
     @Override
@@ -62,11 +64,13 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
 
         public final TextView accountAttributeKeyTextView;
         public final TextView accountAttributeValueTextView;
+        public final TextView accountAttributeLastModifiedTextView;
 
         public AccountDetailAdapterViewHolder(View view) {
             super(view);
             accountAttributeKeyTextView = view.findViewById(R.id.account_attribute_key_text_view);
             accountAttributeValueTextView = view.findViewById(R.id.account_attribute_value_text_view);
+            accountAttributeLastModifiedTextView = view.findViewById(R.id.account_attribute_last_modified_date_text_view);
             ImageButton imageButton = view.findViewById(R.id.account_detail_item_image_button);
             imageButton.setOnClickListener(this);
             view.setOnClickListener(this);
