@@ -1,9 +1,11 @@
 package edu.hm.cs.ig.passbutler.entry;
 
+import android.graphics.Typeface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.TextView;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.gui.PreAuthActivity;
@@ -20,6 +22,10 @@ public class LogoActivity extends PreAuthActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_logo);
+
+        TextView appTitleTextView = findViewById(R.id.app_title_text_view);
+        Typeface type = Typeface.createFromAsset(getAssets(), getString(R.string.font_dancing_script_regular_path));
+        appTitleTextView.setTypeface(type);
 
         // Disable screenshots
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,

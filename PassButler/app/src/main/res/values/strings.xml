@@ -16,6 +16,10 @@
     <string name="external_directory_name">PassButler</string>
     <string name="backup_file_name">passbutler.bak</string>
 
+    <!-- Fonts -->
+    <string name="font_dancing_script_regular_path">fonts/dancing_script_regular.ttf</string>
+    <string name="font_dancing_script_bold_path">fonts/dancing_script_bold.ttf</string>
+
     <!-- Shared Preferences -->
     <string name="shared_prefs_uuid_key">edu.hm.cs.ig.passbutler.shared_prefs_uuid</string>
     <string name="shared_prefs_auto_lock_enabled_key">edu.hm.cs.ig.passbutler.shared_prefs_auto_lock_enabled</string>
