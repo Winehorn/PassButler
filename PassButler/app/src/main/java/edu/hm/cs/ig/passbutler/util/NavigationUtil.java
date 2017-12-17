@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
+import edu.hm.cs.ig.passbutler.entry.LogoActivity;
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.account_detail.AccountDetailActivity;
 import edu.hm.cs.ig.passbutler.account_list.AccountListActivity;
@@ -28,6 +29,11 @@ public class NavigationUtil {
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        context.startActivity(intent);
+    }
+
+    public static void goToLogoActivity(Context context) {
+        Intent intent = new Intent(context, LogoActivity.class);
         context.startActivity(intent);
     }
 

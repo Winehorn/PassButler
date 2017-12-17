@@ -6,6 +6,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH" />
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -25,19 +26,15 @@
         </activity>
         <activity
             android:name=".entry.CreatePersistenceActivity"
-            android:label="@string/create_persistence_activity_label">
-
-        </activity>
+            android:label="@string/create_persistence_activity_label"></activity>
         <activity
             android:name=".entry.UnlockActivity"
-            android:label="@string/unlock_activity_label">
-
-        </activity>
+            android:label="@string/unlock_activity_label"></activity>
         <activity
             android:name=".account_list.AccountListActivity"
             android:label="@string/account_list_activity_label"
-            android:parentActivityName=".entry.UnlockActivity"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:parentActivityName=".entry.UnlockActivity">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value=".entry.UnlockActivity" />
@@ -75,6 +72,14 @@
                 android:value=".account_list.AccountListActivity" />
         </activity>
 
+        <activity android:name=".backup.BackupActivity"
+            android:label="@string/backup_activity_label"
+            android:parentActivityName=".account_list.AccountListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value=".account_list.AccountListActivity" />
+        </activity>
+
         <provider
             android:name=".data.SyncContentProvider"
             android:authorities="edu.hm.cs.ig.passbutler"
@@ -84,19 +89,16 @@
             android:name=".sync.BluetoothSyncSenderJobService"
             android:exported="false">
             <intent-filter>
-                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE"/>
+                <action android:name="com.firebase.jobdispatcher.ACTION_EXECUTE" />
             </intent-filter>
         </service>
-
         <service
             android:name=".sync.BluetoothSyncReceiverIntentService"
-            android:exported="false">
-        </service>
-
+            android:exported="false"></service>
         <service
             android:name=".sync.SyncFileMergerIntentService"
-            android:exported="false">
-        </service>
+            android:exported="false"></service>
+
 
     </application>
 

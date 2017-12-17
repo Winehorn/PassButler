@@ -1,12 +1,14 @@
 package edu.hm.cs.ig.passbutler.account_list;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.FileObserver;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AlertDialog;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
@@ -22,11 +24,16 @@ import android.widget.Toast;
 import java.util.Date;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.account_detail.AccountDetailActivity;
+import edu.hm.cs.ig.passbutler.backup.BackupActivity;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.password.PasswordGeneratorActivity;
+import edu.hm.cs.ig.passbutler.settings.SettingsActivity;
+import edu.hm.cs.ig.passbutler.sync.SyncActivity;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
@@ -110,6 +117,11 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
         }
         else if(id == R.id.settings_menu_item) {
             NavigationUtil.goToSettingsActivity(this);
+            return true;
+        }
+	else if(id == R.id.backup_menu_item) {
+            Intent intent = new Intent(this, BackupActivity.class);
+            startActivity(intent);
             return true;
         }
         return super.onOptionsItemSelected(item);
