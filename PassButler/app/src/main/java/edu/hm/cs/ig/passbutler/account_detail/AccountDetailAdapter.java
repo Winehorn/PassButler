@@ -10,6 +10,8 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
 
+import java.text.SimpleDateFormat;
+
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 
@@ -41,7 +43,8 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
     public void onBindViewHolder(AccountDetailAdapterViewHolder holder, int position) {
         String key = accountItemHandler.getAttributeKey(context, position);
         String value = accountItemHandler.getAttributeValue(context, key);
-        String lastModified = accountItemHandler.getAttributeLastModified(context, key).toString();
+        String lastModified = new SimpleDateFormat(context.getString(R.string.date_format))
+                .format(accountItemHandler.getAttributeLastModified(context, key));
         holder.accountAttributeKeyTextView.setText(key);
         holder.accountAttributeValueTextView.setText(value);
         holder.accountAttributeLastModifiedTextView.setText(lastModified);

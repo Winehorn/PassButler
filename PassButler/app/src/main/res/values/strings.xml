@@ -15,6 +15,7 @@
     <string name="sync_directory_name">sync</string>
     <string name="external_directory_name">PassButler</string>
     <string name="backup_file_name">passbutler.bak</string>
+    <string name="date_format">yyyy-MM-dd HH:mm:ss</string>
 
     <!-- Fonts -->
     <string name="font_dancing_script_regular_path">fonts/dancing_script_regular.ttf</string>
