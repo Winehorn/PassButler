@@ -5,7 +5,6 @@ import android.support.v7.app.ActionBar;
 import android.text.Editable;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.Switch;
@@ -37,10 +36,6 @@ public class PasswordGeneratorActivity extends PostAuthActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
-        // Prevent screen capturing on non-rooted devices
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
 
         setContentView(R.layout.activity_password_generator);
         ActionBar actionBar = this.getSupportActionBar();

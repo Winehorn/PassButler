@@ -13,7 +13,7 @@ import edu.hm.cs.ig.passbutler.security.AutoLocker;
  * Created by dennis on 16.12.17.
  */
 
-public class PostAuthActivity extends PassButlerActivity {
+public class PostAuthActivity extends PassButlerBaseActivity {
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {

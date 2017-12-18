@@ -12,7 +12,6 @@ import android.nfc.tech.NfcF;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.EditText;
 import android.widget.Toast;
 
@@ -54,11 +53,7 @@ public class UnlockActivity extends PreAuthActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unlock);
 
-        // Disable screenshots
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_SECURE,
-                WindowManager.LayoutParams.FLAG_SECURE);
         passwordEditText = findViewById(R.id.password_edit_text);
-
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         if (mNfcAdapter == null) {
