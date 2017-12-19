@@ -66,6 +66,8 @@
     <string name="settings_menu_item_label">@string/settings_activity_label</string>
     <string name="default_account_name">Nameless account</string>
     <string name="delete_account_menu_item_label">Delete</string>
+    <string name="backup_create_menu_item_label">Create Backup</string>
+    <string name="backup_import_item_label">Import Backup</string>
 
     <!-- AccountDetailActivity -->
     <string name="account_detail_activity_label">Nameless account</string>
@@ -107,11 +109,6 @@
     <string name="bluetooth_sync_switch_on_text">Activated</string>
     <string name="bluetooth_sync_switch_off_text">Deactivated</string>
     <string name="sync_now_button_label">Sync now</string>
-
-    <!-- BackupActivity -->
-    <string name="backup_activity_label">Backup</string>
-    <string name="backup_activity_create_backup_button_label">Create Backup</string>
-    <string name="backup_activity_import_backup_button_label">Import Backup</string>
 
     <!-- SettingsActivity -->
     <string name="settings_activity_label">Settings</string>

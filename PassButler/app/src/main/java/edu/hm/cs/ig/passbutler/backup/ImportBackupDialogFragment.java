@@ -43,7 +43,7 @@ public class ImportBackupDialogFragment extends DialogFragment {
                                         FileUtil.getInternalStorageFile(context,
                                                 getString(R.string.accounts_file_path)));
 
-                                Log.d(TAG, "importBackupButtonClick: internalFile: " + destFile.getAbsolutePath());
+                                Log.d(TAG, "importBackup: internalFile: " + destFile.getAbsolutePath());
                                 Toast.makeText(context, "Import successful", Toast.LENGTH_SHORT).show();
                                 NavigationUtil.goToLogoActivity(context);
 
@@ -52,11 +52,11 @@ public class ImportBackupDialogFragment extends DialogFragment {
                                         " in " + FileUtil.getExternalAppDir(context).getAbsolutePath() +
                                         "/ !", Toast.LENGTH_LONG).show();
 
-                                Log.e(TAG, "createBackupButtonClick: Could not find file.");
+                                Log.e(TAG, "createBackup: Could not find file.");
                                 e.printStackTrace();
                             } catch (IOException e) {
                                 Toast.makeText(context, "Error while importing Backup!", Toast.LENGTH_SHORT).show();
-                                Log.e(TAG, "createBackupButtonClick: Error while reading or writing.");
+                                Log.e(TAG, "createBackup: Error while reading or writing.");
                                 e.printStackTrace();
                             }
                         } else {
