@@ -16,12 +16,16 @@
     <integer name="bluetooth_sync_flextime_sec">5</integer>
 
     <!-- PasswordGeneratorActivity -->
-    <integer name="password_generator_max_length">32</integer>
+    <integer name="password_generator_max_length">64</integer>
     <integer name="password_generator_min_length">4</integer>
-    <integer name="password_generator_default_length">16</integer>
+    <integer name="password_generator_default_length">18</integer>
 
     <!-- CopyUtil -->
     <integer name="copy_delete_duration">20</integer>
+
+    <!-- UnlockActivity -->
+    <integer name="unlock_max_attempts">3</integer>
+    <integer name="unlock_default_lock_duration">60</integer>
 
     <!-- Shared preferences -->
     <integer name="shared_prefs_auto_lock_time_min">1</integer>
