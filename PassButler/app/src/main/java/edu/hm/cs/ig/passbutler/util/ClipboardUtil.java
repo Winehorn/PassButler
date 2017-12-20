@@ -33,12 +33,14 @@ public class ClipboardUtil {
      */
     public void copyAndDelete(final String label, String text, int seconds) {
         Handler handler = new Handler(Looper.getMainLooper());
-
+        // TODO: check usage of string copy
         // Create ClipData
         ClipData clip = ClipData.newPlainText(label, text);
         // TODO: handle possible NullPointerException
         clipboardManager.setPrimaryClip(clip);
-        Log.d(TAG, clip.getDescription().getLabel().toString());
+
+        Toast.makeText(mContext, "Copied!", Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "Copied to clipboard: " + clip.getDescription().getLabel().toString());
 
         // Overwrite clipboard after given time
         handler.postDelayed(new Runnable() {
@@ -58,7 +60,9 @@ public class ClipboardUtil {
         ClipData clip = ClipData.newPlainText(label, text);
         // TODO: handle possible NullPointerException
         clipboardManager.setPrimaryClip(clip);
-        Log.d(TAG, clip.getDescription().getLabel().toString());
+
+        Toast.makeText(mContext, "Copied!", Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "Copied to clipboard: " + clip.getDescription().getLabel().toString());
 
         // Overwrite clipboard after given time
         handler.postDelayed(new Runnable() {
@@ -78,7 +82,9 @@ public class ClipboardUtil {
         ClipData clip = ClipData.newPlainText(label, text);
         // TODO: handle possible NullPointerException
         clipboardManager.setPrimaryClip(clip);
-        Log.d(TAG, clip.getDescription().getLabel().toString());
+
+        Toast.makeText(mContext, "Copied!", Toast.LENGTH_SHORT).show();
+        Log.i(TAG, "Copied to clipboard: " + clip.getDescription().getLabel().toString());
 
         // Overwrite clipboard after given time
         handler.postDelayed(new Runnable() {

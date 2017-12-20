@@ -33,6 +33,8 @@ public class PasswordUtil {
 
         SecureRandom random = new SecureRandom();
 
+
+        // TODO: concatenate strings and chose random char from that string
         List<String> charCategories = new ArrayList<>(4);
         charCategories.add(lower);
         charCategories.add(upper);
