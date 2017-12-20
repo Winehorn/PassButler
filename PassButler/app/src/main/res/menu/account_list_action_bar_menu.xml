@@ -26,8 +26,13 @@
         android:orderInCategory="400"
         app:showAsAction="never"/>
     <item
-        android:id="@+id/backup_menu_item"
-        android:title="@string/backup_activity_label"
-        android:orderInCategory="350"
+        android:id="@+id/backup_create_menu_item"
+        android:title="@string/backup_create_menu_item_label"
+        android:orderInCategory="325"
+        app:showAsAction="never"/>
+    <item
+        android:id="@+id/backup_import_menu_item"
+        android:title="@string/backup_import_item_label"
+        android:orderInCategory="375"
         app:showAsAction="never"/>
 </menu>

@@ -5,9 +5,8 @@ import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.util.Log;
 
-import edu.hm.cs.ig.passbutler.backup.BackupActivity;
-import edu.hm.cs.ig.passbutler.entry.LogoActivity;
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.entry.LogoActivity;
 import edu.hm.cs.ig.passbutler.account_detail.AccountDetailActivity;
 import edu.hm.cs.ig.passbutler.account_list.AccountListActivity;
 import edu.hm.cs.ig.passbutler.entry.CreatePersistenceActivity;
@@ -83,12 +82,6 @@ public class NavigationUtil {
     public static void goToSyncActivity(Context context) {
         Log.i(TAG, "Navigating to " + SyncActivity.class.getSimpleName() + ".");
         Intent intent = new Intent(context, SyncActivity.class);
-        context.startActivity(intent);
-    }
-
-    public static void goToBackupActivity(Context context) {
-        Log.i(TAG, "Navigating to " + BackupActivity.class.getSimpleName() + ".");
-        Intent intent = new Intent(context, BackupActivity.class);
         context.startActivity(intent);
     }
 

@@ -26,6 +26,7 @@ import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.util.BackupUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
@@ -107,8 +108,12 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
             NavigationUtil.goToSettingsActivity(this);
             return true;
         }
-	else if(id == R.id.backup_menu_item) {
-            NavigationUtil.goToBackupActivity(this);
+	    else if(id == R.id.backup_create_menu_item) {
+            BackupUtil.createBackup(this);
+            return true;
+        }
+        else if(id == R.id.backup_import_menu_item) {
+            BackupUtil.importBackup(this);
             return true;
         }
         return super.onOptionsItemSelected(item);

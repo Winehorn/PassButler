@@ -14,14 +14,12 @@
         android:id="@+id/backup_create_backup_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/backup_activity_create_backup_button_label"
         android:onClick="createBackupButtonClick"/>
 
     <Button
         android:id="@+id/backup_import_backup_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/backup_activity_import_backup_button_label"
         android:onClick="importBackupButtonClick"/>
 
 

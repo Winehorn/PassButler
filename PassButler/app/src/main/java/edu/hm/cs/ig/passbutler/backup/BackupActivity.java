@@ -38,25 +38,25 @@ public class BackupActivity extends PostAuthActivity {
                             FileUtil.getInternalStorageFile(this, getString(R.string.accounts_file_path)),
                             FileUtil.getExternalAppDir(this));
 
-                    Log.i(TAG, "createBackupButtonClick: Filepath:" + expFile.getAbsolutePath());
+                    Log.i(TAG, "createBackup: Filepath:" + expFile.getAbsolutePath());
                     Toast.makeText(this, "Backup created!", Toast.LENGTH_SHORT).show();
-                    Log.d(TAG, "createBackupButtonClick: internalFile: " + FileUtil.getInternalStorageFile(this, getString(R.string.accounts_file_path)).getAbsolutePath());
+                    Log.d(TAG, "createBackup: internalFile: " + FileUtil.getInternalStorageFile(this, getString(R.string.accounts_file_path)).getAbsolutePath());
 
                 } catch (FileNotFoundException e) {
                     Toast.makeText(this, "Error while creating Backup!", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "createBackupButtonClick: Could not find file.");
+                    Log.e(TAG, "createBackup: Could not find file.");
                     e.printStackTrace();
                 } catch (IOException e) {
                     Toast.makeText(this, "Error while creating Backup!", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG, "createBackupButtonClick: Error while reading or writing.");
+                    Log.e(TAG, "createBackup: Error while reading or writing.");
                     e.printStackTrace();
                 }
             } else {
-                Log.w(TAG, "createBackupButtonClick: External Storage is not writable");
+                Log.w(TAG, "createBackup: External Storage is not writable");
                 Toast.makeText(this, "External Storage not writable!", Toast.LENGTH_SHORT).show();
             }
         } else {
-            Log.w(TAG, "createBackupButtonClick: Internal file does not exist.");
+            Log.w(TAG, "createBackup: Internal file does not exist.");
         }
     }
 
