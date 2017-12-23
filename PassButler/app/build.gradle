@@ -17,6 +17,9 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+    configurations.all {
+        resolutionStrategy.force 'com.google.code.findbugs:jsr305:1.3.9'
+    }
 }
 
 dependencies {
@@ -33,6 +36,7 @@ dependencies {
     compile 'commons-io:commons-io:2.6'
     compile 'com.firebase:firebase-jobdispatcher:0.8.4'
     compile 'com.android.support:preference-v7:26.1.0'
+    compile 'com.google.guava:guava:23.5-android'
     // Passwordchecker
     compile 'com.nulab-inc:zxcvbn:1.2.3'
     // Expandable Layout

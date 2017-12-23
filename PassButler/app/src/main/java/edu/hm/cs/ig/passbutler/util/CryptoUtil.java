@@ -3,6 +3,8 @@ package edu.hm.cs.ig.passbutler.util;
 import android.content.Context;
 import android.util.Log;
 
+import com.google.common.primitives.Longs;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,9 +15,11 @@ import java.security.Key;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 
+import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
 import javax.crypto.CipherOutputStream;
+import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.spec.SecretKeySpec;
 
@@ -48,6 +52,83 @@ public class CryptoUtil {
         ArrayUtil.clear(bytes);
         ArrayUtil.clear(digestedBytes);
         return key;
+    }
+
+    public static String encryptToString(String data, Key encryptionKey, String encryptionAlg) {
+        return StringUtil.fromBase64(encryptToBytes(data.getBytes(), encryptionKey, encryptionAlg));
+    }
+
+    public static String encryptToString(long data, Key encryptionKey, String encryptionAlg) {
+        return StringUtil.fromBase64(encryptToBytes(Longs.toByteArray(data), encryptionKey, encryptionAlg));
+    }
+
+    public static byte[] encryptToBytes(String data, Key encryptionKey, String encryptionAlg) {
+        return encryptToBytes(data.getBytes(), encryptionKey, encryptionAlg);
+    }
+
+    public static byte[] encryptToBytes(long data, Key encryptionKey, String encryptionAlg) {
+        return encryptToBytes(Longs.toByteArray(data), encryptionKey, encryptionAlg);
+    }
+
+    public static byte[] encryptToBytes(byte[] data, Key encryptionKey, String encryptionAlg) {
+        return useCipher(data, encryptionKey, encryptionAlg, Cipher.ENCRYPT_MODE);
+    }
+
+    public static String decryptToString(String data, Key decryptionKey, String decryptionAlg) {
+        byte[] decryptedBytes = decryptToBytes(data, decryptionKey, decryptionAlg);
+        String decryptedString = new String(decryptedBytes);
+        ArrayUtil.clear(decryptedBytes);
+        return decryptedString;
+    }
+
+    public static char[] decryptToChars(String data, Key decryptionKey, String decryptionAlg) {
+        byte[] decryptedBytes = decryptToBytes(data, decryptionKey, decryptionAlg);
+        char[] decryptedChars = ArrayUtil.toAsciiChars(decryptedBytes);
+        ArrayUtil.clear(decryptedBytes);
+        return decryptedChars;
+    }
+
+    public static long decryptToLong(String data, Key decryptionKey, String decryptionAlg) {
+        byte[] decryptedBytes = decryptToBytes(data, decryptionKey, decryptionAlg);
+        long decryptedLong = Longs.fromByteArray(decryptedBytes);
+        ArrayUtil.clear(decryptedBytes);
+        return decryptedLong;
+    }
+
+    public static byte[] decryptToBytes(String data, Key decryptionKey, String decryptionAlg) {
+        byte[] decodedData = StringUtil.toBase64(data);
+        return decryptToBytes(decodedData, decryptionKey, decryptionAlg);
+    }
+
+    public static byte[] decryptToBytes(long data, Key decryptionKey, String decryptionAlg) {
+        return decryptToBytes(Longs.toByteArray(data), decryptionKey, decryptionAlg);
+    }
+
+    public static byte[] decryptToBytes(byte[] data, Key decryptionKey, String decryptionAlg) {
+        return useCipher(data, decryptionKey, decryptionAlg, Cipher.DECRYPT_MODE);
+    }
+
+    private static byte[] useCipher(byte[] data, Key key, String alg, int mode) {
+        try {
+            Cipher cipher = Cipher.getInstance(alg);
+            cipher.init(mode, key);
+            return cipher.doFinal(data);
+        } catch (NoSuchAlgorithmException e) {
+            Log.e(TAG, "The encryption algorithm must be valid.");
+            return null;
+        } catch (NoSuchPaddingException e) {
+            Log.e(TAG, "The padding must be valid.");
+            return null;
+        } catch (InvalidKeyException e) {
+            Log.e(TAG, "The key must be valid.");
+            return null;
+        } catch (IllegalBlockSizeException e) {
+            Log.e(TAG, "The block size must be valid.");
+            return null;
+        } catch (BadPaddingException e) {
+            Log.e(TAG, "The padding must not be bad.");
+            return null;
+        }
     }
 
     public static boolean writeToInternalStorage(

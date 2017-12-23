@@ -37,9 +37,11 @@ public class KeyHolder {
     public Key getKey() throws IllegalStateException {
         Log.i(TAG, "Getting key from " + KeyHolder.class.getSimpleName() + ".");
         if(key != null) {
+            Log.i(TAG, "A key is present.");
             return key;
         }
-        throw new IllegalStateException("The " + KeyHolder.class.getSimpleName() + " must always contain a valid key when one is requested.");
+        Log.i(TAG, "No key is present.");
+        throw new IllegalStateException("The " + KeyHolder.class.getSimpleName() + " must always contain a key when one is requested.");
     }
 
     public void clearKey(Context context) throws DestroyFailedException {

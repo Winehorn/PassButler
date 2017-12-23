@@ -29,15 +29,23 @@ public class ArrayUtil {
 
     public static byte[] getContentAsByteArray(EditText editText) {
         char[] content = getContentAsCharArray(editText);
-        return convertArrayAscii(content);
+        return fromAsciiChars(content);
     }
 
-    public static byte[] convertArrayAscii(char[] chars) {
+    public static byte[] fromAsciiChars(char[] chars) {
         byte[] bytes = new byte[chars.length];
         for (int i = 0; i < bytes.length; i++) {
             bytes[i] = (byte) chars[i];
         }
         return bytes;
+    }
+
+    public static char[] toAsciiChars(byte[] bytes) {
+        char[] chars = new char[bytes.length];
+        for (int i = 0; i < chars.length; i++) {
+            chars[i] = (char) bytes[i];
+        }
+        return chars;
     }
 
     public static byte[] concatAndClearSrc(byte[] a1, byte[] a2) {

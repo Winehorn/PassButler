@@ -7,12 +7,15 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.security.Key;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 
 /**
  * Created by dennis on 16.11.17.
@@ -86,8 +89,11 @@ public class AccountItemHandler {
         try {
             JSONObject attributes = accountItemAsJson.getJSONObject(context.getString(R.string.json_key_account_attribute_list));
             JSONObject newAttribute = new JSONObject();
-            newAttribute.put(context.getString(R.string.json_key_account_attribute_value), attributeValue);
-            newAttribute.put(context.getString(R.string.json_key_account_attribute_last_modified), lastModified.getTime());
+            Key key = KeyHolder.getInstance().getKey();
+            String encryptedAttributeValue = CryptoUtil.encryptToString(attributeValue, key, context.getString(R.string.encryption_alg));
+            String encryptedLastModified = CryptoUtil.encryptToString(lastModified.getTime(), key, context.getString(R.string.encryption_alg));
+            newAttribute.put(context.getString(R.string.json_key_account_attribute_value), encryptedAttributeValue);
+            newAttribute.put(context.getString(R.string.json_key_account_attribute_last_modified), encryptedLastModified);
             attributes.put(attributeKey, newAttribute);
             setLastModified(context, lastModified);
             if(adapter != null) {
@@ -150,17 +156,27 @@ public class AccountItemHandler {
     }
 
     public String getAttributeValue(Context context, String attributeKey) {
-        return getAttributeProperty(
+        String encryptedAttributeValue =  getAttributeProperty(
                 context,
                 attributeKey,
                 context.getString(R.string.json_key_account_attribute_value));
+        Key decryptionKey = KeyHolder.getInstance().getKey();
+        return CryptoUtil.decryptToString(
+                encryptedAttributeValue,
+                decryptionKey,
+                context.getString(R.string.encryption_alg));
     }
 
     public Date getAttributeLastModified(Context context, String attributeKey) {
-        return new Date(Long.parseLong(getAttributeProperty(
+        String encryptedLastModified =  getAttributeProperty(
                 context,
                 attributeKey,
-                context.getString(R.string.json_key_account_attribute_last_modified))));
+                context.getString(R.string.json_key_account_attribute_last_modified));
+        Key decryptionKey = KeyHolder.getInstance().getKey();
+        return new Date(CryptoUtil.decryptToLong(
+                encryptedLastModified,
+                decryptionKey,
+                context.getString(R.string.encryption_alg)));
     }
 
     private String getAttributeProperty(Context context, String attributeKey, String attributePropertyKey) {
