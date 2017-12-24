@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.crypto.NoSuchPaddingException;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.SyncContentProviderUtil;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 
@@ -144,22 +145,16 @@ public class AccountListHandler implements Parcelable {
 
     public synchronized boolean saveToInternalStorage(Context context, String filePath, Date lastModified, Key key, boolean persistMetaData)
     {
-        String hashDummy = "haschIstSuper"; // TODO: Calculate Hash here instead of passing dummy
-        boolean isSaved =  CryptoUtil.writeToInternalStorage(
-                context,
-                new FileMetaData(filePath, lastModified, hashDummy),
+        byte[] encryptedData = CryptoUtil.encryptToBytes(
                 accountListAsJson.toString(),
                 key,
-                context.getString(R.string.encryption_alg),
+                context.getString(R.string.encryption_alg));
+        String fileHash = CryptoUtil.digestToString(context.getString(R.string.hash_func_for_digest), encryptedData);
+        return FileUtil.writeToInternalStorage(
+                context,
+                new FileMetaData(filePath, lastModified, fileHash),
+                encryptedData,
                 persistMetaData);
-        if(isSaved) {
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(SyncContract.DataSourceEntry.COLUMN_FILE_PATH, filePath);
-            contentValues.put(SyncContract.DataSourceEntry.COLUMN_LAST_MODIFIED_TIMESTAMP, lastModified.getTime());
-            contentValues.put(SyncContract.DataSourceEntry.COLUMN_FILE_HASH, hashDummy);
-            context.getContentResolver().insert(SyncContract.DataSourceEntry.CONTENT_URI, contentValues);
-        }
-        return isSaved;
     }
 
     public boolean accountExists(Context context, String accountName) {

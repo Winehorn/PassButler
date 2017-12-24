@@ -5,12 +5,14 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.gui.PreAuthActivity;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 import edu.hm.cs.ig.passbutler.util.ServiceUtil;
+import edu.hm.cs.ig.passbutler.util.SyncContentProviderUtil;
 
 public class LogoActivity extends PreAuthActivity {
 
@@ -26,8 +28,6 @@ public class LogoActivity extends PreAuthActivity {
         Typeface type = Typeface.createFromAsset(getAssets(), getString(R.string.font_dancing_script_regular_path));
         appTitleTextView.setTypeface(type);
 
-        ServiceUtil.startSyncMergerService(getApplicationContext());
-
         final Handler handler = new Handler();
         handler.postDelayed(new Runnable() {
             @Override
@@ -42,6 +42,8 @@ public class LogoActivity extends PreAuthActivity {
                 }
             }
         }, DELAY_IN_MILLIS);
+
+        ServiceUtil.startSyncMergerService(getApplicationContext());
     }
 
     @Override

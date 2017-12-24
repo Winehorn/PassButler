@@ -5,6 +5,7 @@ import android.os.Environment;
 import android.util.Log;
 
 import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -17,8 +18,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.nio.channels.FileChannel;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.FileMetaData;
@@ -42,13 +41,39 @@ public class FileUtil {
     }
 
     public static boolean internalStorageFileExists(Context context, String filePath) {
-        return getFromInternalStorage(context, filePath).exists();
+        return getInternalStorageFile(context, filePath).exists();
     }
 
-    public static File getFromInternalStorage(Context context, String filePath) {
+    public static File getInternalStorageFile(Context context, String filePath) {
         String basePath = context.getFilesDir().getAbsolutePath();
-        File file = new File(basePath, filePath);
-        return file;
+        return new File(basePath, filePath);
+    }
+
+    public static File getExternalAppDir(Context context) {
+        File extDir = new File(Environment.getExternalStorageDirectory(), context.getString(R.string.external_directory_name));
+        return extDir;
+    }
+
+    public static String getFileHash(Context context, String filePath) {
+        return getFileHash(context, getInternalStorageFile(context, filePath));
+    }
+
+    public static String getFileHash(Context context, File file) {
+        byte[] fileContent = readBytesFromInternalStorage(file);
+        return CryptoUtil.digestToString(context.getString(R.string.hash_func_for_digest), fileContent);
+    }
+
+    public static boolean isFileManipulated(Context context, String filePath) {
+        Log.i(TAG, "Checking file " + filePath + " for manipulation.");
+        String savedFileHash = SyncContentProviderUtil.getFileHash(context, filePath);
+        if(savedFileHash != null) {
+            String actualFileHash = FileUtil.getFileHash(context, filePath);
+            boolean isFileManipulated = !savedFileHash.equals(actualFileHash);
+            Log.i(TAG, "Result of check if file is manipulated: " + isFileManipulated + ".");
+            return  isFileManipulated;
+        }
+        Log.i(TAG, "File has no recorded hash value so manipulation is excluded.");
+        return false;
     }
 
     public static boolean writeToInternalStorage(
@@ -157,13 +182,13 @@ public class FileUtil {
         return true;
     }
 
-    public static String readFromInternalStorage(Context context, String filePath) {
-        return readFromInternalStorage(getInternalStorageFile(context, filePath));
+    public static byte[] readBytesFromInternalStorage(Context context, String filePath) {
+        return readBytesFromInternalStorage(getInternalStorageFile(context, filePath));
     }
 
-    public static String readFromInternalStorage(File file) {
+    public static byte[] readBytesFromInternalStorage(File file) {
         try {
-            return readFromInputStream(new FileInputStream(file));
+            return readBytesFromInputStream(new FileInputStream(file));
         }
         catch(FileNotFoundException e) {
             Log.e(TAG, "Could not find file to read from in internal storage.");
@@ -175,17 +200,35 @@ public class FileUtil {
         }
     }
 
-    public static File getInternalStorageFile(Context context, String filePath) {
-        String basePath = context.getFilesDir().getAbsolutePath();
-        return new File(basePath, filePath);
+    public static byte[] readBytesFromInputStream(InputStream inputStream) throws IOException {
+        try (InputStream streamToRead = inputStream) {
+            return IOUtils.toByteArray(streamToRead);
+        }
+        catch(IOException e) {
+            Log.e(TAG, "I/O error while reading from input stream.");
+            throw e;
+        }
     }
 
-    public static File getExternalAppDir(Context context) {
-        File extDir = new File(Environment.getExternalStorageDirectory(), context.getString(R.string.external_directory_name));
-        return extDir;
+    public static String readStringFromInternalStorage(Context context, String filePath) {
+        return readStringFromInternalStorage(getInternalStorageFile(context, filePath));
     }
 
-    public static String readFromInputStream(InputStream inputStream) throws IOException {
+    public static String readStringFromInternalStorage(File file) {
+        try {
+            return readStringFromInputStream(new FileInputStream(file));
+        }
+        catch(FileNotFoundException e) {
+            Log.e(TAG, "Could not find file to read from in internal storage.");
+            return null;
+        }
+        catch(IOException e) {
+            Log.e(TAG, "I/O error while reading from internal storage.");
+            return null;
+        }
+    }
+
+    public static String readStringFromInputStream(InputStream inputStream) throws IOException {
         try (InputStream streamToRead = inputStream) {
             String ret = convertStreamToString(streamToRead);
             return ret;

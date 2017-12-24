@@ -32,6 +32,7 @@ import edu.hm.cs.ig.passbutler.gui.PreAuthActivity;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.util.ArrayUtil;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
+import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 public class UnlockActivity extends PreAuthActivity {
@@ -104,6 +105,11 @@ public class UnlockActivity extends PreAuthActivity {
             Log.i(TAG, "Inserted password is empty.");
             return;
         }
+        if(FileUtil.isFileManipulated(this, getString(R.string.accounts_file_path))) {
+            Toast.makeText(this, getString(R.string.manipulation_error_msg), Toast.LENGTH_LONG).show();
+            Log.i(TAG, "Cannot unlock account list because the encrypted data was manipulated.");
+            return;
+        }
         try {
             if (!isPasswordCorrect()) {
                 Toast.makeText(this, getString(R.string.wrong_password_error_msg), Toast.LENGTH_SHORT).show();
@@ -140,7 +146,7 @@ public class UnlockActivity extends PreAuthActivity {
              * and should not be used afterwards!
              */
             KeyHolder.getInstance().setKeyAndClearOld(this, CryptoUtil.generateKey(
-                    getString(R.string.hash_func),
+                    getString(R.string.hash_func_for_key_gen),
                     getString(R.string.encryption_alg),
                     password,
                     nfcKey));

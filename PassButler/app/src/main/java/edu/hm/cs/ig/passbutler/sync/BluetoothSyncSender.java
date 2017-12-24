@@ -120,7 +120,7 @@ public class BluetoothSyncSender {
                 Date lastModified = SyncContentProviderUtil.getLastModified(context, filePath);
                 Log.i(TAG, "Sending date of last modification " + lastModified + ".");
                 connection.writeLong(lastModified.getTime());
-                File file = FileUtil.getFromInternalStorage(context, filePath);
+                File file = FileUtil.getInternalStorageFile(context, filePath);
                 if(!file.exists()) {
                     Log.e(TAG, "Synchronization of file " + filePath + " failed. File does not exist.");
                     return false;

@@ -29,7 +29,7 @@ public class BackupActivity extends PostAuthActivity {
 
     public void createBackupButtonClick(View view) {
         if (FileUtil.internalStorageFileExists(this, getString(R.string.accounts_file_path))) {
-            String internalFile = FileUtil.readFromInternalStorage(this, getString(R.string.accounts_file_path));
+            String internalFile = FileUtil.readStringFromInternalStorage(this, getString(R.string.accounts_file_path));
             textView.setText(internalFile);
 
             if (FileUtil.isExternalStorageWritable()) {

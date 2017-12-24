@@ -38,6 +38,27 @@ public class CryptoUtil {
             throw new IllegalArgumentException("Valid base data for key creation must be specified.");
         }
         byte[] bytes = ArrayUtil.concatAndClearSrc(baseData);
+        byte[] digestedBytes = digestToBytes(hashFunc, bytes);
+        Key key = new SecretKeySpec(digestedBytes, encryptionAlg);
+        Log.i(TAG, "Key created.");
+        ArrayUtil.clear(bytes);
+        ArrayUtil.clear(digestedBytes);
+        return key;
+    }
+
+    public static String digestToString(String hashFunc, String data) {
+        return StringUtil.fromBase64(digestToBytes(hashFunc, data));
+    }
+
+    public static String digestToString(String hashFunc, byte[] data) {
+        return StringUtil.fromBase64(digestToBytes(hashFunc, data));
+    }
+
+    public static byte[] digestToBytes(String hashFunc, String data) {
+        return digestToBytes(hashFunc, StringUtil.toBase64(data));
+    }
+
+    public static byte[] digestToBytes(String hashFunc, byte[] data) {
         final MessageDigest messageDigest;
         try {
             messageDigest = MessageDigest.getInstance(hashFunc);
@@ -45,13 +66,8 @@ public class CryptoUtil {
             Log.e(TAG, "The hash function must be valid.");
             return null;
         }
-        messageDigest.update(bytes, 0, bytes.length);
-        byte[] digestedBytes = messageDigest.digest();
-        Key key = new SecretKeySpec(digestedBytes, encryptionAlg);
-        Log.i(TAG, "Key created created.");
-        ArrayUtil.clear(bytes);
-        ArrayUtil.clear(digestedBytes);
-        return key;
+        messageDigest.update(data, 0, data.length);
+        return messageDigest.digest();
     }
 
     public static String encryptToString(String data, Key encryptionKey, String encryptionAlg) {
@@ -196,7 +212,7 @@ public class CryptoUtil {
         try {
             Cipher cipher = Cipher.getInstance(encryptionAlg);
             cipher.init(Cipher.DECRYPT_MODE, decryptionKey);
-            return FileUtil.readFromInputStream(new CipherInputStream(new FileInputStream(file), cipher));
+            return FileUtil.readStringFromInputStream(new CipherInputStream(new FileInputStream(file), cipher));
         }
         catch (NoSuchAlgorithmException e) {
             Log.e(TAG, "The encryption algorithm must be valid.");

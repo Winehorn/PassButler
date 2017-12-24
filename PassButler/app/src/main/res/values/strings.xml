@@ -138,6 +138,7 @@
     <string name="enable_bluetooth_error_msg">@string/internal_error</string>
     <string name="missing_bluetooth_bond_error_msg">Synchronization failed. Bluetooth Pairing with device is required.</string>
     <string name="auto_lock_time_error_msg">The auto lock time must be an integer between %d and %d</string>
+    <string name="manipulation_error_msg">Account data was manipulated and cannot be decrypted. Please restore it from a backup.</string>
 
     <!-- Dialogs -->
     <string name="dialog_title_account_name">Please enter a name for the new account</string>
@@ -166,7 +167,8 @@
     <string name="hash_func_sha_512">SHA-512</string>
     <string name="encryption_alg_aes">AES</string>
     <string name="char_encoding_utf_8">UTF-8</string>
-    <string name="hash_func">@string/hash_func_sha_256</string>
+    <string name="hash_func_for_key_gen">@string/hash_func_sha_256</string>
+    <string name="hash_func_for_digest">@string/hash_func_sha_256</string>
     <string name="encryption_alg">@string/encryption_alg_aes</string>
     <string name="char_encoding">@string/char_encoding_utf_8</string>
 

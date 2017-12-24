@@ -58,6 +58,19 @@ public class SyncContentProviderUtil {
         return hardwareAddress;
     }
 
+    public static String getFileHash(Context context, String filePath) {
+        Log.i(TAG, "Retrieving hash of file " + filePath + ".");
+        String fileHash = getColumnStringValue(
+                context,
+                SyncContract.DataSourceEntry.CONTENT_URI,
+                SyncContract.DataSourceEntry.COLUMN_FILE_HASH,
+                SqlUtil.createSelectionString(SyncContract.DataSourceEntry.COLUMN_FILE_PATH),
+                new String[]{filePath},
+                null);
+        Log.i(TAG, "Hash value is " + fileHash + ".");
+        return fileHash;
+    }
+
     public static Date getLastModified(Context context, String filePath) {
         Log.i(TAG, "Retrieving date of last modification of file " + filePath + ".");
         Date lastModified = getColumnDateValue(

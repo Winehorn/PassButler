@@ -138,7 +138,7 @@ public class CreatePersistenceActivity extends PreAuthActivity {
              * and should not be used afterwards!
              */
             KeyHolder.getInstance().setKeyAndClearOld(this, CryptoUtil.generateKey(
-                    getString(R.string.hash_func),
+                    getString(R.string.hash_func_for_key_gen),
                     getString(R.string.encryption_alg),
                     password,
                     nfcKey));
