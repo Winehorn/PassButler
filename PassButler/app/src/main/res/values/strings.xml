@@ -26,9 +26,9 @@
     <string name="shared_prefs_auto_lock_enabled_key">edu.hm.cs.ig.passbutler.shared_prefs_auto_lock_enabled</string>
     <string name="shared_prefs_auto_lock_enabled_summary_on">On</string>
     <string name="shared_prefs_auto_lock_enabled_summary_off">Off</string>
-    <string name="shared_prefs_auto_lock_enabled_title">Automatically lock PassButler when inactive</string>
+    <string name="shared_prefs_auto_lock_enabled_title">Auto lock</string>
     <string name="shared_prefs_auto_lock_time_key">edu.hm.cs.ig.passbutler.shared_prefs_auto_lock_time</string>
-    <string name="shared_prefs_auto_lock_time_title">Auto lock inactivity threshold (minutes)</string>
+    <string name="shared_prefs_auto_lock_time_title">Auto lock threshold (minutes)</string>
     <string name="shared_prefs_auto_lock_time_summary_default">Invalid time</string>
     <string name="shared_prefs_auto_lock_time_default">5</string>
 
