@@ -1,6 +1,5 @@
 package edu.hm.cs.ig.passbutler.data;
 
-import android.content.ContentValues;
 import android.content.Context;
 import android.os.Parcel;
 import android.os.Parcelable;
@@ -25,9 +24,9 @@ import java.util.Set;
 import javax.crypto.NoSuchPaddingException;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.SyncContentProviderUtil;
-import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 
 /**
  * Created by dennis on 15.11.17.
@@ -45,52 +44,11 @@ public class AccountListHandler implements Parcelable {
             this.accountListAsJson = new JSONObject();
             JSONObject accounts = new JSONObject();
             this.accountListAsJson.put(context.getString(R.string.json_key_account_list), accounts);
-
-
-
-
-
-
-            // TODO: Just for testing purposes
-            JSONObject amazon = new JSONObject();
-            amazon.put(context.getString(R.string.json_key_account_attribute_list), new JSONObject());
-            amazon.put(context.getString(R.string.json_key_account_last_modified), 1513031718890L);
-            accounts.put("AMAZON", amazon);
-
-            JSONObject google = new JSONObject();
-            google.put(context.getString(R.string.json_key_account_attribute_list), new JSONObject());
-            google.put(context.getString(R.string.json_key_account_last_modified), 1513031718890L);
-            accounts.put("GOOGLE", google);
-
-            JSONObject paypal = new JSONObject();
-            paypal.put(context.getString(R.string.json_key_account_attribute_list), new JSONObject());
-            paypal.put(context.getString(R.string.json_key_account_last_modified), 1513031718890L);
-            accounts.put("PayPal", paypal);
-
-            JSONObject battleNet = new JSONObject();
-            battleNet.put(context.getString(R.string.json_key_account_attribute_list), new JSONObject());
-            battleNet.put(context.getString(R.string.json_key_account_last_modified), 1513031718890L);
-            accounts.put("BattleNet", battleNet);
-
-
-
-
-
-
-
-            accountListAsJson.put(context.getString(R.string.json_key_account_list), accounts);
         }
         catch(JSONException e) {
-            // TODO Logging
+            Log.wtf(TAG, "Could not create new " + AccountListHandler.class.getSimpleName() + ".");
             throw new IllegalStateException("Inserting JSON test values for accounts failed.");
         }
-
-
-
-
-
-
-
     }
 
     public AccountListHandler(String accountListAsJson) throws JSONException

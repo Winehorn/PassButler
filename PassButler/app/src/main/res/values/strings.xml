@@ -66,6 +66,7 @@
     <string name="settings_menu_item_label">@string/settings_activity_label</string>
     <string name="default_account_name">Nameless account</string>
     <string name="delete_account_menu_item_label">Delete</string>
+    <string name="empty_account_list_comment">No accounts were created until now</string>
 
     <!-- AccountDetailActivity -->
     <string name="account_detail_activity_label">Nameless account</string>
@@ -79,6 +80,7 @@
     <string name="delete_attribute_menu_item_label">Delete</string>
     <string name="last_modified_identifier_text_view_label">Last modified:</string>
     <string name="default_last_modified_date">Default date</string>
+    <string name="empty_attribute_list_comment">No attributes were created until now</string>
 
     <!-- PasswordGeneratorActivity -->
     <string name="password_generator_activity_label">Password generator</string>

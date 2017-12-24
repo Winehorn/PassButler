@@ -8,12 +8,26 @@
     tools:context="edu.hm.cs.ig.passbutler.account_list.AccountListActivity"
     android:background="@color/background">
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/account_list_recycler_view"
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:clipToPadding="false"
-        android:paddingBottom="8dp"/>
+        android:background="@color/background">
+
+        <TextView
+            android:id="@+id/empty_account_list_comment_text_view"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:text="@string/empty_account_list_comment"/>
+
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/account_list_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:clipToPadding="false"
+            android:paddingBottom="8dp"/>
+
+    </FrameLayout>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/add_account_fab"

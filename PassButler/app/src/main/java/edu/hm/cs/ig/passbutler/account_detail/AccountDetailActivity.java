@@ -12,13 +12,12 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.text.InputType;
 import android.util.Log;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import org.json.JSONException;
@@ -44,6 +43,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
     private boolean createNewAccountItem;
     private AccountItemHandler accountItemHandler;
     private RecyclerView recyclerView;
+    private TextView emptyAttributeListCommentTextView;
     private AccountDetailAdapter accountDetailAdapter;
     private BroadcastFileObserver broadcastFileObserver;
 
@@ -65,6 +65,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                 getString(R.string.bundle_key_create_new_account_item),
                 getResources().getBoolean(R.bool.intent_extras_default_value_create_new_account_item));
         setTitle(accountName);
+        emptyAttributeListCommentTextView = findViewById(R.id.empty_attribute_list_comment_text_view);
 
         // Build up recycler view.
         recyclerView = findViewById(R.id.account_detail_recycler_view);
@@ -94,29 +95,9 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
     }
 
     @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.account_detail_action_bar_menu, menu);
-        return true;
-    }
-
-    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == android.R.id.home) {
-            finish();
-            return true;
-        }
-        else if(id == R.id.save_changes_menu_item) {
-            accountListHandler.addAccount(
-                    this,
-                    null,
-                    accountItemHandler,
-                    true,
-                    getString(R.string.accounts_file_path),
-                    new Date(),
-                    KeyHolder.getInstance().getKey(),
-                    true);
             finish();
             return true;
         }
@@ -178,7 +159,18 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                                 dialog.dismiss();
                                 String key = keyInput.getText().toString();
                                 String value = valueInput.getText().toString();
-                                if(!accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
+                                if(accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
+                                    accountListHandler.addAccount(
+                                            AccountDetailActivity.this,
+                                            null,
+                                            accountItemHandler,
+                                            true,
+                                            getString(R.string.accounts_file_path),
+                                            new Date(),
+                                            KeyHolder.getInstance().getKey(),
+                                            true);
+                                }
+                                else {
                                     Toast.makeText(
                                             AccountDetailActivity.this,
                                             AccountDetailActivity.this.getString(R.string.add_attribute_error_msg),
@@ -198,7 +190,18 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                     }
                     else {
                         dialog.dismiss();
-                        if(!accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
+                        if(accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
+                            accountListHandler.addAccount(
+                                    AccountDetailActivity.this,
+                                    null,
+                                    accountItemHandler,
+                                    true,
+                                    getString(R.string.accounts_file_path),
+                                    new Date(),
+                                    KeyHolder.getInstance().getKey(),
+                                    true);
+                        }
+                        else {
                             Toast.makeText(
                                     AccountDetailActivity.this,
                                     AccountDetailActivity.this.getString(R.string.add_attribute_error_msg),
@@ -245,6 +248,15 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                                 accountDetailAdapter,
                                 attributeKey,
                                 new Date());
+                        accountListHandler.addAccount(
+                                AccountDetailActivity.this,
+                                null,
+                                accountItemHandler,
+                                true,
+                                getString(R.string.accounts_file_path),
+                                new Date(),
+                                KeyHolder.getInstance().getKey(),
+                                true);
                     }
                 });
                 builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {
@@ -293,7 +305,18 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                             Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    if(!accountItemHandler.changeAttributeValue(AccountDetailActivity.this, accountDetailAdapter, attributeKey, newAttributeValue, new Date())) {
+                    if(accountItemHandler.changeAttributeValue(AccountDetailActivity.this, accountDetailAdapter, attributeKey, newAttributeValue, new Date())) {
+                        accountListHandler.addAccount(
+                                AccountDetailActivity.this,
+                                null,
+                                accountItemHandler,
+                                true,
+                                getString(R.string.accounts_file_path),
+                                new Date(),
+                                KeyHolder.getInstance().getKey(),
+                                true);
+                    }
+                    else {
                         Toast.makeText(
                                 AccountDetailActivity.this,
                                 AccountDetailActivity.this.getString(R.string.edit_attribute_error_msg),
@@ -311,6 +334,15 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
 
         // Show the dialog.
         builder.show();
+    }
+
+    private void showEmptyAttributeListComment() {
+        if(accountDetailAdapter.getItemCount() > 0) {
+            emptyAttributeListCommentTextView.setVisibility(View.INVISIBLE);
+        }
+        else {
+            emptyAttributeListCommentTextView.setVisibility(View.VISIBLE);
+        }
     }
 
     @Override
@@ -345,6 +377,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
             finish();
         }
         accountDetailAdapter.setAccountItemHandler(accountItemHandler);
+        showEmptyAttributeListComment();
     }
 
     @Override

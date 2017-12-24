@@ -16,6 +16,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Date;
@@ -33,6 +34,7 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
 
     private static final String TAG = AccountListActivity.class.getName();
     private RecyclerView recyclerView;
+    private TextView emptyAccountListCommentTextView;
     private AccountListAdapter accountListAdapter;
     private AccountListHandler accountListHandler;
     private BroadcastFileObserver broadcastFileObserver;
@@ -48,6 +50,7 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
 
         // Build up recycler view.
         recyclerView = findViewById(R.id.account_list_recycler_view);
+        emptyAccountListCommentTextView = findViewById(R.id.empty_account_list_comment_text_view);
         LinearLayoutManager linearLayoutManager = new LinearLayoutManager(
                 this,
                 LinearLayoutManager.VERTICAL,
@@ -226,6 +229,15 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
         }
     }
 
+    private void showEmptyAccountListComment() {
+        if(accountListAdapter.getItemCount() > 0) {
+            emptyAccountListCommentTextView.setVisibility(View.INVISIBLE);
+        }
+        else {
+            emptyAccountListCommentTextView.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public Loader<AccountListHandler> onCreateLoader(int id, Bundle args) {
         if(id == getResources().getInteger(R.integer.account_list_handler_loader_id)) {
@@ -242,6 +254,7 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
         Log.i(TAG, "Processing data of finished loader.");
         accountListAdapter.setAccountListHandler(data);
         accountListHandler = data;
+        showEmptyAccountListComment();
     }
 
     @Override
