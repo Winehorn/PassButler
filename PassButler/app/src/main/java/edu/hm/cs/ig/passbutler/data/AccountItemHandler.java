@@ -248,7 +248,5 @@ public class AccountItemHandler {
 
         Log.i(TAG, "Merge of account completed. Changes have been made: " + somethingChanged + ".");
         return somethingChanged;
-
-        // TODO: testen
     }
 }

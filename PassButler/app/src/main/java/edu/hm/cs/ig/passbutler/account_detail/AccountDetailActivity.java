@@ -43,7 +43,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
     private boolean createNewAccountItem;
     private AccountItemHandler accountItemHandler;
     private RecyclerView recyclerView;
-    private TextView emptyAttributeListCommentTextView;
+    private TextView emptyAttributeListMessageTextView;
     private AccountDetailAdapter accountDetailAdapter;
     private BroadcastFileObserver broadcastFileObserver;
 
@@ -65,7 +65,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                 getString(R.string.bundle_key_create_new_account_item),
                 getResources().getBoolean(R.bool.intent_extras_default_value_create_new_account_item));
         setTitle(accountName);
-        emptyAttributeListCommentTextView = findViewById(R.id.empty_attribute_list_comment_text_view);
+        emptyAttributeListMessageTextView = findViewById(R.id.empty_attribute_list_message_text_view);
 
         // Build up recycler view.
         recyclerView = findViewById(R.id.account_detail_recycler_view);
@@ -90,8 +90,6 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                 FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_path)),
                 FileObserver.MODIFY);
         broadcastFileObserver.startWatching();
-
-        // TODO: Show loading indicator until loader has finished loading attributes
     }
 
     @Override
@@ -336,12 +334,12 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
         builder.show();
     }
 
-    private void showEmptyAttributeListComment() {
+    private void showEmptyAttributeListMessage() {
         if(accountDetailAdapter.getItemCount() > 0) {
-            emptyAttributeListCommentTextView.setVisibility(View.INVISIBLE);
+            emptyAttributeListMessageTextView.setVisibility(View.INVISIBLE);
         }
         else {
-            emptyAttributeListCommentTextView.setVisibility(View.VISIBLE);
+            emptyAttributeListMessageTextView.setVisibility(View.VISIBLE);
         }
     }
 
@@ -377,7 +375,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
             finish();
         }
         accountDetailAdapter.setAccountItemHandler(accountItemHandler);
-        showEmptyAttributeListComment();
+        showEmptyAttributeListMessage();
     }
 
     @Override

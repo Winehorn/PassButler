@@ -309,8 +309,6 @@ public class AccountListHandler implements Parcelable {
 
         Log.i(TAG, "Merge of account list completed. Changes have been made: " + somethingChanged + ".");
         return somethingChanged;
-
-        // TODO: testen
     }
 
     @Override
