@@ -16,8 +16,8 @@ import edu.hm.cs.ig.passbutler.security.AutoLocker;
 public class PostAuthActivity extends PassButlerBaseActivity {
 
     @Override
-    public void onCreate(@Nullable Bundle savedInstanceState, @Nullable PersistableBundle persistentState) {
-        super.onCreate(savedInstanceState, persistentState);
+    protected void onCreate(@Nullable Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
     }
 
     @Override
