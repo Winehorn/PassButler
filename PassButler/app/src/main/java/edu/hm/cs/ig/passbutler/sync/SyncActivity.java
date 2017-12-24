@@ -71,8 +71,6 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
                 getResources().getInteger(R.integer.bluetooth_sync_device_loader_id),
                 null,
                 this);
-
-        // TODO: Display loading indicator until loader has finished.
     }
 
     @Override

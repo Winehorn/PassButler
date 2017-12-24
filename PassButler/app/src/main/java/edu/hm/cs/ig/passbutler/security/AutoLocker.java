@@ -67,12 +67,6 @@ public class AutoLocker {
 
     private void onFinish() {
         Log.i(TAG, "Auto lock countdown has expired.");
-        try {
-            KeyHolder.getInstance().clearKey(context);
-        } catch (DestroyFailedException e) {
-            Log.e(TAG, "Could not clear key after auto lock.");
-            Toast.makeText(context, context.getString(R.string.destroy_failed_error_msg), Toast.LENGTH_SHORT).show();
-        }
 
         // TODO: clear backstack
 

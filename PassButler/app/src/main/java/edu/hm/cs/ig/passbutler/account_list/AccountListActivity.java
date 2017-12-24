@@ -93,7 +93,6 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
         int id = item.getItemId();
         if (id == android.R.id.home || id == R.id.lock_menu_item) {
             NavigationUtil.goToUnlockActivity(this);
-            // TODO: Remove saved decryption key (aka lock PassButler again). Better with an own Button?
             return true;
         }
         else if(id == R.id.password_generator_menu_item) {

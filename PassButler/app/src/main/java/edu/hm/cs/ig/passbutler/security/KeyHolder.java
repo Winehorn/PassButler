@@ -2,6 +2,7 @@ package edu.hm.cs.ig.passbutler.security;
 
 import android.content.Context;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.lang.reflect.Field;
 import java.security.Key;
@@ -44,7 +45,7 @@ public class KeyHolder {
         throw new IllegalStateException("The " + KeyHolder.class.getSimpleName() + " must always contain a key when one is requested.");
     }
 
-    public void clearKey(Context context) throws DestroyFailedException {
+    public void clearKey(Context context) {
         Log.i(TAG, "Clearing key from " + KeyHolder.class.getSimpleName() + ".");
         if(key != null) {
             /*
@@ -62,12 +63,12 @@ public class KeyHolder {
                     ArrayUtil.clear(internalKeyField);
                 } catch(NoSuchFieldException | IllegalAccessException e) {
                     Log.e(TAG, "Could not get internal key field of " + SecretKeySpec.class.getSimpleName() + ". The clearing of the key failed.");
-                    throw new DestroyFailedException("The clearing of the key failed.");
+                    Toast.makeText(context, context.getString(R.string.destroy_failed_error_msg), Toast.LENGTH_SHORT).show();
                 }
             }
             else {
                 Log.e(TAG, "The type of the key to clear is unknown.");
-                throw new DestroyFailedException("The type of the key must be known.");
+                Toast.makeText(context, context.getString(R.string.destroy_failed_error_msg), Toast.LENGTH_SHORT).show();
             }
         }
         else {

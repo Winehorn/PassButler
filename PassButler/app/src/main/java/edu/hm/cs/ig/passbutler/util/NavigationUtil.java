@@ -14,6 +14,7 @@ import edu.hm.cs.ig.passbutler.entry.CreatePersistenceActivity;
 import edu.hm.cs.ig.passbutler.entry.UnlockActivity;
 import edu.hm.cs.ig.passbutler.password.PasswordGeneratorActivity;
 import edu.hm.cs.ig.passbutler.security.AutoLocker;
+import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.settings.SettingsActivity;
 import edu.hm.cs.ig.passbutler.sync.SyncActivity;
 
@@ -27,6 +28,8 @@ public class NavigationUtil {
 
     public static void goToHomeScreen(Context context) {
         Log.i(TAG, "Navigating to home screen.");
+        AutoLocker.getInstance().cancel();
+        KeyHolder.getInstance().clearKey(context);
         Intent intent = new Intent(Intent.ACTION_MAIN);
         intent.addCategory(Intent.CATEGORY_HOME);
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
@@ -34,12 +37,17 @@ public class NavigationUtil {
     }
 
     public static void goToLogoActivity(Context context) {
+        Log.i(TAG, "Navigating to " + LogoActivity.class.getSimpleName() + ".");
+        AutoLocker.getInstance().cancel();
+        KeyHolder.getInstance().clearKey(context);
         Intent intent = new Intent(context, LogoActivity.class);
         context.startActivity(intent);
     }
 
     public static void goToCreatePersistenceActivity(Context context) {
         Log.i(TAG, "Navigating to " + CreatePersistenceActivity.class.getSimpleName() + ".");
+        AutoLocker.getInstance().cancel();
+        KeyHolder.getInstance().clearKey(context);
         Intent intent = new Intent(context, CreatePersistenceActivity.class);
         context.startActivity(intent);
     }
@@ -47,6 +55,7 @@ public class NavigationUtil {
     public static void goToUnlockActivity(Context context) {
         Log.i(TAG, "Navigating to " + UnlockActivity.class.getSimpleName() + ".");
         AutoLocker.getInstance().cancel();
+        KeyHolder.getInstance().clearKey(context);
         Intent intent = new Intent(context, UnlockActivity.class);
         context.startActivity(intent);
     }
