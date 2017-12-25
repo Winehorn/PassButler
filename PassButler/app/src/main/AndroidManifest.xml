@@ -20,7 +20,9 @@
             android:name=".entry.LogoActivity"
             android:label="@string/logo_activity_label"
             android:theme="@style/AppThemeWithoutActionBar"
-            android:launchMode="singleTop">
+            android:launchMode="singleTop"
+            android:configChanges="orientation"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
