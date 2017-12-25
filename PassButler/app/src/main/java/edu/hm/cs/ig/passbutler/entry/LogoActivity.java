@@ -2,17 +2,17 @@ package edu.hm.cs.ig.passbutler.entry;
 
 import android.graphics.Typeface;
 import android.os.Bundle;
+import android.os.FileObserver;
 import android.os.Handler;
 import android.util.Log;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.gui.PreAuthActivity;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 import edu.hm.cs.ig.passbutler.util.ServiceUtil;
-import edu.hm.cs.ig.passbutler.util.SyncContentProviderUtil;
 
 public class LogoActivity extends PreAuthActivity {
 
@@ -44,6 +44,11 @@ public class LogoActivity extends PreAuthActivity {
         }, DELAY_IN_MILLIS);
 
         ServiceUtil.startSyncMergerService(getApplicationContext());
+        BroadcastFileObserver.init(
+                getApplicationContext(),
+                getString(R.string.account_list_handler_loader_reload_action),
+                FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_path)),
+                FileObserver.MODIFY);
     }
 
     @Override

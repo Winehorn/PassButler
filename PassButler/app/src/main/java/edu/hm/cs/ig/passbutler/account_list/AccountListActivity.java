@@ -2,7 +2,6 @@ package edu.hm.cs.ig.passbutler.account_list;
 
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.os.FileObserver;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.Loader;
 import android.support.v7.app.ActionBar;
@@ -27,7 +26,6 @@ import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
-import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 public class AccountListActivity extends PostAuthActivity implements AccountListAdapterOnClickHandler, AccountListAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
@@ -37,7 +35,6 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
     private TextView emptyAccountListMessageTextView;
     private AccountListAdapter accountListAdapter;
     private AccountListHandler accountListHandler;
-    private BroadcastFileObserver broadcastFileObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,12 +65,7 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
                 getResources().getInteger(R.integer.account_list_handler_loader_id),
                 null,
                 this);
-        broadcastFileObserver = new BroadcastFileObserver(
-                getApplicationContext(),
-                getString(R.string.account_list_handler_loader_reload_action),
-                FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_path)),
-                FileObserver.MODIFY);
-        broadcastFileObserver.startWatching();
+        BroadcastFileObserver.getInstance().startWatching();
     }
 
     @Override
