@@ -31,6 +31,7 @@
     <string name="shared_prefs_auto_lock_time_title">Auto lock threshold (minutes)</string>
     <string name="shared_prefs_auto_lock_time_summary_default">Invalid time</string>
     <string name="shared_prefs_auto_lock_time_default">5</string>
+    <string name="shared_prefs_auto_sync_enabled_key">edu.hm.cs.ig.passbutler.shared_prefs_auto_sync_enabled</string>
 
     <!-- Accounts file (JSON) -->
     <string name="accounts_file_path">accounts</string>

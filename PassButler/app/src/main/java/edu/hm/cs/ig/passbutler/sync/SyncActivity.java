@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -30,6 +31,7 @@ import java.util.Set;
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.SyncContract;
 import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
+import edu.hm.cs.ig.passbutler.util.PreferencesUtil;
 import edu.hm.cs.ig.passbutler.util.ServiceUtil;
 
 public class SyncActivity extends PostAuthActivity implements LoaderManager.LoaderCallbacks<Cursor>, BluetoothSyncDeviceAdapterOnMenuItemClickHandler {
@@ -45,8 +47,14 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync);
-
         bluetoothSyncSwitch = findViewById(R.id.bluetooth_sync_switch);
+        bluetoothSyncSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                onBluetoothSyncSwitchChange(isChecked);
+            }
+        });
+        bluetoothSyncSwitch.setChecked(PreferencesUtil.getAutoSyncEnabled(this));
         emptySyncDeviceListMessageTextView = findViewById(R.id.empty_sync_device_list_message_text_view);
         ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
@@ -124,10 +132,8 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
         openBluetoothSettings();
     }
 
-    public void bluetoothSyncSwitchOnClick(View view) {
-        // TODO: Wird switch state bei erzeugen neuer activity auf default gesetzt?
-
-        if(bluetoothSyncSwitch.isChecked()) {
+    public void onBluetoothSyncSwitchChange(boolean isChecked) {
+        if(isChecked) {
             ServiceUtil.startSyncReceiverService(this);
             ServiceUtil.startSyncSenderService(this);
         }
@@ -135,6 +141,7 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
             ServiceUtil.cancelSyncReceiverService(this);
             ServiceUtil.cancelSyncSenderService(this);
         }
+        PreferencesUtil.setAutoSyncEnabled(this, isChecked);
     }
 
     public void addBluetoothSyncDeviceFabOnClick(View view) {

@@ -37,8 +37,7 @@
             style="@style/TextAppearance.AppCompat.Medium"
             android:text="@string/bluetooth_sync_switch_label"
             android:textOn="@string/bluetooth_sync_switch_on_text"
-            android:textOff="@string/bluetooth_sync_switch_off_text"
-            android:onClick="bluetoothSyncSwitchOnClick" />
+            android:textOff="@string/bluetooth_sync_switch_off_text" />
 
         <Button
             android:layout_width="match_parent"

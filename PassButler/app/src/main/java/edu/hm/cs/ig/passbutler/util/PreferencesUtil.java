@@ -20,11 +20,24 @@ public class PreferencesUtil {
             editor.putString(context.getString(
                     R.string.shared_prefs_uuid_key),
                     UUID.randomUUID().toString());
-            editor.commit();
+            editor.apply();
         }
         UUID uuid = UUID.fromString(prefs.getString(
                 context.getString(R.string.shared_prefs_uuid_key),
                 null));
         return uuid;
+    }
+
+    public static boolean getAutoSyncEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                context.getString(R.string.shared_prefs_auto_sync_enabled_key),
+                context.getResources().getBoolean(R.bool.shared_prefs_auto_sync_enabled_default));
+    }
+
+    public static void setAutoSyncEnabled(Context context, boolean newIsEnabled) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(context.getString(R.string.shared_prefs_auto_sync_enabled_key), newIsEnabled);
+        editor.apply();
     }
 }
