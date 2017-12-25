@@ -101,14 +101,15 @@
     <string name="device_name_key">device_name</string>
     <string name="device_hardware_address_key">device_hardware_address</string>
     <string name="delete_bluetooth_sync_device">Delete</string>
-    <string name="default_bluetooth_sync_device_id">Default ID</string>
     <string name="default_bluetooth_sync_device_name">Default name</string>
     <string name="default_bluetooth_sync_device_hardware_address">Default hardware address</string>
     <string name="pair_devices_button_label">Pair devices</string>
-    <string name="bluetooth_sync_switch_label">Bluetooth synchronization</string>
+    <string name="bluetooth_sync_switch_label">Automatic synchronization</string>
     <string name="bluetooth_sync_switch_on_text">Activated</string>
     <string name="bluetooth_sync_switch_off_text">Deactivated</string>
     <string name="sync_now_button_label">Sync now</string>
+    <string name="bluetooth_pairing_advice">NOTE: You must pair your devices via Bluetooth before you can add them to the list of sync devices.</string>
+    <string name="empty_sync_device_list_message">No sync devices were added until now</string>
 
     <!-- BackupActivity -->
     <string name="backup_activity_label">Backup</string>

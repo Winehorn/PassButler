@@ -31,7 +31,8 @@ import edu.hm.cs.ig.passbutler.util.SqlUtil;
 
 public class BluetoothSyncSender {
 
-    public static final String TAG = BluetoothSyncSender.class.getName();
+    private static final String TAG = BluetoothSyncSender.class.getName();
+    private static Object sharedLock = new Object();
     private Context context;
     private ContentResolver contentResolver;
     private List<String> filesToSync;
@@ -55,20 +56,22 @@ public class BluetoothSyncSender {
     }
 
     public void syncAllDevices() {
-        Log.i(TAG, "Starting synchronization to all available devices.");
-        Set<BluetoothDevice> syncDevices = getSyncDevices();
-        for (BluetoothDevice syncDevice : syncDevices) {
-            if(syncSingleDevice(syncDevice)) {
-                Log.i(TAG, "Successfully synced to device with hardware address " + syncDevice.getAddress() + ".");
+        synchronized(sharedLock) {
+            Log.i(TAG, "Starting synchronization to all available devices.");
+            Set<BluetoothDevice> syncDevices = getSyncDevices();
+            for (BluetoothDevice syncDevice : syncDevices) {
+                if(syncSingleDevice(syncDevice)) {
+                    Log.i(TAG, "Successfully synced to device with hardware address " + syncDevice.getAddress() + ".");
+                }
+                else {
+                    Log.i(TAG, "Failed to sync to device with hardware address " + syncDevice.getAddress() + ".");
+                }
             }
-            else {
-                Log.i(TAG, "Failed to sync to device with hardware address " + syncDevice.getAddress() + ".");
-            }
+            Log.i(TAG, "Synchronization of all available devices finished.");
         }
-        Log.i(TAG, "Synchronization of all available devices finished.");
     }
 
-    public boolean syncSingleDevice(BluetoothDevice syncDevice) {
+    public synchronized boolean syncSingleDevice(BluetoothDevice syncDevice) {
         String hardwareAddress = syncDevice.getAddress();
         Log.i(TAG, "Starting synchronization to device with hardware address " + hardwareAddress + ".");
 

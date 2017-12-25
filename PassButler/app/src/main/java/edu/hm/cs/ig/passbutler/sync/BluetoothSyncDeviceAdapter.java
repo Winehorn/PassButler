@@ -50,7 +50,7 @@ public class BluetoothSyncDeviceAdapter extends RecyclerView.Adapter<BluetoothSy
         final int id = cursor.getInt(idIndex);
         final String deviceName = cursor.getString(deviceNameIndex);
         final String deviceHardwareAddress = cursor.getString(deviceHardwareAddressIndex);
-        holder.idTextView.setText(String.valueOf(id));
+        holder.setDeviceId(String.valueOf(id));
         holder.deviceNameTextView.setText(deviceName);
         holder.deviceHardwareAddressTextView.setText(deviceHardwareAddress);
     }
@@ -70,18 +70,25 @@ public class BluetoothSyncDeviceAdapter extends RecyclerView.Adapter<BluetoothSy
 
     class BluetoothSyncDeviceViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
-        public final TextView idTextView;
+        private String deviceId;
         public final TextView deviceNameTextView;
         public final TextView deviceHardwareAddressTextView;
 
         public BluetoothSyncDeviceViewHolder(View view) {
             super(view);
-            idTextView = view.findViewById(R.id.bluetooth_sync_device_text_view);
             deviceNameTextView = view.findViewById(R.id.bluetooth_sync_device_name_text_view);
             deviceHardwareAddressTextView = view.findViewById(R.id.bluetooth_sync_device_hardware_address_text_view);
             ImageButton imageButton = view.findViewById(R.id.bluetooth_sync_device_image_button);
             imageButton.setOnClickListener(this);
             view.setOnClickListener(this);
+        }
+
+        public void setDeviceId(String newDeviceId) {
+            this.deviceId = newDeviceId;
+        }
+
+        public String getDeviceId() {
+            return this.deviceId;
         }
 
         @Override
@@ -96,7 +103,7 @@ public class BluetoothSyncDeviceAdapter extends RecyclerView.Adapter<BluetoothSy
 
         @Override
         public boolean onMenuItemClick(MenuItem item) {
-            return menuItemClickHandler.onMenuItemClick(item, idTextView.getText().toString());
+            return menuItemClickHandler.onMenuItemClick(item, this.deviceId);
         }
     }
 }

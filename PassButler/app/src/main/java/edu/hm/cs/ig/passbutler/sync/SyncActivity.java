@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v4.app.LoaderManager;
@@ -21,6 +22,7 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Switch;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.Set;
@@ -34,6 +36,7 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
 
     public static final String TAG = SyncActivity.class.getName();
     private Switch bluetoothSyncSwitch;
+    private TextView emptySyncDeviceListMessageTextView;
     private RecyclerView recyclerView;
     private BluetoothSyncDeviceAdapter bluetoothSyncDeviceAdapter;
     BluetoothAdapter bluetoothAdapter;
@@ -44,6 +47,7 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
         setContentView(R.layout.activity_sync);
 
         bluetoothSyncSwitch = findViewById(R.id.bluetooth_sync_switch);
+        emptySyncDeviceListMessageTextView = findViewById(R.id.empty_sync_device_list_message_text_view);
         ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
             actionBar.setDisplayHomeAsUpEnabled(true);
@@ -105,10 +109,15 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
     }
 
     public void syncNowButtonOnClick(View view) {
-        //new BluetoothSyncSenderJobService.BluetoothSyncSenderAsyncTask(getApplicationContext(), null).execute();
-
-        // TODO: Remove
-        Toast.makeText(this, "Sync try", Toast.LENGTH_LONG).show();
+        Log.i(TAG, "Started manual synchronization of all devices.");
+        new AsyncTask<Void, Void, Void>() {
+            @Override
+            protected Void doInBackground(Void... voids) {
+                new BluetoothSyncSender(getApplicationContext(),
+                        getString(R.string.accounts_file_path)).syncAllDevices();
+                return null;
+            }
+        }.execute();
     }
 
     public void pairDevicesButtonOnClick(View view) {
@@ -240,6 +249,15 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
         }
     }
 
+    private void showEmptySyncDeviceListMessage() {
+        if(bluetoothSyncDeviceAdapter.getItemCount() > 0) {
+            emptySyncDeviceListMessageTextView.setVisibility(View.INVISIBLE);
+        }
+        else {
+            emptySyncDeviceListMessageTextView.setVisibility(View.VISIBLE);
+        }
+    }
+
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         if(id == getResources().getInteger(R.integer.bluetooth_sync_device_loader_id)) {
@@ -261,6 +279,7 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
     public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
         Log.i(TAG, "Processing data of finished loader.");
         bluetoothSyncDeviceAdapter.setCursor(data);
+        showEmptySyncDeviceListMessage();
     }
 
     @Override

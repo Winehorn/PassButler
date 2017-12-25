@@ -1,59 +1,106 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="edu.hm.cs.ig.passbutler.sync.SyncActivity"
-    android:background="@color/background"
-    android:orientation="vertical">
+    android:background="@color/background">
 
-    <Switch
-        android:id="@+id/bluetooth_sync_switch"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:checked="false"
-        android:text="@string/bluetooth_sync_switch_label"
-        android:textOn="@string/bluetooth_sync_switch_on_text"
-        android:textOff="@string/bluetooth_sync_switch_off_text"
-        android:onClick="bluetoothSyncSwitchOnClick" />
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/sync_now_button_label"
-        android:onClick="syncNowButtonOnClick"/>
-
-    <Button
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="@string/pair_devices_button_label"
-        android:onClick="pairDevicesButtonOnClick"/>
-
-    <android.support.design.widget.CoordinatorLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:background="@color/background">
+        android:layout_marginTop="8dp"
+        android:layout_marginBottom="8dp"
+        android:background="@color/background"
+        android:orientation="vertical">
 
-        <android.support.v7.widget.RecyclerView
-            android:id="@+id/bluetooth_sync_devices_recycler_view"
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="88dp"
+            android:layout_marginRight="88dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/sync_now_button_label"
+            android:onClick="syncNowButtonOnClick"/>
+
+        <Switch
+            android:id="@+id/bluetooth_sync_switch"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="8dp"
+            android:checked="false"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:text="@string/bluetooth_sync_switch_label"
+            android:textOn="@string/bluetooth_sync_switch_on_text"
+            android:textOff="@string/bluetooth_sync_switch_off_text"
+            android:onClick="bluetoothSyncSwitchOnClick" />
+
+        <Button
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="88dp"
+            android:layout_marginRight="88dp"
+            android:layout_marginBottom="8dp"
+            android:text="@string/pair_devices_button_label"
+            android:onClick="pairDevicesButtonOnClick"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="24dp"
+            android:layout_marginRight="24dp"
+            android:layout_marginBottom="8dp"
+            style="@style/TextAppearance.AppCompat.Medium"
+            android:text="@string/bluetooth_pairing_advice"/>
+
+        <android.support.design.widget.CoordinatorLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:clipToPadding="false"
-            android:paddingBottom="8dp"/>
+            android:layout_marginLeft="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginRight="8dp"
+            android:background="@color/background_dark">
 
-        <android.support.design.widget.FloatingActionButton
-            android:id="@+id/add_bluetooth_sync_device_fab"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            app:layout_anchor="@id/bluetooth_sync_devices_recycler_view"
-            app:layout_anchorGravity="bottom|right|end"
-            android:layout_margin="16dp"
-            app:fabSize="normal"
-            android:src="@drawable/ic_action_add"
-            android:onClick="addBluetoothSyncDeviceFabOnClick"/>
+            <FrameLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:background="@color/background_dark">
 
-    </android.support.design.widget.CoordinatorLayout>
+                <TextView
+                    android:id="@+id/empty_sync_device_list_message_text_view"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:textAppearance="@style/TextAppearance.AppCompat.Medium"
+                    android:text="@string/empty_sync_device_list_message"/>
 
-</LinearLayout>
+                <android.support.v7.widget.RecyclerView
+                    android:id="@+id/bluetooth_sync_devices_recycler_view"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:clipToPadding="false"
+                    android:paddingBottom="8dp"/>
+
+            </FrameLayout>
+
+            <android.support.design.widget.FloatingActionButton
+                android:id="@+id/add_bluetooth_sync_device_fab"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                app:layout_anchor="@id/bluetooth_sync_devices_recycler_view"
+                app:layout_anchorGravity="bottom|right|end"
+                android:layout_margin="16dp"
+                app:fabSize="normal"
+                android:src="@drawable/ic_action_add"
+                android:onClick="addBluetoothSyncDeviceFabOnClick"/>
+
+        </android.support.design.widget.CoordinatorLayout>
+
+    </LinearLayout>
+
+</FrameLayout>

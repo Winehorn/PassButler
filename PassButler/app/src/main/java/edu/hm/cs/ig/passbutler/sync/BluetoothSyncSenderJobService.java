@@ -30,10 +30,6 @@ public class BluetoothSyncSenderJobService extends JobService {
     @Override
     public boolean onStartJob(JobParameters jobParams) {
         backgroundTask = new BluetoothSyncSenderAsyncTask(getApplicationContext(), jobParams);
-
-        // TODO: entfernen
-        Toast.makeText(this, "Sync try", Toast.LENGTH_LONG).show();
-
         backgroundTask.execute();
         return true;
     }

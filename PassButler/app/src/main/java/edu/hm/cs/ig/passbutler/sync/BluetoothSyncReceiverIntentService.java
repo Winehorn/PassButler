@@ -26,9 +26,6 @@ public class BluetoothSyncReceiverIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        // TODO: entfernen
-        Toast.makeText(this, "Listening", Toast.LENGTH_LONG).show();
-
         bluetoothSyncReceiver.continuousReceiveSync();
     }
 }

@@ -7,5 +7,5 @@ import android.view.MenuItem;
  */
 
 public interface BluetoothSyncDeviceAdapterOnMenuItemClickHandler {
-    boolean onMenuItemClick(MenuItem item, String deviceId);
+    boolean onMenuItemClick(MenuItem item, String deviceI);
 }

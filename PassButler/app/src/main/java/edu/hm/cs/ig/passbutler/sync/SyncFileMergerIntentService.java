@@ -28,9 +28,6 @@ public class SyncFileMergerIntentService extends IntentService {
 
     @Override
     protected void onHandleIntent(Intent intent) {
-        // TODO: entfernen
-        Toast.makeText(this, "Merger started", Toast.LENGTH_SHORT).show();
-
         ServiceUtil.notifyMergeAll(getApplicationContext());
         Looper.loop();
     }
