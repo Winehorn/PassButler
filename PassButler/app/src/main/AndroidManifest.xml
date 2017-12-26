@@ -20,7 +20,7 @@
             android:name=".entry.LogoActivity"
             android:label="@string/logo_activity_label"
             android:theme="@style/AppThemeWithoutActionBar"
-            android:launchMode="singleTop"
+            android:launchMode="singleTask"
             android:configChanges="orientation"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -32,12 +32,12 @@
         <activity
             android:name=".entry.CreatePersistenceActivity"
             android:label="@string/create_persistence_activity_label"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTask"></activity>
 
         <activity
             android:name=".entry.UnlockActivity"
             android:label="@string/unlock_activity_label"
-            android:launchMode="singleTop"></activity>
+            android:launchMode="singleTask"></activity>
 
         <activity
             android:name=".account_list.AccountListActivity"

@@ -67,9 +67,6 @@ public class AutoLocker {
 
     private void onFinish() {
         Log.i(TAG, "Auto lock countdown has expired.");
-
-        // TODO: clear backstack
-
         NavigationUtil.goToUnlockActivity(context);
     }
 }
