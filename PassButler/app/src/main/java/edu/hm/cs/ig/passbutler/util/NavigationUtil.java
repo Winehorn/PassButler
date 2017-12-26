@@ -1,9 +1,12 @@
 package edu.hm.cs.ig.passbutler.util;
 
+import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.preference.PreferenceManager;
 import android.util.Log;
+
+import java.util.List;
 
 import edu.hm.cs.ig.passbutler.backup.BackupActivity;
 import edu.hm.cs.ig.passbutler.entry.LogoActivity;
@@ -53,10 +56,15 @@ public class NavigationUtil {
     }
 
     public static void goToUnlockActivity(Context context) {
+        goToUnlockActivity(context, false);
+    }
+
+    public static void goToUnlockActivity(Context context, boolean moveToBackground) {
         Log.i(TAG, "Navigating to " + UnlockActivity.class.getSimpleName() + ".");
         AutoLocker.getInstance().cancel();
         KeyHolder.getInstance().clearKey(context);
         Intent intent = new Intent(context, UnlockActivity.class);
+        intent.putExtra(context.getString(R.string.bundle_key_move_task_to_back), moveToBackground);
         context.startActivity(intent);
     }
 
@@ -105,5 +113,21 @@ public class NavigationUtil {
         Log.i(TAG, "Navigating to " + SettingsActivity.class.getSimpleName() + ".");
         Intent intent = new Intent(context, SettingsActivity.class);
         context.startActivity(intent);
+    }
+
+    public static boolean isAppInForeground(Context context) {
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> appProcesses = activityManager.getRunningAppProcesses();
+        if (appProcesses == null) {
+            return false;
+        }
+        final String packageName = context.getPackageName();
+        for (ActivityManager.RunningAppProcessInfo appProcess : appProcesses) {
+            if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND
+                    && appProcess.processName.equals(packageName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }

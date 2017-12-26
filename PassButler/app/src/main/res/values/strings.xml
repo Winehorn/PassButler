@@ -9,6 +9,7 @@
     <string name="bundle_key_last_received_version_timestamp">last_received_version_timestamp</string>
     <string name="bundle_key_last_incorporated_version_timestamp">last_incorporated_version_timestamp</string>
     <string name="bundle_key_merge_date">merge_date</string>
+    <string name="bundle_key_move_task_to_back">move_task_to_back</string>
     <string name="account_list_handler_loader_reload_action">edu.hm.cs.ig.passbutler.reload</string>
     <string name="bluetooth_sync_channel_name">"passbutler_bluetooth_sync_channel"</string>
     <string name="bluetooth_sync_channel_uuid">"efac1942-6c97-4a9a-b13d-44511c226603"</string>

@@ -1,6 +1,7 @@
 package edu.hm.cs.ig.passbutler.security;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.CountDownTimer;
 import android.util.Log;
 import android.widget.Toast;
@@ -10,6 +11,7 @@ import java.util.concurrent.TimeUnit;
 import javax.security.auth.DestroyFailedException;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.entry.UnlockActivity;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 /**
@@ -67,6 +69,6 @@ public class AutoLocker {
 
     private void onFinish() {
         Log.i(TAG, "Auto lock countdown has expired.");
-        NavigationUtil.goToUnlockActivity(context);
+        NavigationUtil.goToUnlockActivity(context, !NavigationUtil.isAppInForeground(context));
     }
 }

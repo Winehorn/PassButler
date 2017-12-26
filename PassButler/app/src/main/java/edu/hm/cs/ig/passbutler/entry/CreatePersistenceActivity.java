@@ -117,6 +117,8 @@ public class CreatePersistenceActivity extends PreAuthActivity {
         else
         {
             createPersistence();
+            passwordEditText.getText().clear();
+            repeatPasswordEditText.getText().clear();
             NavigationUtil.goToAccountListActivity(this);
         }
     }

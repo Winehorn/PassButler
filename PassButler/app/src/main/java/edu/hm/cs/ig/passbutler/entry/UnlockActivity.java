@@ -128,6 +128,7 @@ public class UnlockActivity extends PreAuthActivity {
             return;
         }
         Log.i(TAG, "Correct password was entered.");
+        passwordEditText.getText().clear();
         NavigationUtil.goToAccountListActivity(this);
     }
 
@@ -180,9 +181,13 @@ public class UnlockActivity extends PreAuthActivity {
 
     @Override
     protected void onNewIntent(Intent intent) {
+        if(intent.hasExtra(getString(R.string.bundle_key_move_task_to_back))
+                && intent.getBooleanExtra(getString(R.string.bundle_key_move_task_to_back), false)) {
+            moveTaskToBack(true);
+        }
         Log.i("Foreground dispatch", "Discovered tag in activity " + TAG);
-
-        if(intent.getAction().equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
+        String action = intent.getAction();
+        if(action != null && action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
             if (tag != null) {
                 Ndef ndef = Ndef.get(tag);
@@ -206,9 +211,6 @@ public class UnlockActivity extends PreAuthActivity {
                     }
                 }
             }
-
-        } else {
-            Toast.makeText(this, "This is the wrong tag or it's corrupted!", Toast.LENGTH_LONG).show();
         }
     }
 }
