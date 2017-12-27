@@ -204,6 +204,10 @@ public class SyncFileMerger {
             Log.e(TAG, "Merge failed. Decryption key is not available.");
             return false;
         }
+        catch (JSONException e) {
+            Log.e(TAG, "Merge failed. Error while parsing JSON occurred.");
+            return false;
+        }
     }
 
     private boolean isMergeRequired(String filePath, String hardwareAddress, Date lastReceivedVersionTimestamp) {

@@ -258,7 +258,7 @@ public class AccountListHandler implements Parcelable {
             String accountsFilePath,
             AccountListHandler accountsToMerge,
             Date mergeDataVersion,
-            Date mergeDate) throws MissingKeyException {
+            Date mergeDate) throws MissingKeyException, JSONException {
         Log.i(TAG, "Starting to merge account list with existing data.");
         final List<AccountItemHandler> localAccounts = getAccounts(context);
         final Set<String> processedCommonAccounts = new HashSet<>();

@@ -88,7 +88,13 @@ public class AccountItemHandler {
         }
     }
 
-    public boolean addAttribute(Context context, RecyclerView.Adapter adapter, String attributeKey, String attributeValue, Date lastModified) {
+    public boolean addAttribute(
+            Context context,
+            RecyclerView.Adapter adapter,
+            String attributeKey,
+            String attributeValue,
+            Date lastModified,
+            boolean overrideAccountLastModified) {
         try {
             JSONObject attributes = accountItemAsJson.getJSONObject(context.getString(R.string.json_key_account_attribute_list));
             JSONObject newAttribute = new JSONObject();
@@ -98,7 +104,9 @@ public class AccountItemHandler {
             newAttribute.put(context.getString(R.string.json_key_account_attribute_value), encryptedAttributeValue);
             newAttribute.put(context.getString(R.string.json_key_account_attribute_last_modified), encryptedLastModified);
             attributes.put(attributeKey, newAttribute);
-            setLastModified(context, lastModified);
+            if(overrideAccountLastModified) {
+                setLastModified(context, lastModified);
+            }
             if(adapter != null) {
                 adapter.notifyDataSetChanged();
             }
@@ -114,11 +122,18 @@ public class AccountItemHandler {
         return true;
     }
 
-    public boolean removeAttribute(Context context, RecyclerView.Adapter adapter, String attributeKey, Date lastModified) {
+    public boolean removeAttribute(
+            Context context,
+            RecyclerView.Adapter adapter,
+            String attributeKey,
+            Date lastModified,
+            boolean overrideAccountLastModified) {
         try {
             JSONObject attributes = accountItemAsJson.getJSONObject(context.getString(R.string.json_key_account_attribute_list));
             attributes.remove(attributeKey);
-            setLastModified(context, lastModified);
+            if(overrideAccountLastModified) {
+                setLastModified(context, lastModified);
+            }
             if(adapter != null) {
                 adapter.notifyDataSetChanged();
             }
@@ -135,8 +150,9 @@ public class AccountItemHandler {
             RecyclerView.Adapter adapter,
             String attributeKey,
             String newAttributeValue,
-            Date lastModified) {
-        return addAttribute(context, adapter, attributeKey, newAttributeValue, lastModified);
+            Date lastModified,
+            boolean overrideAccountLastModified) {
+        return addAttribute(context, adapter, attributeKey, newAttributeValue, lastModified, overrideAccountLastModified);
     }
 
     public Iterator<String> getAttributeKeys(Context context) {
@@ -163,32 +179,48 @@ public class AccountItemHandler {
     }
 
     public String getAttributeValue(Context context, String attributeKey) throws MissingKeyException {
-        String encryptedAttributeValue =  getAttributeProperty(
+        return getDecryptedAttributeStringProperty(
                 context,
                 attributeKey,
                 context.getString(R.string.json_key_account_attribute_value));
-        Key decryptionKey = null;
-        decryptionKey = KeyHolder.getInstance().getKey();
-        return CryptoUtil.decryptToString(
-                encryptedAttributeValue,
-                decryptionKey,
-                context.getString(R.string.encryption_alg));
     }
 
     public Date getAttributeLastModified(Context context, String attributeKey) throws MissingKeyException {
-        String encryptedLastModified =  getAttributeProperty(
+        return getDecryptedAttributeDateProperty(
                 context,
                 attributeKey,
                 context.getString(R.string.json_key_account_attribute_last_modified));
-        Key decryptionKey = null;
-        decryptionKey = KeyHolder.getInstance().getKey();
-        return new Date(CryptoUtil.decryptToLong(
-                encryptedLastModified,
-                decryptionKey,
-                context.getString(R.string.encryption_alg)));
     }
 
-    private String getAttributeProperty(Context context, String attributeKey, String attributePropertyKey) {
+    private String getDecryptedAttributeStringProperty(Context context, String attributeKey, String attributePropertyKey) throws MissingKeyException {
+        String encryptedStringProperty = getEncryptedAttributeProperty(
+                context,
+                attributeKey,
+                attributePropertyKey);
+        if(encryptedStringProperty != null) {
+            return CryptoUtil.decryptToString(
+                    encryptedStringProperty,
+                    KeyHolder.getInstance().getKey(),
+                    context.getString(R.string.encryption_alg));
+        }
+        return null;
+    }
+
+    private Date getDecryptedAttributeDateProperty(Context context, String attributeKey, String attributePropertyKey) throws MissingKeyException {
+        String encryptedDateProperty = getEncryptedAttributeProperty(
+                context,
+                attributeKey,
+                attributePropertyKey);
+        if(encryptedDateProperty != null) {
+            return new Date(CryptoUtil.decryptToLong(
+                    encryptedDateProperty,
+                    KeyHolder.getInstance().getKey(),
+                    context.getString(R.string.encryption_alg)));
+        }
+        return null;
+    }
+
+    private String getEncryptedAttributeProperty(Context context, String attributeKey, String attributePropertyKey) {
         try {
             JSONObject attributes = accountItemAsJson.getJSONObject(context.getString(R.string.json_key_account_attribute_list));
             JSONObject attribute = attributes.getJSONObject(attributeKey);
@@ -210,7 +242,7 @@ public class AccountItemHandler {
         }
     }
 
-    public boolean merge(Context context, AccountItemHandler accountToMerge, Date mergeDate) throws MissingKeyException {
+    public boolean merge(Context context, AccountItemHandler accountToMerge, Date mergeDate) throws MissingKeyException, JSONException {
         Log.i(TAG, "Starting to merge account with name " + accountToMerge.getAccountName(context) + " with existing data.");
         final Iterator<String> localAttributesIterator = getAttributeKeys(context);
         final Iterator<String> mergeAttributesIterator = accountToMerge.getAttributeKeys(context);
@@ -227,7 +259,8 @@ public class AccountItemHandler {
             if(mergeValue == null || mergeLastModified == null) {
                 if(accountToMerge.getLastModified(context).after(localLastModified)) {
                     Log.i(TAG, "Deleting attribute " + attributeKey + ".");
-                    removeAttribute(context, null, attributeKey, mergeDate);
+                    localAttributesIterator.remove();
+                    removeAttribute(context, null, attributeKey, mergeDate, false);
                     somethingChanged = true;
                 }
             }
@@ -235,7 +268,7 @@ public class AccountItemHandler {
             else {
                 if (mergeLastModified.after(localLastModified)) {
                     Log.i(TAG, "Changing value of attribute " + attributeKey + " to " + mergeValue + ".");
-                    addAttribute(context, null, attributeKey, mergeValue, mergeDate);
+                    addAttribute(context, null, attributeKey, mergeValue, mergeDate, false);
                     somethingChanged = true;
                 }
                 processedCommonAttributes.add(attributeKey);
@@ -249,12 +282,20 @@ public class AccountItemHandler {
                 if(accountToMerge.getAttributeLastModified(context, attributeKey).after(this.lastModified)) {
                     String value = accountToMerge.getAttributeValue(context, attributeKey);
                     Log.i(TAG, "Adding new attribute " + attributeKey + " with value " + value + ".");
-                    addAttribute(context, null, attributeKey, value, mergeDate);
+                    addAttribute(context, null, attributeKey, value, mergeDate, false);
                     somethingChanged = true;
                 }
             }
         }
 
+        /*
+         * Set date of last modification at the end of merging because otherwise it would
+         * interfere with the process of determining which attributes should get deleted, changed
+         * or newly created.
+         */
+        if(somethingChanged) {
+            setLastModified(context, mergeDate);
+        }
         Log.i(TAG, "Merge of account completed. Changes have been made: " + somethingChanged + ".");
         return somethingChanged;
     }

@@ -151,7 +151,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                                 dialog.dismiss();
                                 String key = keyInput.getText().toString();
                                 String value = valueInput.getText().toString();
-                                if(accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
+                                if(accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date(), true)) {
                                     try {
                                         accountListHandler.addAccount(
                                                 AccountDetailActivity.this,
@@ -189,7 +189,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                     }
                     else {
                         dialog.dismiss();
-                        if(accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
+                        if(accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date(), true)) {
                             try {
                                 accountListHandler.addAccount(
                                         AccountDetailActivity.this,
@@ -267,7 +267,8 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                                 getApplicationContext(),
                                 accountDetailAdapter,
                                 attributeKey,
-                                new Date());
+                                new Date(),
+                                true);
                         try {
                             accountListHandler.addAccount(
                                     AccountDetailActivity.this,
@@ -332,7 +333,7 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                             Toast.LENGTH_SHORT).show();
                 }
                 else {
-                    if(accountItemHandler.changeAttributeValue(AccountDetailActivity.this, accountDetailAdapter, attributeKey, newAttributeValue, new Date())) {
+                    if(accountItemHandler.changeAttributeValue(AccountDetailActivity.this, accountDetailAdapter, attributeKey, newAttributeValue, new Date(), true)) {
                         try {
                             accountListHandler.addAccount(
                                     AccountDetailActivity.this,
