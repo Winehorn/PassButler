@@ -21,6 +21,7 @@ import android.support.v7.widget.RecyclerView;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.CompoundButton;
 import android.widget.Switch;
 import android.widget.TextView;
@@ -38,6 +39,8 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
 
     public static final String TAG = SyncActivity.class.getName();
     private Switch bluetoothSyncSwitch;
+    private Switch autoSyncSwitch;
+    private Button syncNowButton;
     private TextView emptySyncDeviceListMessageTextView;
     private RecyclerView recyclerView;
     private BluetoothSyncDeviceAdapter bluetoothSyncDeviceAdapter;
@@ -47,6 +50,8 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync);
+        syncNowButton = findViewById(R.id.sync_now_button);
+        syncNowButton.setEnabled(PreferencesUtil.getBluetoothSyncEnabled(this));
         bluetoothSyncSwitch = findViewById(R.id.bluetooth_sync_switch);
         bluetoothSyncSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
@@ -54,7 +59,16 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
                 onBluetoothSyncSwitchChange(isChecked);
             }
         });
-        bluetoothSyncSwitch.setChecked(PreferencesUtil.getAutoSyncEnabled(this));
+        bluetoothSyncSwitch.setChecked(PreferencesUtil.getBluetoothSyncEnabled(this));
+        autoSyncSwitch = findViewById(R.id.auto_sync_switch);
+        autoSyncSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                onAutoSyncSwitchChange(isChecked);
+            }
+        });
+        autoSyncSwitch.setEnabled(PreferencesUtil.getBluetoothSyncEnabled(this));
+        autoSyncSwitch.setChecked(PreferencesUtil.getAutoSyncEnabled(this));
         emptySyncDeviceListMessageTextView = findViewById(R.id.empty_sync_device_list_message_text_view);
         ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
@@ -135,10 +149,21 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
     public void onBluetoothSyncSwitchChange(boolean isChecked) {
         if(isChecked) {
             ServiceUtil.startSyncReceiverService(this);
-            ServiceUtil.startSyncSenderService(this);
         }
         else {
             ServiceUtil.cancelSyncReceiverService(this);
+            autoSyncSwitch.setChecked(isChecked);
+        }
+        syncNowButton.setEnabled(isChecked);
+        autoSyncSwitch.setEnabled(isChecked);
+        PreferencesUtil.setBluetoothSyncEnabled(this, isChecked);
+    }
+
+    public void onAutoSyncSwitchChange(boolean isChecked) {
+        if(isChecked) {
+            ServiceUtil.startSyncSenderService(this);
+        }
+        else {
             ServiceUtil.cancelSyncSenderService(this);
         }
         PreferencesUtil.setAutoSyncEnabled(this, isChecked);

@@ -32,6 +32,7 @@
     <string name="shared_prefs_auto_lock_time_title">Auto lock threshold (minutes)</string>
     <string name="shared_prefs_auto_lock_time_summary_default">Invalid time</string>
     <string name="shared_prefs_auto_lock_time_default">5</string>
+    <string name="shared_prefs_bluetooth_sync_enabled_key">edu.hm.cs.ig.passbutler.shared_prefs_bluetooth_sync_enabled</string>
     <string name="shared_prefs_auto_sync_enabled_key">edu.hm.cs.ig.passbutler.shared_prefs_auto_sync_enabled</string>
 
     <!-- Accounts file (JSON) -->
@@ -108,9 +109,12 @@
     <string name="default_bluetooth_sync_device_name">Default name</string>
     <string name="default_bluetooth_sync_device_hardware_address">Default hardware address</string>
     <string name="pair_devices_button_label">Pair devices</string>
-    <string name="bluetooth_sync_switch_label">Automatic synchronization</string>
+    <string name="bluetooth_sync_switch_label">Bluetooth synchronization</string>
     <string name="bluetooth_sync_switch_on_text">Activated</string>
     <string name="bluetooth_sync_switch_off_text">Deactivated</string>
+    <string name="auto_sync_switch_label">Automatic synchronization</string>
+    <string name="auto_sync_switch_on_text">Activated</string>
+    <string name="auto_sync_switch_off_text">Deactivated</string>
     <string name="sync_now_button_label">Sync now</string>
     <string name="bluetooth_pairing_advice">NOTE: You must pair your devices via Bluetooth before you can add them to the list of sync devices.</string>
     <string name="empty_sync_device_list_message">No sync devices were added until now</string>

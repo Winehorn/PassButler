@@ -5,6 +5,11 @@
 
     <!-- Shared preferences -->
     <bool name="shared_prefs_auto_lock_enabled_default">true</bool>
+    <bool name="shared_prefs_bluetooth_sync_enabled_default">false</bool>
     <bool name="shared_prefs_auto_sync_enabled_default">false</bool>
+
+    <!-- SyncActivity -->
+    <bool name="bluetooth_sync_enabled_initial">false</bool>
+    <bool name="auto_sync_enabled_initial">false</bool>
 
 </resources>

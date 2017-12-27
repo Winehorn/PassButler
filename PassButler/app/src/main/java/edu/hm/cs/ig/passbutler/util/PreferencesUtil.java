@@ -28,6 +28,19 @@ public class PreferencesUtil {
         return uuid;
     }
 
+    public static boolean getBluetoothSyncEnabled(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
+                context.getString(R.string.shared_prefs_bluetooth_sync_enabled_key),
+                context.getResources().getBoolean(R.bool.shared_prefs_bluetooth_sync_enabled_default));
+    }
+
+    public static void setBluetoothSyncEnabled(Context context, boolean newIsEnabled) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor editor = prefs.edit();
+        editor.putBoolean(context.getString(R.string.shared_prefs_bluetooth_sync_enabled_key), newIsEnabled);
+        editor.apply();
+    }
+
     public static boolean getAutoSyncEnabled(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context).getBoolean(
                 context.getString(R.string.shared_prefs_auto_sync_enabled_key),
