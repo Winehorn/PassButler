@@ -43,5 +43,7 @@ dependencies {
     compile 'net.cachapa.expandablelayout:expandablelayout:2.9.2'
     // Discrete SeekBar
     compile 'org.adw.library:discrete-seekbar:1.0.1'
+    // Database creation from asset
+    compile 'com.readystatesoftware.sqliteasset:sqliteassethelper:2.0.1'
     testCompile 'junit:junit:4.12'
 }

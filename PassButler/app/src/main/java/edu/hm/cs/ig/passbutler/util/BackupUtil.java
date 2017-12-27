@@ -33,7 +33,7 @@ public class BackupUtil {
                     Log.d(TAG, "createBackup: internalFile: " + FileUtil.getInternalStorageFile(context, context.getString(R.string.accounts_file_path)).getAbsolutePath());
 
                 } catch (FileNotFoundException e) {
-                    Toast.makeText(context, "Error while creating Backup!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Backup not found!", Toast.LENGTH_SHORT).show();
                     Log.e(TAG, "createBackup: Could not find file.");
                     e.printStackTrace();
                 } catch (IOException e) {

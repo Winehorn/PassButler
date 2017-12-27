@@ -38,8 +38,8 @@ public class ImportBackupDialogFragment extends DialogFragment {
 
         // Use the Builder class for convenient dialog construction
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
-        builder.setTitle(R.string.dialog_title_backup_import);
-        builder.setMessage(R.string.dialog_message_backup_import)
+        builder.setTitle(R.string.dialog_title_backup_import)
+                .setMessage(R.string.dialog_message_backup_import)
                 .setPositiveButton(R.string.dialog_option_import, new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
                         // Check if internal file exists
