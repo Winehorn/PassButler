@@ -25,6 +25,12 @@ public class BluetoothSyncReceiverIntentService extends IntentService {
     }
 
     @Override
+    public void onDestroy() {
+        super.onDestroy();
+        bluetoothSyncReceiver.stopContinuousReceiveSync();
+    }
+
+    @Override
     protected void onHandleIntent(Intent intent) {
         bluetoothSyncReceiver.continuousReceiveSync();
     }

@@ -9,6 +9,7 @@
     <integer name="enable_bluetooth_and_add_sync_device_request_code">2000</integer>
 
     <!-- Bluetooth synchronization -->
+    <integer name="bluetooth_sync_accept_timeout">5000</integer>
     <integer name="bluetooth_sync_start">0</integer>
     <integer name="bluetooth_sync_continue">1</integer>
     <integer name="bluetooth_sync_end">2</integer>

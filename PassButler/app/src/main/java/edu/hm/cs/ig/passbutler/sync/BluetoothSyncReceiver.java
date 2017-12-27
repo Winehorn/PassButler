@@ -62,39 +62,40 @@ public class BluetoothSyncReceiver {
     }
 
     public boolean receiveSync() {
-        try {
-            Log.i(TAG, "Creating new server socket.");
-            serverSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(
-                    context.getString(R.string.bluetooth_sync_channel_name),
-                    UUID.fromString(context.getString(R.string.bluetooth_sync_channel_uuid)));
-        }
-        catch (IOException e) {
-            Log.e(TAG, "I/O error while creating server socket.");
-            return false;
-        }
-        BluetoothSocket socket;
-        try {
-            Log.i(TAG, "Accepting incoming connection to server socket.");
-            socket = serverSocket.accept();
-        }
-        catch (IOException e) {
-            Log.e(TAG, "I/O error while accepting connection to server socket.");
-            return false;
-        }
-        if (socket != null) {
+        Log.i(TAG, "Creating new server socket.");
+        try(BluetoothServerSocket serverSocket = bluetoothAdapter.listenUsingRfcommWithServiceRecord(
+                context.getString(R.string.bluetooth_sync_channel_name),
+                UUID.fromString(context.getString(R.string.bluetooth_sync_channel_uuid)))) {
+            this.serverSocket = serverSocket;
+
+            BluetoothSocket socket;
             try {
-                Log.i(TAG, "Closing server socket for further sync requests.");
-                closeServerSocket();
+                Log.i(TAG, "Accepting incoming connection to server socket.");
+                socket = serverSocket.accept(context.getResources().getInteger(R.integer.bluetooth_sync_accept_timeout));
             }
             catch (IOException e) {
-                Log.e(TAG, "I/O error while closing server socket for further sync requests.");
+                Log.e(TAG, "I/O error while accepting connection to server socket. Possible timeout.");
+                return false;
+            }
+            if (socket != null) {
+                try {
+                    Log.i(TAG, "Closing server socket for further sync requests.");
+                    closeServerSocket();
+                }
+                catch (IOException e) {
+                    Log.e(TAG, "I/O error while closing server socket for further sync requests.");
+                    return false;
+                }
+            }
+            try(BluetoothConnection connection = new BluetoothConnection(context, socket)) {
+                return processSyncRequest(connection);
+            } catch (IOException e) {
+                Log.e(TAG, "I/O error while creating wrapper for Bluetooth connection.");
                 return false;
             }
         }
-        try(BluetoothConnection connection = new BluetoothConnection(context, socket)) {
-            return processSyncRequest(connection);
-        } catch (IOException e) {
-            Log.e(TAG, "I/O error while creating wrapper for Bluetooth connection.");
+        catch (IOException e) {
+            Log.e(TAG, "I/O error while creating server socket.");
             return false;
         }
     }
