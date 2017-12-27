@@ -59,7 +59,7 @@ public class FileUtil {
     }
 
     public static String getFileHash(Context context, File file) {
-        byte[] fileContent = readBytesFromInternalStorage(file);
+        byte[] fileContent = readBytesFromFile(file);
         return CryptoUtil.digestToString(context.getString(R.string.hash_func_for_digest), fileContent);
     }
 
@@ -104,7 +104,7 @@ public class FileUtil {
             String s,
             boolean persistMetaData)
     {
-        return writeToInternalStorage(
+        return writeToFile(
                 context,
                 new File(combinePaths(context.getFilesDir().getPath(), fileMetaData.getFilePath())),
                 fileMetaData,
@@ -118,7 +118,7 @@ public class FileUtil {
             byte[] bytes,
             boolean persistMetaData)
     {
-        return writeToInternalStorage(
+        return writeToFile(
                 context,
                 new File(combinePaths(context.getFilesDir().getPath(), fileMetaData.getFilePath())),
                 fileMetaData,
@@ -126,7 +126,7 @@ public class FileUtil {
                 persistMetaData);
     }
 
-    public static boolean writeToInternalStorage(
+    public static boolean writeToFile(
             Context context,
             File file,
             FileMetaData fileMetaData,
@@ -150,7 +150,7 @@ public class FileUtil {
         }
     }
 
-    public static boolean writeToInternalStorage(
+    public static boolean writeToFile(
             Context context,
             File file,
             FileMetaData fileMetaData,
@@ -183,19 +183,19 @@ public class FileUtil {
     }
 
     public static byte[] readBytesFromInternalStorage(Context context, String filePath) {
-        return readBytesFromInternalStorage(getInternalStorageFile(context, filePath));
+        return readBytesFromFile(getInternalStorageFile(context, filePath));
     }
 
-    public static byte[] readBytesFromInternalStorage(File file) {
+    public static byte[] readBytesFromFile(File file) {
         try {
             return readBytesFromInputStream(new FileInputStream(file));
         }
         catch(FileNotFoundException e) {
-            Log.e(TAG, "Could not find file to read from in internal storage.");
+            Log.e(TAG, "Could not find file to read from.");
             return null;
         }
         catch(IOException e) {
-            Log.e(TAG, "I/O error while reading from internal storage.");
+            Log.e(TAG, "I/O error while reading from.");
             return null;
         }
     }

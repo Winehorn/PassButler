@@ -199,13 +199,13 @@ public class CryptoUtil {
             String filePath,
             Key decryptionKey,
             String encryptionAlg) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {
-        return readFromInternalStorage(
+        return readFromFile(
                 FileUtil.getInternalStorageFile(context, filePath),
                 decryptionKey,
                 encryptionAlg);
     }
 
-    public static String readFromInternalStorage(
+    public static String readFromFile(
             File file,
             Key decryptionKey,
             String encryptionAlg) throws NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {

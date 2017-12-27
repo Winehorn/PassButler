@@ -7,6 +7,7 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -25,6 +26,7 @@
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
+
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
@@ -89,15 +91,6 @@
                 android:value=".account_list.AccountListActivity" />
         </activity>
 
-        <activity android:name=".backup.BackupActivity"
-            android:label="@string/backup_activity_label"
-            android:parentActivityName=".account_list.AccountListActivity"
-            android:launchMode="singleTop">
-            <meta-data
-                android:name="android.support.PARENT_ACTIVITY"
-                android:value=".account_list.AccountListActivity" />
-        </activity>
-
         <provider
             android:name=".data.SyncContentProvider"
             android:authorities="edu.hm.cs.ig.passbutler"
@@ -118,6 +111,7 @@
         <service
             android:name=".sync.SyncFileMergerIntentService"
             android:exported="false"></service>
+
 
     </application>
 

@@ -9,6 +9,7 @@ import android.util.Log;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
@@ -57,15 +58,18 @@ public class AccountListHandler implements Parcelable {
         this.accountListAsJson = new JSONObject(accountListAsJson);
     }
 
-    public static AccountListHandler getFromFile(Context context, String filePath, Key key) throws JSONException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {
+    public static AccountListHandler getFromInternalStorage(Context context, String internalStorageFilePath, Key key) throws JSONException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {
+        return getFromFile(context, FileUtil.getInternalStorageFile(context, internalStorageFilePath), key);
+    }
+
+    public static AccountListHandler getFromFile(Context context, File file, Key key) throws JSONException, NoSuchAlgorithmException, InvalidKeyException, NoSuchPaddingException, FileNotFoundException, IOException {
         Log.i(TAG, "Creating " + AccountListHandler.class.getSimpleName() + " from file content.");
         try {
             Log.i(TAG, "File found. Returning "
                     + AccountListHandler.class.getSimpleName()
                     + " with data from the file.");
-            String jsonString = CryptoUtil.readFromInternalStorage(
-                    context,
-                    filePath,
+            String jsonString = CryptoUtil.readFromFile(
+                    file,
                     key,
                     context.getString(R.string.encryption_alg));
             return new AccountListHandler(jsonString);

@@ -62,7 +62,7 @@ public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler
     @Override
     public AccountListHandler loadInBackground() {
         try {
-            return AccountListHandler.getFromFile(getContext(), fileName, KeyHolder.getInstance().getKey());
+            return AccountListHandler.getFromInternalStorage(getContext(), fileName, KeyHolder.getInstance().getKey());
         }
         catch(JSONException
                 | NoSuchAlgorithmException
@@ -72,6 +72,13 @@ public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler
             Toast.makeText(getContext(), getContext().getString(R.string.loader_error_msg), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Could not load " + AccountListHandler.class.getSimpleName()
                     + " from file. Returning empty "
+                    + AccountListHandler.class.getSimpleName()
+                    + " instead.");
+            return new AccountListHandler(getContext());
+        }
+        catch(IllegalStateException e) {
+            Log.e(TAG, "Could not get key from " + KeyHolder.class.getSimpleName()
+                    + " to decrypt account list. Returning empty "
                     + AccountListHandler.class.getSimpleName()
                     + " instead.");
             return new AccountListHandler(getContext());

@@ -1,8 +1,10 @@
 package edu.hm.cs.ig.passbutler.entry;
 
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.nfc.FormatException;
 import android.nfc.NdefMessage;
 import android.nfc.NfcAdapter;
@@ -35,6 +37,8 @@ import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
+import static android.os.SystemClock.elapsedRealtime;
+
 public class UnlockActivity extends PreAuthActivity {
 
     private static final String TAG = UnlockActivity.class.getName();
@@ -49,12 +53,25 @@ public class UnlockActivity extends PreAuthActivity {
     private IntentFilter[] mFilters;
     private String[][] mTechLists;
 
+    private SharedPreferences sharedPreferences;
+    private int attemptCount;
+    private long lastAttemptTime;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_unlock);
 
         passwordEditText = findViewById(R.id.password_edit_text);
+
+        // Get SharedPreferences for controlling log in attempts
+        sharedPreferences = this.getPreferences(Context.MODE_PRIVATE);
+        attemptCount = sharedPreferences.getInt(getString(R.string.unlock_pref_attempts), 0);
+        lastAttemptTime = sharedPreferences.getLong(getString(R.string.unlock_pref_last_attempt_time), 0);
+
+        Log.d(TAG, "onCreate: attemptCount: " + attemptCount);
+        Log.d(TAG, "onCreate: lastAttemptTime: " + lastAttemptTime);
+
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         if (mNfcAdapter == null) {
@@ -110,10 +127,18 @@ public class UnlockActivity extends PreAuthActivity {
             Log.i(TAG, "Cannot unlock account list because the encrypted data was manipulated.");
             return;
         }
+        if(isDisabled()) {
+            Toast.makeText(this, getString(R.string.unlock_temp_disabled), Toast.LENGTH_SHORT).show();
+            Log.i(TAG, "Login is temporarily disabled.");
+            return;
+        }
         try {
             if (!isPasswordCorrect()) {
                 Toast.makeText(this, getString(R.string.wrong_password_error_msg), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "Wrong password was entered.");
+                attemptCount++;
+                lastAttemptTime = elapsedRealtime();
+                setUnlockCountPref(attemptCount, lastAttemptTime);
                 return;
             }
         }
@@ -125,8 +150,14 @@ public class UnlockActivity extends PreAuthActivity {
                 | IOException e) {
             Toast.makeText(this, getString(R.string.unlock_error_msg), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Could not check password for correctness.");
+            e.printStackTrace();
             return;
         }
+
+        attemptCount = 0;
+        lastAttemptTime = elapsedRealtime();
+        setUnlockCountPref(attemptCount, lastAttemptTime);
+
         Log.i(TAG, "Correct password was entered.");
         passwordEditText.getText().clear();
         NavigationUtil.goToAccountListActivity(this);
@@ -151,7 +182,7 @@ public class UnlockActivity extends PreAuthActivity {
                     getString(R.string.encryption_alg),
                     password,
                     nfcKey));
-            AccountListHandler.getFromFile(this, getString(R.string.accounts_file_path), KeyHolder.getInstance().getKey());
+            AccountListHandler.getFromInternalStorage(this, getString(R.string.accounts_file_path), KeyHolder.getInstance().getKey());
             nfcKeyRead = false;
 	    return true;
         }
@@ -212,5 +243,27 @@ public class UnlockActivity extends PreAuthActivity {
                 }
             }
         }
+    }
+
+    private void setUnlockCountPref(int attemptCount, long lastAttemptTime) {
+        SharedPreferences.Editor sharedPreferencesEdit = sharedPreferences.edit();
+        sharedPreferencesEdit.putInt(getString(R.string.unlock_pref_attempts), attemptCount);
+        sharedPreferencesEdit.putLong(getString(R.string.unlock_pref_last_attempt_time), lastAttemptTime);
+        sharedPreferencesEdit.apply();
+    }
+
+    private Boolean isDisabled() {
+        Boolean isDisabled = false;
+        int timeDif = (int) ((elapsedRealtime() - lastAttemptTime)/1000);
+        Log.d(TAG, "isDisabled: attemptCount:" + attemptCount);
+        Log.d(TAG, "isDisabled: timeDif:" + timeDif);
+        if(attemptCount >= getResources().getInteger(R.integer.unlock_max_attempts) &&
+                timeDif <= getResources().getInteger(R.integer.unlock_default_lock_duration)) {
+            isDisabled = true;
+        } else if (timeDif > getResources().getInteger(R.integer.unlock_default_lock_duration)) {
+            attemptCount = 0;
+            setUnlockCountPref(attemptCount, lastAttemptTime);
+        }
+        return isDisabled;
     }
 }

@@ -73,13 +73,14 @@ public class PasswordGeneratorActivity extends PostAuthActivity {
 
             int length = passwordLengthSeekBar.getProgress();
 
-            password = PasswordUtil.generatePassword(lowerSwitch.isChecked(), upperSwitch.isChecked(),
-                    numbersSwitch.isChecked(), specialSwitch.isChecked(),
-                    length, this);
-
             if (!lowerSwitch.isChecked() && !upperSwitch.isChecked() &&
                     !numbersSwitch.isChecked() && !specialSwitch.isChecked()) {
                 Toast.makeText(this, getString(R.string.password_generator_no_switch_msg), Toast.LENGTH_LONG).show();
+                return;
+            } else {
+                password = PasswordUtil.generatePassword(lowerSwitch.isChecked(), upperSwitch.isChecked(),
+                        numbersSwitch.isChecked(), specialSwitch.isChecked(),
+                        length, this);
             }
         } else {
             password = PasswordUtil.generatePassword(this);

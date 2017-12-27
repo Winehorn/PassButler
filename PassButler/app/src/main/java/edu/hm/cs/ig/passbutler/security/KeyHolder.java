@@ -12,6 +12,7 @@ import javax.security.auth.DestroyFailedException;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.util.ArrayUtil;
+import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 /**
  * Created by dennis on 23.11.17.

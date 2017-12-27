@@ -68,6 +68,8 @@
     <string name="settings_menu_item_label">@string/settings_activity_label</string>
     <string name="default_account_name">Nameless account</string>
     <string name="delete_account_menu_item_label">Delete</string>
+    <string name="backup_create_menu_item_label">Create Backup</string>
+    <string name="backup_import_item_label">Import Backup</string>    
     <string name="empty_account_list_message">No accounts were created until now</string>
 
     <!-- AccountDetailActivity -->
@@ -112,11 +114,6 @@
     <string name="sync_now_button_label">Sync now</string>
     <string name="bluetooth_pairing_advice">NOTE: You must pair your devices via Bluetooth before you can add them to the list of sync devices.</string>
     <string name="empty_sync_device_list_message">No sync devices were added until now</string>
-
-    <!-- BackupActivity -->
-    <string name="backup_activity_label">Backup</string>
-    <string name="backup_activity_create_backup_button_label">Create Backup</string>
-    <string name="backup_activity_import_backup_button_label">Import Backup</string>
 
     <!-- SettingsActivity -->
     <string name="settings_activity_label">Settings</string>

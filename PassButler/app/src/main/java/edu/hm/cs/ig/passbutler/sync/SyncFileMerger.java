@@ -129,7 +129,7 @@ public class SyncFileMerger {
         AccountListHandler localData;
         try {
             Log.i(TAG, "Reading local version of file to merge.");
-            localData = AccountListHandler.getFromFile(
+            localData = AccountListHandler.getFromInternalStorage(
                     context,
                     filePath,
                     keyHolder.getKey());
@@ -145,7 +145,7 @@ public class SyncFileMerger {
         AccountListHandler syncData;
         try {
             Log.i(TAG, "Reading version of file to merge from remote device.");
-            syncData = AccountListHandler.getFromFile(
+            syncData = AccountListHandler.getFromInternalStorage(
                     context,
                     FileUtil.combinePaths(context.getString(R.string.sync_directory_name), hardwareAddress, filePath),
                     keyHolder.getKey());
