@@ -141,6 +141,8 @@
     <string name="missing_bluetooth_bond_error_msg">Synchronization failed. Bluetooth Pairing with device is required.</string>
     <string name="auto_lock_time_error_msg">The auto lock time must be an integer between %d and %d</string>
     <string name="manipulation_error_msg">Account data was manipulated and cannot be decrypted. Please restore it from a backup.</string>
+    <string name="missing_key_error_msg">Your password expired. Please unlock the app again.</string>
+    <string name="cannot_create_persistence_error_msg">@string/internal_error</string>
 
     <!-- Dialogs -->
     <string name="dialog_title_account_name">Please enter a name for the new account</string>

@@ -20,6 +20,8 @@ import javax.crypto.NoSuchPaddingException;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
+import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 /**
  * Created by dennis on 17.11.17.
@@ -63,6 +65,15 @@ public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler
     public AccountListHandler loadInBackground() {
         try {
             return AccountListHandler.getFromInternalStorage(getContext(), fileName, KeyHolder.getInstance().getKey());
+        }
+        catch(MissingKeyException e) {
+            Toast.makeText(getContext(), getContext().getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+            Log.e(TAG, "Could not retrieve key from " + KeyHolder.class.getSimpleName()
+                    + " for decryption. Returning empty "
+                    + AccountListHandler.class.getSimpleName()
+                    + " instead.");
+            NavigationUtil.goToUnlockActivity(getContext());
+            return new AccountListHandler(getContext());
         }
         catch(JSONException
                 | NoSuchAlgorithmException

@@ -3,17 +3,23 @@ package edu.hm.cs.ig.passbutler.account_detail;
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.account_list.AccountListActivity;
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
+import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
+import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 /**
  * Created by dennis on 16.11.17.
@@ -41,13 +47,20 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
 
     @Override
     public void onBindViewHolder(AccountDetailAdapterViewHolder holder, int position) {
-        String key = accountItemHandler.getAttributeKey(context, position);
-        String value = accountItemHandler.getAttributeValue(context, key);
-        String lastModified = new SimpleDateFormat(context.getString(R.string.date_format))
-                .format(accountItemHandler.getAttributeLastModified(context, key));
-        holder.accountAttributeKeyTextView.setText(key);
-        holder.accountAttributeValueTextView.setText(value);
-        holder.accountAttributeLastModifiedTextView.setText(lastModified);
+        try {
+            String key = accountItemHandler.getAttributeKey(context, position);
+            String value = accountItemHandler.getAttributeValue(context, key);
+            String lastModified = new SimpleDateFormat(context.getString(R.string.date_format))
+                    .format(accountItemHandler.getAttributeLastModified(context, key));
+            holder.accountAttributeKeyTextView.setText(key);
+            holder.accountAttributeValueTextView.setText(value);
+            holder.accountAttributeLastModifiedTextView.setText(lastModified);
+        } catch (MissingKeyException e) {
+            Toast.makeText(context, context.getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+            Log.wtf(TAG, "Could not bind view holder because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+            NavigationUtil.goToUnlockActivity(context);
+            return;
+        }
     }
 
     @Override

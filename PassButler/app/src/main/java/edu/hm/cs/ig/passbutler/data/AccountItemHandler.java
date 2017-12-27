@@ -3,6 +3,7 @@ package edu.hm.cs.ig.passbutler.data;
 import android.content.Context;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -15,7 +16,9 @@ import java.util.Set;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
+import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 /**
  * Created by dennis on 16.11.17.
@@ -103,6 +106,10 @@ public class AccountItemHandler {
         catch(JSONException e) {
             Log.e(TAG, "Could not add new attribute to list.");
             return false;
+        } catch (MissingKeyException e) {
+            Toast.makeText(context, context.getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+            NavigationUtil.goToUnlockActivity(context);
+            return false;
         }
         return true;
     }
@@ -155,24 +162,26 @@ public class AccountItemHandler {
         return null;
     }
 
-    public String getAttributeValue(Context context, String attributeKey) {
+    public String getAttributeValue(Context context, String attributeKey) throws MissingKeyException {
         String encryptedAttributeValue =  getAttributeProperty(
                 context,
                 attributeKey,
                 context.getString(R.string.json_key_account_attribute_value));
-        Key decryptionKey = KeyHolder.getInstance().getKey();
+        Key decryptionKey = null;
+        decryptionKey = KeyHolder.getInstance().getKey();
         return CryptoUtil.decryptToString(
                 encryptedAttributeValue,
                 decryptionKey,
                 context.getString(R.string.encryption_alg));
     }
 
-    public Date getAttributeLastModified(Context context, String attributeKey) {
+    public Date getAttributeLastModified(Context context, String attributeKey) throws MissingKeyException {
         String encryptedLastModified =  getAttributeProperty(
                 context,
                 attributeKey,
                 context.getString(R.string.json_key_account_attribute_last_modified));
-        Key decryptionKey = KeyHolder.getInstance().getKey();
+        Key decryptionKey = null;
+        decryptionKey = KeyHolder.getInstance().getKey();
         return new Date(CryptoUtil.decryptToLong(
                 encryptedLastModified,
                 decryptionKey,
@@ -201,7 +210,7 @@ public class AccountItemHandler {
         }
     }
 
-    public boolean merge(Context context, AccountItemHandler accountToMerge, Date mergeDate) {
+    public boolean merge(Context context, AccountItemHandler accountToMerge, Date mergeDate) throws MissingKeyException {
         Log.i(TAG, "Starting to merge account with name " + accountToMerge.getAccountName(context) + " with existing data.");
         final Iterator<String> localAttributesIterator = getAttributeKeys(context);
         final Iterator<String> mergeAttributesIterator = accountToMerge.getAttributeKeys(context);

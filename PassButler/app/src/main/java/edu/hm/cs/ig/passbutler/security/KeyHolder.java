@@ -36,14 +36,14 @@ public class KeyHolder {
         Log.i(TAG, "New key was set in " + KeyHolder.class.getSimpleName() + " and old key was cleared.");
     }
 
-    public Key getKey() throws IllegalStateException {
+    public Key getKey() throws MissingKeyException {
         Log.i(TAG, "Getting key from " + KeyHolder.class.getSimpleName() + ".");
         if(key != null) {
             Log.i(TAG, "A key is present.");
             return key;
         }
-        Log.i(TAG, "No key is present.");
-        throw new IllegalStateException("The " + KeyHolder.class.getSimpleName() + " must always contain a key when one is requested.");
+        Log.e(TAG, "No key is present.");
+        throw new MissingKeyException("The " + KeyHolder.class.getSimpleName() + " must always contain a key when one is requested.");
     }
 
     public void clearKey(Context context) {

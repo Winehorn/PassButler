@@ -27,6 +27,7 @@ import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.gui.PreAuthActivity;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.ArrayUtil;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
@@ -155,12 +156,18 @@ public class CreatePersistenceActivity extends PreAuthActivity {
             return;
         }
         AccountListHandler accountListHandler = new AccountListHandler(this);
-        accountListHandler.saveToInternalStorage(
-                this,
-                getString(R.string.accounts_file_path),
-                new Date(0L),   // Initialize with oldest date so that sync is possible with every other newer version.
-                KeyHolder.getInstance().getKey(),
-                true);
+        try {
+            accountListHandler.saveToInternalStorage(
+                    this,
+                    getString(R.string.accounts_file_path),
+                    new Date(0L),   // Initialize with oldest date so that sync is possible with every other newer version.
+                    KeyHolder.getInstance().getKey(),
+                    true);
+        } catch (MissingKeyException e) {
+            Toast.makeText(this, this.getString(R.string.cannot_create_persistence_error_msg), Toast.LENGTH_SHORT).show();
+            Log.wtf(TAG, "Could retrieve key from " + KeyHolder.class.getSimpleName() + " to create persistence.");
+            return;
+        }
         Log.i(TAG, "New accounts file created.");
     }
 

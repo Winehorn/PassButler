@@ -31,7 +31,9 @@ import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.gui.InstantAutoCompleteTextView;
 import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.ClipboardUtil;
+import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 public class AccountDetailActivity extends PostAuthActivity implements AccountDetailAdapterOnMenuItemClickHandler, LoaderManager.LoaderCallbacks<AccountListHandler> {
 
@@ -150,15 +152,22 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                                 String key = keyInput.getText().toString();
                                 String value = valueInput.getText().toString();
                                 if(accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
-                                    accountListHandler.addAccount(
-                                            AccountDetailActivity.this,
-                                            null,
-                                            accountItemHandler,
-                                            true,
-                                            getString(R.string.accounts_file_path),
-                                            new Date(),
-                                            KeyHolder.getInstance().getKey(),
-                                            true);
+                                    try {
+                                        accountListHandler.addAccount(
+                                                AccountDetailActivity.this,
+                                                null,
+                                                accountItemHandler,
+                                                true,
+                                                getString(R.string.accounts_file_path),
+                                                new Date(),
+                                                KeyHolder.getInstance().getKey(),
+                                                true);
+                                    } catch (MissingKeyException e) {
+                                        Toast.makeText(AccountDetailActivity.this, getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                                        Log.wtf(TAG, "Could not add account because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                                        NavigationUtil.goToUnlockActivity(AccountDetailActivity.this);
+                                        return;
+                                    }
                                 }
                                 else {
                                     Toast.makeText(
@@ -181,15 +190,22 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                     else {
                         dialog.dismiss();
                         if(accountItemHandler.addAttribute(AccountDetailActivity.this, accountDetailAdapter, key, value, new Date())) {
-                            accountListHandler.addAccount(
-                                    AccountDetailActivity.this,
-                                    null,
-                                    accountItemHandler,
-                                    true,
-                                    getString(R.string.accounts_file_path),
-                                    new Date(),
-                                    KeyHolder.getInstance().getKey(),
-                                    true);
+                            try {
+                                accountListHandler.addAccount(
+                                        AccountDetailActivity.this,
+                                        null,
+                                        accountItemHandler,
+                                        true,
+                                        getString(R.string.accounts_file_path),
+                                        new Date(),
+                                        KeyHolder.getInstance().getKey(),
+                                        true);
+                            } catch (MissingKeyException e) {
+                                Toast.makeText(AccountDetailActivity.this, getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                                Log.wtf(TAG, "Could not add attribute because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                                NavigationUtil.goToUnlockActivity(AccountDetailActivity.this);
+                                return;
+                            }
                         }
                         else {
                             Toast.makeText(
@@ -217,13 +233,27 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
         switch(item.getItemId()) {
             case R.id.copy_attribute_menu_item: {
                 ClipboardUtil clipboardUtil = new ClipboardUtil(this);
-                clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type),
-                        accountItemHandler.getAttributeValue(this, attributeKey),
-                        getResources().getInteger(R.integer.copy_delete_duration));
+                try {
+                    clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type),
+                            accountItemHandler.getAttributeValue(this, attributeKey),
+                            getResources().getInteger(R.integer.copy_delete_duration));
+                } catch (MissingKeyException e) {
+                    Toast.makeText(AccountDetailActivity.this, getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                    Log.wtf(TAG, "Could not copy value to clipboard because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                    NavigationUtil.goToUnlockActivity(AccountDetailActivity.this);
+                    return false;
+                }
                 return true;
             }
             case R.id.edit_attribute_menu_item: {
-                showEditAttributeDialog(attributeKey, accountItemHandler.getAttributeValue(this, attributeKey));
+                try {
+                    showEditAttributeDialog(attributeKey, accountItemHandler.getAttributeValue(this, attributeKey));
+                } catch (MissingKeyException e) {
+                    Toast.makeText(AccountDetailActivity.this, getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                    Log.wtf(TAG, "Could not edit attribute because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                    NavigationUtil.goToUnlockActivity(AccountDetailActivity.this);
+                    return false;
+                }
                 return true;
             }
             case R.id.delete_attribute_menu_item: {
@@ -238,15 +268,22 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                                 accountDetailAdapter,
                                 attributeKey,
                                 new Date());
-                        accountListHandler.addAccount(
-                                AccountDetailActivity.this,
-                                null,
-                                accountItemHandler,
-                                true,
-                                getString(R.string.accounts_file_path),
-                                new Date(),
-                                KeyHolder.getInstance().getKey(),
-                                true);
+                        try {
+                            accountListHandler.addAccount(
+                                    AccountDetailActivity.this,
+                                    null,
+                                    accountItemHandler,
+                                    true,
+                                    getString(R.string.accounts_file_path),
+                                    new Date(),
+                                    KeyHolder.getInstance().getKey(),
+                                    true);
+                        } catch (MissingKeyException e) {
+                            Toast.makeText(AccountDetailActivity.this, getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                            Log.wtf(TAG, "Could not delete attribute because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                            NavigationUtil.goToUnlockActivity(AccountDetailActivity.this);
+                            return;
+                        }
                     }
                 });
                 builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {
@@ -296,15 +333,22 @@ public class AccountDetailActivity extends PostAuthActivity implements AccountDe
                 }
                 else {
                     if(accountItemHandler.changeAttributeValue(AccountDetailActivity.this, accountDetailAdapter, attributeKey, newAttributeValue, new Date())) {
-                        accountListHandler.addAccount(
-                                AccountDetailActivity.this,
-                                null,
-                                accountItemHandler,
-                                true,
-                                getString(R.string.accounts_file_path),
-                                new Date(),
-                                KeyHolder.getInstance().getKey(),
-                                true);
+                        try {
+                            accountListHandler.addAccount(
+                                    AccountDetailActivity.this,
+                                    null,
+                                    accountItemHandler,
+                                    true,
+                                    getString(R.string.accounts_file_path),
+                                    new Date(),
+                                    KeyHolder.getInstance().getKey(),
+                                    true);
+                        } catch (MissingKeyException e) {
+                            Toast.makeText(AccountDetailActivity.this, getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                            Log.wtf(TAG, "Could not edit attribute value because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                            NavigationUtil.goToUnlockActivity(AccountDetailActivity.this);
+                            return;
+                        }
                     }
                     else {
                         Toast.makeText(

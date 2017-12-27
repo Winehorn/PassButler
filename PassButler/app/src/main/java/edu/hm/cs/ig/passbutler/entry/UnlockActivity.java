@@ -32,6 +32,7 @@ import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.gui.PreAuthActivity;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.ArrayUtil;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
@@ -198,6 +199,11 @@ public class UnlockActivity extends PreAuthActivity {
                 return false;
             }
             throw e;
+        } catch (MissingKeyException e) {
+            Toast.makeText(this, getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+            Log.wtf(TAG, "Could not check password for correctness.");
+            nfcKeyRead = false;
+            return false;
         }
     }
 

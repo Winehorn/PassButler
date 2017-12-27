@@ -26,6 +26,7 @@ import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
 import edu.hm.cs.ig.passbutler.gui.PostAuthActivity;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.BackupUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
@@ -197,15 +198,21 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
-                        accountListHandler.removeAccount(
-                                getApplicationContext(),
-                                accountListAdapter,
-                                accountName,
-                                true,
-                                getString(R.string.accounts_file_path),
-                                new Date(),
-                                KeyHolder.getInstance().getKey(),
-                                true);
+                        try {
+                            accountListHandler.removeAccount(
+                                    getApplicationContext(),
+                                    accountListAdapter,
+                                    accountName,
+                                    true,
+                                    getString(R.string.accounts_file_path),
+                                    new Date(),
+                                    KeyHolder.getInstance().getKey(),
+                                    true);
+                        } catch (MissingKeyException e) {
+                            Toast.makeText(AccountListActivity.this, getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                            Log.wtf(TAG, "Could not delete account because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                            NavigationUtil.goToUnlockActivity(AccountListActivity.this);
+                        }
                     }
                 });
                 builder.setNegativeButton(getString(R.string.dialog_option_no), new DialogInterface.OnClickListener() {

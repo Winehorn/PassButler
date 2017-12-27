@@ -25,6 +25,7 @@ import java.util.Set;
 import javax.crypto.NoSuchPaddingException;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.SyncContentProviderUtil;
@@ -257,7 +258,7 @@ public class AccountListHandler implements Parcelable {
             String accountsFilePath,
             AccountListHandler accountsToMerge,
             Date mergeDataVersion,
-            Date mergeDate) {
+            Date mergeDate) throws MissingKeyException {
         Log.i(TAG, "Starting to merge account list with existing data.");
         final List<AccountItemHandler> localAccounts = getAccounts(context);
         final Set<String> processedCommonAccounts = new HashSet<>();

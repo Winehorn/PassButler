@@ -23,6 +23,7 @@ import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.SyncContract;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.SyncContentProviderUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.SqlUtil;
@@ -117,90 +118,92 @@ public class SyncFileMerger {
                 + filePath + " from device with hardware address "
                 + hardwareAddress + " received on " +
                 lastReceivedTimeStamp + ".");
-        KeyHolder keyHolder = KeyHolder.getInstance();
-        if(keyHolder.getKey() == null) {
+        try {
+            KeyHolder keyHolder = KeyHolder.getInstance();
+            if(!lastReceivedTimeStamp.after(lastIncorporatedTimestamp)) {
+                Log.i(TAG, "Merge aborted. Nothing has changed since last merge.");
+                return false;
+            }
+            AccountListHandler localData;
+            try {
+                Log.i(TAG, "Reading local version of file to merge.");
+                localData = AccountListHandler.getFromInternalStorage(
+                        context,
+                        filePath,
+                        keyHolder.getKey());
+            }
+            catch (JSONException
+                    | NoSuchAlgorithmException
+                    | InvalidKeyException
+                    | NoSuchPaddingException
+                    | IOException e) {
+                Log.e(TAG, "Merge failed. Could not read local data.");
+                return false;
+            }
+            AccountListHandler syncData;
+            try {
+                Log.i(TAG, "Reading version of file to merge from remote device.");
+                syncData = AccountListHandler.getFromInternalStorage(
+                        context,
+                        FileUtil.combinePaths(context.getString(R.string.sync_directory_name), hardwareAddress, filePath),
+                        keyHolder.getKey());
+            }
+            catch (JSONException
+                    | NoSuchAlgorithmException
+                    | InvalidKeyException
+                    | NoSuchPaddingException
+                    | IOException e) {
+                Log.e(TAG, "Merge failed. Could not read data from sync item.");
+                // TODO: In this case the password was changed on remote device. What to do?
+                return false;
+            }
+            boolean dataChanged = localData.merge(context, filePath, syncData, lastReceivedTimeStamp, mergeDate);
+            if(dataChanged) {
+                Log.i(TAG, "Saving merged data to internal storage.");
+                localData.saveToInternalStorage(
+                        context,
+                        filePath,
+                        lastReceivedTimeStamp,
+                        keyHolder.getKey(),
+                        true);
+                Log.i(TAG, "Saving changed meta data.");
+                ContentValues contentValues = new ContentValues();
+                contentValues.put(
+                        SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_INCORPORATED_VERSION_TIMESTAMP,
+                        lastIncorporatedTimestamp.getTime());
+                int updatedRows = contentResolver.update(
+                        SyncContract.ReceivedSyncItemEntry.CONTENT_URI,
+                        contentValues,
+                        SqlUtil.createSelectionString(
+                                SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS,
+                                SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH),
+                        new String[]{hardwareAddress, filePath});
+                if(updatedRows < 1) {
+                    throw new IllegalStateException("There must be a row for a received sync item to update.");
+                }
+                contentValues = new ContentValues();
+                contentValues.put(
+                        SyncContract.DataSourceEntry.COLUMN_LAST_MODIFIED_TIMESTAMP,
+                        mergeDate.getTime());
+                updatedRows = contentResolver.update(
+                        SyncContract.DataSourceEntry.CONTENT_URI,
+                        contentValues,
+                        SqlUtil.createSelectionString(SyncContract.DataSourceEntry.COLUMN_FILE_PATH),
+                        new String[]{filePath});
+                if(updatedRows < 1) {
+                    throw new IllegalStateException("There must be a row for a data source to update.");
+                }
+                Log.i(TAG, "Finished to merge file "
+                        + filePath + " from device with hardware address "
+                        + hardwareAddress + " received on " +
+                        lastReceivedTimeStamp + ".");
+            }
+            return dataChanged;
+        }
+        catch (MissingKeyException e) {
             Log.e(TAG, "Merge failed. Decryption key is not available.");
             return false;
         }
-        if(!lastReceivedTimeStamp.after(lastIncorporatedTimestamp)) {
-            Log.i(TAG, "Merge aborted. Nothing has changed since last merge.");
-            return false;
-        }
-        AccountListHandler localData;
-        try {
-            Log.i(TAG, "Reading local version of file to merge.");
-            localData = AccountListHandler.getFromInternalStorage(
-                    context,
-                    filePath,
-                    keyHolder.getKey());
-        }
-        catch (JSONException
-                | NoSuchAlgorithmException
-                | InvalidKeyException
-                | NoSuchPaddingException
-                | IOException e) {
-            Log.e(TAG, "Merge failed. Could not read local data.");
-            return false;
-        }
-        AccountListHandler syncData;
-        try {
-            Log.i(TAG, "Reading version of file to merge from remote device.");
-            syncData = AccountListHandler.getFromInternalStorage(
-                    context,
-                    FileUtil.combinePaths(context.getString(R.string.sync_directory_name), hardwareAddress, filePath),
-                    keyHolder.getKey());
-        }
-        catch (JSONException
-                | NoSuchAlgorithmException
-                | InvalidKeyException
-                | NoSuchPaddingException
-                | IOException e) {
-            Log.e(TAG, "Merge failed. Could not read data from sync item.");
-            // TODO: In this case the password was changed on remote device. What to do?
-            return false;
-        }
-        boolean dataChanged = localData.merge(context, filePath, syncData, lastReceivedTimeStamp, mergeDate);
-        if(dataChanged) {
-            Log.i(TAG, "Saving merged data to internal storage.");
-            localData.saveToInternalStorage(
-                    context,
-                    filePath,
-                    lastReceivedTimeStamp,
-                    keyHolder.getKey(),
-                    true);
-            Log.i(TAG, "Saving changed meta data.");
-            ContentValues contentValues = new ContentValues();
-            contentValues.put(
-                    SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_INCORPORATED_VERSION_TIMESTAMP,
-                    lastIncorporatedTimestamp.getTime());
-            int updatedRows = contentResolver.update(
-                    SyncContract.ReceivedSyncItemEntry.CONTENT_URI,
-                    contentValues,
-                    SqlUtil.createSelectionString(
-                            SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS,
-                            SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH),
-                    new String[]{hardwareAddress, filePath});
-            if(updatedRows < 1) {
-                throw new IllegalStateException("There must be a row for a received sync item to update.");
-            }
-            contentValues = new ContentValues();
-            contentValues.put(
-                    SyncContract.DataSourceEntry.COLUMN_LAST_MODIFIED_TIMESTAMP,
-                    mergeDate.getTime());
-            updatedRows = contentResolver.update(
-                    SyncContract.DataSourceEntry.CONTENT_URI,
-                    contentValues,
-                    SqlUtil.createSelectionString(SyncContract.DataSourceEntry.COLUMN_FILE_PATH),
-                    new String[]{filePath});
-            if(updatedRows < 1) {
-                throw new IllegalStateException("There must be a row for a data source to update.");
-            }
-            Log.i(TAG, "Finished to merge file "
-                    + filePath + " from device with hardware address "
-                    + hardwareAddress + " received on " +
-                    lastReceivedTimeStamp + ".");
-        }
-        return dataChanged;
     }
 
     private boolean isMergeRequired(String filePath, String hardwareAddress, Date lastReceivedVersionTimestamp) {
