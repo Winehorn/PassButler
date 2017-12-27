@@ -43,7 +43,8 @@ public class BackupUtil {
                 }
             } else {
                 Log.w(TAG, "createBackup: External Storage is not writable");
-                Toast.makeText(context, "External Storage not writable!", Toast.LENGTH_SHORT).show();
+                Toast.makeText(context,
+                        "External Storage not writable! Please add the Storage Permission!", Toast.LENGTH_LONG).show();
             }
         } else {
             Log.w(TAG, "createBackup: Internal file does not exist.");
