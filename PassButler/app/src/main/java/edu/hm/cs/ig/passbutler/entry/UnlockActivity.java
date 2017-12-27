@@ -112,6 +112,12 @@ public class UnlockActivity extends PreAuthActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        passwordEditText.getText().clear();
+    }
+
+    @Override
     public void onBackPressed() {
         NavigationUtil.goToHomeScreen(this);
     }
@@ -159,7 +165,6 @@ public class UnlockActivity extends PreAuthActivity {
         setUnlockCountPref(attemptCount, lastAttemptTime);
 
         Log.i(TAG, "Correct password was entered.");
-        passwordEditText.getText().clear();
         NavigationUtil.goToAccountListActivity(this);
     }
 

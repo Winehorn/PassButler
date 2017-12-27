@@ -98,6 +98,13 @@ public class CreatePersistenceActivity extends PreAuthActivity {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        passwordEditText.getText().clear();
+        repeatPasswordEditText.getText().clear();
+    }
+
+    @Override
     public void onBackPressed() {
         NavigationUtil.goToHomeScreen(this);
     }
@@ -117,8 +124,6 @@ public class CreatePersistenceActivity extends PreAuthActivity {
         else
         {
             createPersistence();
-            passwordEditText.getText().clear();
-            repeatPasswordEditText.getText().clear();
             NavigationUtil.goToAccountListActivity(this);
         }
     }
