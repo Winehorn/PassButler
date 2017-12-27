@@ -99,7 +99,8 @@
     <string name="password_generator_chars_uppercase">ABCDEFGHIJKLMNOPQRSTUVWXYZ</string>
     <string name="password_generator_chars_numbers">0123456789</string>
     <string name="password_generator_chars_special">!&quot;#$%&amp;&apos;()*+,-./:;&lt;=&gt;?@[\]^_`{|}~</string>
-    <string name="password_generator_expert_mode">Expert Mode</string>
+    <string name="password_generator_expert_mode_switch">Expert Mode</string>
+    <string name="password_generator_passphrase_switch">Passphrase</string>
 
     <!-- SyncActivity -->
     <string name="sync_activity_label">Sync</string>

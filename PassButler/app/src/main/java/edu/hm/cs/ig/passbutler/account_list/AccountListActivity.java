@@ -18,9 +18,14 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandlerLoader;
 import edu.hm.cs.ig.passbutler.data.BroadcastFileObserver;
@@ -255,6 +260,7 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
         Log.i(TAG, "Processing data of finished loader.");
         accountListAdapter.setAccountListHandler(data);
         accountListHandler = data;
+        accountListAdapter.checkPasswordDuplicates();
         showEmptyAccountListMessage();
     }
 
@@ -262,4 +268,6 @@ public class AccountListActivity extends PostAuthActivity implements AccountList
     public void onLoaderReset(Loader<AccountListHandler> loader) {
         Log.i(TAG, "Processing loader reset.");
     }
+
+
 }

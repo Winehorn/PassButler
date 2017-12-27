@@ -287,27 +287,24 @@ public class FileUtil {
         //if folder does not exist
         if (!dstDir.exists()) {
             if (!dstDir.mkdir()) {
-                Log.d(TAG, "exportFile: dstDir is null");
-                return null;
+                throw new IOException("Could not create dstDir!");
             }
         }
 
-        File expFile = new File(dstDir.getPath() + "/" + context.getString(R.string.backup_file_name));
+        File dstFile = new File(dstDir.getPath() + "/" + context.getString(R.string.backup_file_name));
 
-        if(expFile.exists()) {
+        if(dstFile.exists()) {
             Log.i(TAG, "exportFile: External file exists.");
-            if(expFile.delete()) {
+            if(dstFile.delete()) {
                 Log.i(TAG, "exportFile: External file deleted.");
             }
         }
 
-        FileChannel inChannel = null;
-        FileChannel outChannel = null;
-
+        FileChannel inChannel;
+        FileChannel outChannel;
 
         inChannel = new FileInputStream(srcFile).getChannel();
-        outChannel = new FileOutputStream(expFile).getChannel();
-
+        outChannel = new FileOutputStream(dstFile).getChannel();
 
         try {
             inChannel.transferTo(0, inChannel.size(), outChannel);
@@ -318,25 +315,16 @@ public class FileUtil {
                 outChannel.close();
         }
 
-        return expFile;
+        return dstFile;
     }
 
     /* Checks if external storage is available for read and write */
     public static boolean isExternalStorageWritable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.getExternalStorageDirectory().canWrite();
     }
 
     /* Checks if external storage is available to at least read */
     public static boolean isExternalStorageReadable() {
-        String state = Environment.getExternalStorageState();
-        if (Environment.MEDIA_MOUNTED.equals(state) ||
-                Environment.MEDIA_MOUNTED_READ_ONLY.equals(state)) {
-            return true;
-        }
-        return false;
+        return Environment.getExternalStorageDirectory().canRead();
     }
 }
