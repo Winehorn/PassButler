@@ -19,6 +19,7 @@
     <integer name="password_generator_max_length">64</integer>
     <integer name="password_generator_min_length">4</integer>
     <integer name="password_generator_default_length">18</integer>
+    <integer name="password_generator_default_passphrase_length">7</integer>
 
     <!-- CopyUtil -->
     <integer name="copy_delete_duration">20</integer>
