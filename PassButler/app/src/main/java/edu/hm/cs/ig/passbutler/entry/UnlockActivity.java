@@ -37,6 +37,7 @@ import edu.hm.cs.ig.passbutler.util.ArrayUtil;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
+import edu.hm.cs.ig.passbutler.util.ServiceUtil;
 
 import static android.os.SystemClock.elapsedRealtime;
 
@@ -166,6 +167,7 @@ public class UnlockActivity extends PreAuthActivity {
         setUnlockCountPref(attemptCount, lastAttemptTime);
 
         Log.i(TAG, "Correct password was entered.");
+        ServiceUtil.notifyMergeAll(this);
         NavigationUtil.goToAccountListActivity(this);
     }
 
