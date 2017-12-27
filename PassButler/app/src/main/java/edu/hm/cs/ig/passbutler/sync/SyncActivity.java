@@ -50,9 +50,9 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sync);
-        syncNowButton = findViewById(R.id.sync_now_button);
-        syncNowButton.setEnabled(PreferencesUtil.getBluetoothSyncEnabled(this));
         bluetoothSyncSwitch = findViewById(R.id.bluetooth_sync_switch);
+        autoSyncSwitch = findViewById(R.id.auto_sync_switch);
+        syncNowButton = findViewById(R.id.sync_now_button);
         bluetoothSyncSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -60,7 +60,6 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
             }
         });
         bluetoothSyncSwitch.setChecked(PreferencesUtil.getBluetoothSyncEnabled(this));
-        autoSyncSwitch = findViewById(R.id.auto_sync_switch);
         autoSyncSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
@@ -69,6 +68,7 @@ public class SyncActivity extends PostAuthActivity implements LoaderManager.Load
         });
         autoSyncSwitch.setEnabled(PreferencesUtil.getBluetoothSyncEnabled(this));
         autoSyncSwitch.setChecked(PreferencesUtil.getAutoSyncEnabled(this));
+        syncNowButton.setEnabled(PreferencesUtil.getBluetoothSyncEnabled(this));
         emptySyncDeviceListMessageTextView = findViewById(R.id.empty_sync_device_list_message_text_view);
         ActionBar actionBar = this.getSupportActionBar();
         if (actionBar != null) {
