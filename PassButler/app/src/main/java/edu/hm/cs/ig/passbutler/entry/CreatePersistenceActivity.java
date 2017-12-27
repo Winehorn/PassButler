@@ -160,7 +160,7 @@ public class CreatePersistenceActivity extends PreAuthActivity {
                 getString(R.string.accounts_file_path),
                 new Date(0L),   // Initialize with oldest date so that sync is possible with every other newer version.
                 KeyHolder.getInstance().getKey(),
-                false);
+                true);
         Log.i(TAG, "New accounts file created.");
     }
 

@@ -272,12 +272,26 @@ public class SyncContentProvider extends ContentProvider {
         int match = uriMatcher.match(uri);
         int tasksDeleted;
         switch (match) {
+            case DATA_SOURCES_ALL: {
+                tasksDeleted = database.delete(
+                        SyncContract.DataSourceEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
+            }
             case DATA_SOURCES_SINGLE: {
                 String id = uri.getPathSegments().get(1);
                 tasksDeleted = database.delete(
                         SyncContract.DataSourceEntry.TABLE_NAME,
                         SyncContract.DataSourceEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
                         new String[]{id});
+                break;
+            }
+            case BLUETOOTH_SYNC_DEVICES_ALL: {
+                tasksDeleted = database.delete(
+                        SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
                 break;
             }
             case BLUETOOTH_SYNC_DEVICES_SINGLE: {
@@ -288,12 +302,26 @@ public class SyncContentProvider extends ContentProvider {
                         new String[]{id});
                 break;
             }
+            case RECEIVED_SYNC_ITEMS_ALL: {
+                tasksDeleted = database.delete(
+                        SyncContract.ReceivedSyncItemEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
+                break;
+            }
             case RECEIVED_SYNC_ITEMS_SINGLE: {
                 String id = uri.getPathSegments().get(1);
                 tasksDeleted = database.delete(
                         SyncContract.ReceivedSyncItemEntry.TABLE_NAME,
                         SyncContract.ReceivedSyncItemEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
                         new String[]{id});
+                break;
+            }
+            case SENT_SYNC_ITEMS_ALL: {
+                tasksDeleted = database.delete(
+                        SyncContract.SentSyncItemEntry.TABLE_NAME,
+                        selection,
+                        selectionArgs);
                 break;
             }
             case SENT_SYNC_ITEMS_SINGLE: {
@@ -325,6 +353,14 @@ public class SyncContentProvider extends ContentProvider {
         int match = uriMatcher.match(uri);
 
         switch (match) {
+            case DATA_SOURCES_ALL: {
+                tasksUpdated = database.update(
+                        SyncContract.DataSourceEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            }
             case DATA_SOURCES_SINGLE: {
                 String id = uri.getPathSegments().get(1);
                 tasksUpdated = database.update(
@@ -332,6 +368,14 @@ public class SyncContentProvider extends ContentProvider {
                         values,
                         SyncContract.DataSourceEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
                         new String[]{id});
+                break;
+            }
+            case BLUETOOTH_SYNC_DEVICES_ALL: {
+                tasksUpdated = database.update(
+                        SyncContract.BluetoothSyncDeviceEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
                 break;
             }
             case BLUETOOTH_SYNC_DEVICES_SINGLE: {
@@ -343,6 +387,14 @@ public class SyncContentProvider extends ContentProvider {
                         new String[]{id});
                 break;
             }
+            case RECEIVED_SYNC_ITEMS_ALL: {
+                tasksUpdated = database.update(
+                        SyncContract.ReceivedSyncItemEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
+                break;
+            }
             case RECEIVED_SYNC_ITEMS_SINGLE: {
                 String id = uri.getPathSegments().get(1);
                 tasksUpdated = database.update(
@@ -350,6 +402,14 @@ public class SyncContentProvider extends ContentProvider {
                         values,
                         SyncContract.ReceivedSyncItemEntry._ID + SqlUtil.SELECTION_PLACEHOLDER_SUFFIX,
                         new String[]{id});
+                break;
+            }
+            case SENT_SYNC_ITEMS_ALL: {
+                tasksUpdated = database.update(
+                        SyncContract.SentSyncItemEntry.TABLE_NAME,
+                        values,
+                        selection,
+                        selectionArgs);
                 break;
             }
             case SENT_SYNC_ITEMS_SINGLE: {

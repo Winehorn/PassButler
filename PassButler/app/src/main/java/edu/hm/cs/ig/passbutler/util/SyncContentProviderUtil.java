@@ -110,6 +110,9 @@ public class SyncContentProviderUtil {
                         SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH),
                 new String[]{hardwareAddress, filePath},
                 null);
+        if(lastIncorporated == null) {
+            lastIncorporated = new Date(0L);
+        }
         Log.i(TAG, "Date of last incorporation is " + lastIncorporated + ".");
         return lastIncorporated;
     }

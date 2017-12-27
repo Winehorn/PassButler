@@ -267,16 +267,15 @@ public class BluetoothSyncReceiver {
         contentValues.put(SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS, remoteDeviceHardwareAddress);
         contentValues.put(SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH, filePath);
         contentValues.put(SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_RECEIVED_VERSION_TIMESTAMP, newLastModified.getTime());
-        try {
-            contentResolver.update(
-                    SyncContract.ReceivedSyncItemEntry.CONTENT_URI,
-                    contentValues,
-                    SqlUtil.createSelectionString(
-                            SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS,
-                            SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH),
-                    new String[]{remoteDeviceHardwareAddress, filePath});
-        }
-        catch(UnsupportedOperationException e) {
+        int updatedRows = contentResolver.update(
+                SyncContract.ReceivedSyncItemEntry.CONTENT_URI,
+                contentValues,
+                SqlUtil.createSelectionString(
+                        SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS,
+                        SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH),
+                new String[]{remoteDeviceHardwareAddress, filePath});
+        if(updatedRows < 1) {
+            contentValues.put(SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_INCORPORATED_VERSION_TIMESTAMP, 0L);
             contentResolver.insert(SyncContract.ReceivedSyncItemEntry.CONTENT_URI, contentValues);
         }
         Log.i(TAG, "Update complete.");

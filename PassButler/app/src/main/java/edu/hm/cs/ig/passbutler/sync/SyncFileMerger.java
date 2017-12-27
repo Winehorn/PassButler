@@ -173,42 +173,27 @@ public class SyncFileMerger {
             contentValues.put(
                     SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_INCORPORATED_VERSION_TIMESTAMP,
                     lastIncorporatedTimestamp.getTime());
-            try {
-                contentResolver.update(
-                        SyncContract.ReceivedSyncItemEntry.CONTENT_URI,
-                        contentValues,
-                        SqlUtil.createSelectionString(
-                                SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS,
-                                SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH),
-                        new String[]{hardwareAddress, filePath});
-            }
-            catch(UnsupportedOperationException e) {
-                contentValues.put(
-                        SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS,
-                        hardwareAddress);
-                contentValues.put(
-                        SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH,
-                        filePath);
-                contentValues.put(
-                        SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_RECEIVED_VERSION_TIMESTAMP,
-                        lastReceivedTimeStamp.getTime());
-                contentResolver.insert(SyncContract.ReceivedSyncItemEntry.CONTENT_URI, contentValues);
+            int updatedRows = contentResolver.update(
+                    SyncContract.ReceivedSyncItemEntry.CONTENT_URI,
+                    contentValues,
+                    SqlUtil.createSelectionString(
+                            SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS,
+                            SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH),
+                    new String[]{hardwareAddress, filePath});
+            if(updatedRows < 1) {
+                throw new IllegalStateException("There must be a row for a received sync item to update.");
             }
             contentValues = new ContentValues();
             contentValues.put(
                     SyncContract.DataSourceEntry.COLUMN_LAST_MODIFIED_TIMESTAMP,
                     mergeDate.getTime());
-            try {
-                contentResolver.update(
-                        SyncContract.DataSourceEntry.CONTENT_URI,
-                        contentValues,
-                        SqlUtil.createSelectionString(SyncContract.DataSourceEntry.COLUMN_FILE_PATH),
-                        new String[]{filePath});
-            }
-            catch(UnsupportedOperationException e) {
-                contentValues.put(SyncContract.DataSourceEntry.COLUMN_FILE_PATH, filePath);
-                contentValues.put(SyncContract.DataSourceEntry.COLUMN_FILE_HASH, "test");   // TODO: This overwrites the hash. Update MUST work! Workaround is to read it and write it again.
-                contentResolver.insert(SyncContract.DataSourceEntry.CONTENT_URI, contentValues);
+            updatedRows = contentResolver.update(
+                    SyncContract.DataSourceEntry.CONTENT_URI,
+                    contentValues,
+                    SqlUtil.createSelectionString(SyncContract.DataSourceEntry.COLUMN_FILE_PATH),
+                    new String[]{filePath});
+            if(updatedRows < 1) {
+                throw new IllegalStateException("There must be a row for a data source to update.");
             }
             Log.i(TAG, "Finished to merge file "
                     + filePath + " from device with hardware address "

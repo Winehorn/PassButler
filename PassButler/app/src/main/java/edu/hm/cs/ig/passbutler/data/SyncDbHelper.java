@@ -43,7 +43,7 @@ public class SyncDbHelper extends SQLiteOpenHelper {
                 SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS                   + " TEXT NOT NULL, " +
                 SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH                                 + " TEXT NOT NULL, " +
                 SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_RECEIVED_VERSION_TIMESTAMP           + " INTEGER NOT NULL, " +
-                SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_INCORPORATED_VERSION_TIMESTAMP       + " INTEGER, " +
+                SyncContract.ReceivedSyncItemEntry.COLUMN_LAST_INCORPORATED_VERSION_TIMESTAMP       + " INTEGER NOT NULL, " +
                 " UNIQUE (" + SyncContract.ReceivedSyncItemEntry.COLUMN_SOURCE_HARDWARE_ADDRESS     + ", "
                         + SyncContract.ReceivedSyncItemEntry.COLUMN_FILE_PATH                       + ") ON CONFLICT REPLACE);";
         db.execSQL(CREATE_TABLE_RECEIVED_SYNC_ITEMS);
