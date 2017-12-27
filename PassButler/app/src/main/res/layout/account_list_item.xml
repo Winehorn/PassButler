@@ -24,16 +24,36 @@
             style="@style/TextAppearance.AppCompat.Large"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_alignParentLeft="true"
+            android:layout_alignParentStart="true"
             android:layout_centerVertical="true"
             android:background="@color/background_light"
             android:text="@string/default_account_name"/>
+
+        <ImageView
+            android:id="@+id/account_list_item_timer_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/account_list_item_image_button"
+            android:background="@color/background_light"
+            android:src="@drawable/ic_info_timer_red"
+            android:visibility="gone"/>
+
+        <ImageView
+            android:id="@+id/account_list_item_repetition_img"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toStartOf="@id/account_list_item_timer_img"
+            android:background="@color/background_light"
+            android:src="@drawable/ic_info_pw_repetition"
+            android:visibility="gone"/>
 
         <ImageButton
             android:id="@+id/account_list_item_image_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_alignParentRight="true"
+            android:layout_alignParentEnd="true"
             android:layout_centerVertical="true"
             android:background="@color/background_light"
             android:src="@drawable/ic_action_more" />

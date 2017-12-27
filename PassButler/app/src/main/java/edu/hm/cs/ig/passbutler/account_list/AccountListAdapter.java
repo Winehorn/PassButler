@@ -3,15 +3,25 @@ package edu.hm.cs.ig.passbutler.account_list;
 import android.content.Context;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
+import edu.hm.cs.ig.passbutler.util.DateUtil;
 
 /**
  * Created by dennis on 15.11.17.
@@ -20,10 +30,11 @@ import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.AccountListAdapterViewHolder> {
 
     private static final String TAG = AccountListAdapter.class.getName();
-    private AccountListHandler accountListHandler;
     private final Context context;
     private final AccountListAdapterOnClickHandler clickHandler;
     private final AccountListAdapterOnMenuItemClickHandler menuItemClickHandler;
+    private AccountListHandler accountListHandler;
+    private ArrayList<String> passwordRepetitionAccounts;
 
     public AccountListAdapter(
             Context context,
@@ -44,12 +55,32 @@ public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.
 
     @Override
     public void onBindViewHolder(AccountListAdapterViewHolder holder, int position) {
-        holder.accountNameTextView.setText(accountListHandler.getAccountName(context, position));
+        String accountName = accountListHandler.getAccountName(context, position);
+        AccountItemHandler account = accountListHandler.getAccount(context, accountName);
+        holder.accountNameTextView.setText(accountName);
+
+        if (account.attributeExists(context, context.getString(R.string.account_attribute_password_key))) {
+            Date lastModified = accountListHandler.getAccount(context, accountName)
+                    .getAttributeLastModified(context, context.getString(R.string.account_attribute_password_key));
+            int daysBetween = DateUtil.absoluteDayDif(lastModified, new Date());
+            // TODO: replace with settings value
+            if (daysBetween >= 1) {
+                holder.accountTimerImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.accountTimerImageView.setVisibility(View.GONE);
+            }
+        }
+
+        if (passwordRepetitionAccounts.contains(accountName)) {
+            holder.accountRepetitionImageView.setVisibility(View.VISIBLE);
+        } else {
+            holder.accountRepetitionImageView.setVisibility(View.GONE);
+        }
     }
 
     @Override
     public int getItemCount() {
-        if(accountListHandler == null) {
+        if (accountListHandler == null) {
             return 0;
         }
         return accountListHandler.getAccountCount(context);
@@ -60,9 +91,41 @@ public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.
         notifyDataSetChanged();
     }
 
+    public void checkPasswordDuplicates() {
+        ArrayList<String> dupAccountList = new ArrayList<>();
+        HashMap<String, String> map = new HashMap<>();
+        String pwKey = context.getString(R.string.account_attribute_password_key);
+
+        for (AccountItemHandler handler : accountListHandler.getAccounts(context)) {
+            if (handler.attributeExists(context, pwKey)) {
+                map.put(handler.getAccountName(context),
+                        handler.getAttributeValue(context, pwKey));
+            }
+        }
+
+        for (Map.Entry<String, String> pair : map.entrySet()) {
+            String accountName = pair.getKey();
+            String pw = pair.getValue();
+            int dupCount = 0;
+
+            for (Map.Entry<String, String> innerPair : map.entrySet()) {
+                if (innerPair.getValue().equals(pw)) {
+                    dupCount++;
+                }
+            }
+
+            if (dupCount >= 2) {
+                dupAccountList.add(accountName);
+            }
+        }
+        passwordRepetitionAccounts = dupAccountList;
+    }
+
     public class AccountListAdapterViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, PopupMenu.OnMenuItemClickListener {
 
         public final TextView accountNameTextView;
+        private final ImageView accountTimerImageView;
+        private final ImageView accountRepetitionImageView;
 
         public AccountListAdapterViewHolder(View view) {
             super(view);
@@ -70,15 +133,16 @@ public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.
             ImageButton imageButton = view.findViewById(R.id.account_list_item_image_button);
             imageButton.setOnClickListener(this);
             view.setOnClickListener(this);
+            accountTimerImageView = view.findViewById(R.id.account_list_item_timer_img);
+            accountRepetitionImageView = view.findViewById(R.id.account_list_item_repetition_img);
         }
 
         @Override
         public void onClick(View v) {
-            if(v.getId() == R.id.account_list_item_card_view) {
+            if (v.getId() == R.id.account_list_item_card_view) {
                 final String accountName = accountListHandler.getAccountName(context, getAdapterPosition());
                 clickHandler.onClick(v, accountName);
-            }
-            else if(v.getId() == R.id.account_list_item_image_button) {
+            } else if (v.getId() == R.id.account_list_item_image_button) {
                 final PopupMenu popupMenu = new PopupMenu(context, v);
                 popupMenu.getMenuInflater().inflate(R.menu.account_list_more_menu, popupMenu.getMenu());
                 popupMenu.setOnMenuItemClickListener(this);
