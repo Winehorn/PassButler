@@ -9,6 +9,7 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.util.Log;
+import android.widget.Toast;
 
 import org.json.JSONException;
 
@@ -104,8 +105,6 @@ public class SyncFileMerger {
             }
         }
         Log.i(TAG, "Finished to merge all available sync items.");
-
-        // TODO sort order correct?
     }
 
     public boolean mergeSingle(
@@ -142,7 +141,7 @@ public class SyncFileMerger {
             }
             AccountListHandler syncData;
             try {
-                Log.i(TAG, "Reading version of file to merge from remote device.");
+                Log.i(TAG, "Reading version of file to merge from remote device with hardware address " + hardwareAddress + ".");
                 syncData = AccountListHandler.getFromInternalStorage(
                         context,
                         FileUtil.combinePaths(context.getString(R.string.sync_directory_name), hardwareAddress, filePath),
@@ -154,7 +153,7 @@ public class SyncFileMerger {
                     | NoSuchPaddingException
                     | IOException e) {
                 Log.e(TAG, "Merge failed. Could not read data from sync item.");
-                // TODO: In this case the password was changed on remote device. What to do?
+                Toast.makeText(context, context.getString(R.string.sync_wrong_password_error_msg), Toast.LENGTH_LONG).show();
                 return false;
             }
             boolean dataChanged = localData.merge(context, filePath, syncData, lastReceivedTimeStamp, mergeDate);
