@@ -11,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -19,9 +20,13 @@ import java.util.List;
 import java.util.Map;
 
 import edu.hm.cs.ig.passbutler.R;
+import edu.hm.cs.ig.passbutler.account_detail.AccountDetailActivity;
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
+import edu.hm.cs.ig.passbutler.security.KeyHolder;
+import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.DateUtil;
+import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 
 /**
  * Created by dennis on 15.11.17.
@@ -60,8 +65,16 @@ public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.
         holder.accountNameTextView.setText(accountName);
 
         if (account.attributeExists(context, context.getString(R.string.account_attribute_password_key))) {
-            Date lastModified = accountListHandler.getAccount(context, accountName)
-                    .getAttributeLastModified(context, context.getString(R.string.account_attribute_password_key));
+            Date lastModified = null;
+            try {
+                lastModified = accountListHandler.getAccount(context, accountName)
+                        .getAttributeLastModified(context, context.getString(R.string.account_attribute_password_key));
+            } catch (MissingKeyException e) {
+                Toast.makeText(context, context.getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                Log.wtf(TAG, "Could not check password for too high age because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                NavigationUtil.goToUnlockActivity(context);
+                return;
+            }
             int daysBetween = DateUtil.absoluteDayDif(lastModified, new Date());
             // TODO: replace with settings value
             if (daysBetween >= 1) {
@@ -98,8 +111,15 @@ public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.
 
         for (AccountItemHandler handler : accountListHandler.getAccounts(context)) {
             if (handler.attributeExists(context, pwKey)) {
-                map.put(handler.getAccountName(context),
-                        handler.getAttributeValue(context, pwKey));
+                try {
+                    map.put(handler.getAccountName(context),
+                            handler.getAttributeValue(context, pwKey));
+                } catch (MissingKeyException e) {
+                    Toast.makeText(context, context.getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                    Log.wtf(TAG, "Could not check passwords for duplicates because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                    NavigationUtil.goToUnlockActivity(context);
+                    return;
+                }
             }
         }
 
