@@ -30,6 +30,7 @@ import edu.hm.cs.ig.passbutler.util.NavigationUtil;
 public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler> {
 
     private static final String TAG = AccountListHandlerLoader.class.getName();
+    private Context context;
     private final String fileName;
     private AccountListHandler cachedData;
     private BroadcastReceiver broadcastReceiver = new BroadcastReceiver() {
@@ -42,9 +43,10 @@ public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler
 
     public AccountListHandlerLoader(Context context, String fileName) {
         super(context);
+        this.context = context;
         this.fileName = fileName;
-        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(getContext());
-        IntentFilter intentFilter = new IntentFilter(getContext().getString(R.string.account_list_handler_loader_reload_action));
+        LocalBroadcastManager localBroadcastManager = LocalBroadcastManager.getInstance(context);
+        IntentFilter intentFilter = new IntentFilter(context.getString(R.string.account_list_handler_loader_reload_action));
         Log.i(TAG, "Registering broadcast receiver.");
         localBroadcastManager.registerReceiver(broadcastReceiver, intentFilter);
     }
@@ -64,35 +66,34 @@ public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler
     @Override
     public AccountListHandler loadInBackground() {
         try {
-            return AccountListHandler.getFromInternalStorage(getContext(), fileName, KeyHolder.getInstance().getKey());
+            return AccountListHandler.getFromInternalStorage(context, fileName, KeyHolder.getInstance().getKey());
         }
         catch(MissingKeyException e) {
-            Toast.makeText(getContext(), getContext().getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Could not retrieve key from " + KeyHolder.class.getSimpleName()
                     + " for decryption. Returning empty "
                     + AccountListHandler.class.getSimpleName()
                     + " instead.");
-            NavigationUtil.goToUnlockActivity(getContext());
-            return new AccountListHandler(getContext());
+            NavigationUtil.goToUnlockActivity(context);
+            return new AccountListHandler(context);
         }
         catch(JSONException
                 | NoSuchAlgorithmException
                 | InvalidKeyException
                 | NoSuchPaddingException
                 | IOException e) {
-            Toast.makeText(getContext(), getContext().getString(R.string.loader_error_msg), Toast.LENGTH_SHORT).show();
+            Toast.makeText(context, context.getString(R.string.loader_error_msg), Toast.LENGTH_SHORT).show();
             Log.e(TAG, "Could not load " + AccountListHandler.class.getSimpleName()
                     + " from file. Returning empty "
                     + AccountListHandler.class.getSimpleName()
                     + " instead.");
-            return new AccountListHandler(getContext());
+            return new AccountListHandler(context);
         }
         catch(IllegalStateException e) {
             Log.e(TAG, "Could not get key from " + KeyHolder.class.getSimpleName()
                     + " to decrypt account list. Returning empty "
                     + AccountListHandler.class.getSimpleName()
                     + " instead.");
-            return new AccountListHandler(getContext());
+            return new AccountListHandler(context);
         }
     }
 
@@ -107,6 +108,6 @@ public class AccountListHandlerLoader extends AsyncTaskLoader<AccountListHandler
     protected void onReset() {
         super.onReset();
         Log.i(TAG, "Unregistering broadcast receiver.");
-        LocalBroadcastManager.getInstance(getContext()).unregisterReceiver(broadcastReceiver);
+        LocalBroadcastManager.getInstance(context).unregisterReceiver(broadcastReceiver);
     }
 }
