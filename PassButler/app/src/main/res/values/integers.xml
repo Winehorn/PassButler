@@ -29,6 +29,9 @@
     <integer name="unlock_max_attempts">3</integer>
     <integer name="unlock_default_lock_duration">60</integer>
 
+    <!-- AccountDetailActivity -->
+    <integer name="salt_length">30</integer>
+
     <!-- Shared preferences -->
     <integer name="shared_prefs_auto_lock_time_min">1</integer>
     <integer name="shared_prefs_auto_lock_time_max">60</integer>

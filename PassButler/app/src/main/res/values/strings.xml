@@ -43,6 +43,7 @@
     <string name="json_key_account_attribute_list">attribute_list</string>
     <string name="json_key_account_attribute_value">attribute_value</string>
     <string name="json_key_account_attribute_last_modified">attribute_last_modified</string>
+    <string name="json_key_account_attribute_salt">attribute_salt</string>
 
     <!-- LogoActivity -->
     <string name="logo_activity_label">@string/app_name</string>

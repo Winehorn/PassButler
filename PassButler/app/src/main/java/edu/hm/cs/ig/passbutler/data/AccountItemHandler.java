@@ -19,6 +19,7 @@ import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
+import edu.hm.cs.ig.passbutler.util.StringUtil;
 
 /**
  * Created by dennis on 16.11.17.
@@ -99,10 +100,18 @@ public class AccountItemHandler {
             JSONObject attributes = accountItemAsJson.getJSONObject(context.getString(R.string.json_key_account_attribute_list));
             JSONObject newAttribute = new JSONObject();
             Key key = KeyHolder.getInstance().getKey();
-            String encryptedAttributeValue = CryptoUtil.encryptToString(attributeValue, key, context.getString(R.string.encryption_alg));
-            String encryptedLastModified = CryptoUtil.encryptToString(lastModified.getTime(), key, context.getString(R.string.encryption_alg));
+            String salt = StringUtil.randomString(
+                    true,
+                    true,
+                    true,
+                    true,
+                    context.getResources().getInteger(R.integer.salt_length),
+                    context);
+            String encryptedAttributeValue = CryptoUtil.encryptToString(attributeValue + salt, key, context.getString(R.string.encryption_alg));
+            String encryptedLastModified = CryptoUtil.encryptToString(lastModified.getTime() + salt, key, context.getString(R.string.encryption_alg));
             newAttribute.put(context.getString(R.string.json_key_account_attribute_value), encryptedAttributeValue);
             newAttribute.put(context.getString(R.string.json_key_account_attribute_last_modified), encryptedLastModified);
+            newAttribute.put(context.getString(R.string.json_key_account_attribute_salt), salt);
             attributes.put(attributeKey, newAttribute);
             if(overrideAccountLastModified) {
                 setLastModified(context, lastModified);
@@ -192,16 +201,25 @@ public class AccountItemHandler {
                 context.getString(R.string.json_key_account_attribute_last_modified));
     }
 
+    public String getAttributeSalt(Context context, String attributeKey) {
+        return getEncryptedAttributeProperty(
+                context,
+                attributeKey,
+                context.getString(R.string.json_key_account_attribute_salt));
+    }
+
     private String getDecryptedAttributeStringProperty(Context context, String attributeKey, String attributePropertyKey) throws MissingKeyException {
         String encryptedStringProperty = getEncryptedAttributeProperty(
                 context,
                 attributeKey,
                 attributePropertyKey);
         if(encryptedStringProperty != null) {
-            return CryptoUtil.decryptToString(
+            String decryptedStringProperty = CryptoUtil.decryptToString(
                     encryptedStringProperty,
                     KeyHolder.getInstance().getKey(),
                     context.getString(R.string.encryption_alg));
+            String salt = getAttributeSalt(context, attributeKey);
+            return decryptedStringProperty.substring(0, decryptedStringProperty.length() - salt.length());
         }
         return null;
     }
@@ -212,10 +230,12 @@ public class AccountItemHandler {
                 attributeKey,
                 attributePropertyKey);
         if(encryptedDateProperty != null) {
-            return new Date(CryptoUtil.decryptToLong(
+            String decryptedDateProperty = CryptoUtil.decryptToString(
                     encryptedDateProperty,
                     KeyHolder.getInstance().getKey(),
-                    context.getString(R.string.encryption_alg)));
+                    context.getString(R.string.encryption_alg));
+            String salt = getAttributeSalt(context, attributeKey);
+            return new Date(Long.parseLong(decryptedDateProperty.substring(0, decryptedDateProperty.length() - salt.length())));
         }
         return null;
     }
