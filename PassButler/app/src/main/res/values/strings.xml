@@ -32,6 +32,7 @@
     <string name="shared_prefs_auto_lock_time_title">Auto lock threshold (minutes)</string>
     <string name="shared_prefs_auto_lock_time_summary_default">Invalid time</string>
     <string name="shared_prefs_auto_lock_time_default">5</string>
+    <string name="pref_header_auto_lock">Auto Lock</string>
     <string name="shared_prefs_bluetooth_sync_enabled_key">edu.hm.cs.ig.passbutler.shared_prefs_bluetooth_sync_enabled</string>
     <string name="shared_prefs_auto_sync_enabled_key">edu.hm.cs.ig.passbutler.shared_prefs_auto_sync_enabled</string>
 
@@ -87,6 +88,7 @@
     <string name="last_modified_identifier_text_view_label">Last modified:</string>
     <string name="default_last_modified_date">Default date</string>
     <string name="empty_attribute_list_message">No attributes were created until now</string>
+    <string name="account_detail_item_lock_img_description">Passwordstrength Icon</string>
 
     <!-- PasswordGeneratorActivity -->
     <string name="password_generator_activity_label">Password generator</string>
@@ -191,6 +193,12 @@
     <string name="title_activity_settings_test">Settings</string>
 
     <!-- Strings related to Settings -->
+
+    <!-- Login Attempt Settings -->
+    <string name="pref_header_login_attempt">Login Attempts</string>
+    <string name="pref_number_of_attempts">Number Of Attempts</string>
+    <string name="pref_number_of_attempts_default">3</string>
+    <string name="pref_number_of_attempts_key">edu.hm.cs.ig.passbutler.number_of_attempts_key</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>

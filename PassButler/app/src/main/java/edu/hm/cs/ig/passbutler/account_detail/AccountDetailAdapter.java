@@ -9,17 +9,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.text.SimpleDateFormat;
 
 import edu.hm.cs.ig.passbutler.R;
-import edu.hm.cs.ig.passbutler.account_list.AccountListActivity;
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
+import edu.hm.cs.ig.passbutler.util.PasswordUtil;
 
 /**
  * Created by dennis on 16.11.17.
@@ -55,6 +56,24 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
             holder.accountAttributeKeyTextView.setText(key);
             holder.accountAttributeValueTextView.setText(value);
             holder.accountAttributeLastModifiedTextView.setText(lastModified);
+            if(key.equals(context.getString(R.string.account_attribute_password_key))) {
+                int strength = PasswordUtil.checkPassword(value);
+                switch (strength) {
+                    case 0:
+                    case 1:
+                        holder.accountAttributeLockImageView.setImageResource(R.drawable.ic_info_pw_red);
+                        break;
+                    case 2:
+                    case 3:
+                        holder.accountAttributeLockImageView.setImageResource(R.drawable.ic_info_pw_yellow);
+                        break;
+                    case 4:
+                        holder.accountAttributeLockImageView.setImageResource(R.drawable.ic_info_pw_green);
+                }
+                holder.accountAttributeLockImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.accountAttributeLockImageView.setVisibility(View.INVISIBLE);
+            }
         } catch (MissingKeyException e) {
             Toast.makeText(context, context.getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
             Log.wtf(TAG, "Could not bind view holder because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
@@ -81,12 +100,14 @@ public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdap
         public final TextView accountAttributeKeyTextView;
         public final TextView accountAttributeValueTextView;
         public final TextView accountAttributeLastModifiedTextView;
+        private final ImageView accountAttributeLockImageView;
 
         public AccountDetailAdapterViewHolder(View view) {
             super(view);
             accountAttributeKeyTextView = view.findViewById(R.id.account_attribute_key_text_view);
             accountAttributeValueTextView = view.findViewById(R.id.account_attribute_value_text_view);
             accountAttributeLastModifiedTextView = view.findViewById(R.id.account_attribute_last_modified_date_text_view);
+            accountAttributeLockImageView = view.findViewById(R.id.account_detail_item_lock_img);
             ImageButton imageButton = view.findViewById(R.id.account_detail_item_image_button);
             imageButton.setOnClickListener(this);
             view.setOnClickListener(this);
