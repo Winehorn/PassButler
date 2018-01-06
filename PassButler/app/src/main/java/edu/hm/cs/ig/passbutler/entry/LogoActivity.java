@@ -18,6 +18,8 @@ public class LogoActivity extends PreAuthActivity {
 
     private static final String TAG = LogoActivity.class.getName();
     private static final int DELAY_IN_MILLIS = 3000;
+    private Handler handler;
+    private Runnable waitingTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +30,19 @@ public class LogoActivity extends PreAuthActivity {
         Typeface type = Typeface.createFromAsset(getAssets(), getString(R.string.font_dancing_script_regular_path));
         appTitleTextView.setTypeface(type);
 
-        final Handler handler = new Handler();
-        handler.postDelayed(new Runnable() {
+        ServiceUtil.startSyncMergerService(getApplicationContext());
+        BroadcastFileObserver.init(
+                getApplicationContext(),
+                getString(R.string.account_list_handler_loader_reload_action),
+                FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_path)),
+                FileObserver.MODIFY);
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        handler = new Handler();
+        waitingTask = new Runnable() {
             @Override
             public void run() {
                 if(FileUtil.internalStorageFileExists(LogoActivity.this, getString(R.string.accounts_file_path))) {
@@ -41,14 +54,14 @@ public class LogoActivity extends PreAuthActivity {
                     NavigationUtil.goToCreatePersistenceActivity(LogoActivity.this);
                 }
             }
-        }, DELAY_IN_MILLIS);
+        };
+        handler.postDelayed(waitingTask, DELAY_IN_MILLIS);
+    }
 
-        ServiceUtil.startSyncMergerService(getApplicationContext());
-        BroadcastFileObserver.init(
-                getApplicationContext(),
-                getString(R.string.account_list_handler_loader_reload_action),
-                FileUtil.combinePaths(getFilesDir().getAbsolutePath(), getString(R.string.accounts_file_path)),
-                FileObserver.MODIFY);
+    @Override
+    protected void onStop() {
+        super.onStop();
+        handler.removeCallbacks(waitingTask);
     }
 
     @Override
