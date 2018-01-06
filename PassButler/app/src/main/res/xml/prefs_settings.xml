@@ -1,16 +1,41 @@
 <?xml version="1.0" encoding="utf-8"?>
 <PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <CheckBoxPreference
-        android:defaultValue="@bool/shared_prefs_auto_lock_enabled_default"
-        android:key="@string/shared_prefs_auto_lock_enabled_key"
-        android:summaryOn="@string/shared_prefs_auto_lock_enabled_summary_on"
-        android:summaryOff="@string/shared_prefs_auto_lock_enabled_summary_off"
-        android:title="@string/shared_prefs_auto_lock_enabled_title" />
+    <PreferenceCategory android:title="@string/pref_header_auto_lock">
 
-    <EditTextPreference
-        android:defaultValue="@string/shared_prefs_auto_lock_time_default"
-        android:key="@string/shared_prefs_auto_lock_time_key"
-        android:title="@string/shared_prefs_auto_lock_time_title" />
+        <CheckBoxPreference
+            android:defaultValue="@bool/shared_prefs_auto_lock_enabled_default"
+            android:key="@string/shared_prefs_auto_lock_enabled_key"
+            android:summaryOff="@string/shared_prefs_auto_lock_enabled_summary_off"
+            android:summaryOn="@string/shared_prefs_auto_lock_enabled_summary_on"
+            android:title="@string/shared_prefs_auto_lock_enabled_title" />
+
+        <EditTextPreference
+            android:defaultValue="@string/shared_prefs_auto_lock_time_default"
+            android:key="@string/shared_prefs_auto_lock_time_key"
+            android:title="@string/shared_prefs_auto_lock_time_title" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_header_login_attempt">
+
+        <EditTextPreference
+            android:defaultValue="@string/pref_number_of_attempts_default"
+            android:key="@string/pref_number_of_attempts_key"
+            android:title="@string/pref_number_of_attempts" />
+
+        <EditTextPreference
+            android:defaultValue="@string/pref_attempt_lock_time_default"
+            android:key="@string/pref_attempt_lock_time_key"
+            android:title="@string/pref_attempt_lock_time" />
+
+    </PreferenceCategory>
+    <PreferenceCategory android:title="@string/pref_header_overdue">
+
+        <EditTextPreference
+            android:defaultValue="@string/pref_overdue_default"
+            android:key="@string/pref_overdue_key"
+            android:title="@string/pref_overdue_title" />
+
+    </PreferenceCategory>
 
 </PreferenceScreen>

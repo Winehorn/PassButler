@@ -62,9 +62,7 @@ public class CreatePersistenceActivity extends PreAuthActivity {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         if (mNfcAdapter == null) {
-            // TODO: nfcAvailable nutzen um Persistencezeug ohne NFC zu machen
-            // TODO: Strings durch Resourcestrings ersetzen
-            Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "This device does not support NFC.", Toast.LENGTH_LONG).show();
         } else {
             nfcAvailable = true;
             if (!mNfcAdapter.isEnabled()) {

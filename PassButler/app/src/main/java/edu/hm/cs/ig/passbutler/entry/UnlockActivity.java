@@ -27,6 +27,7 @@ import java.security.NoSuchAlgorithmException;
 import javax.crypto.BadPaddingException;
 import javax.crypto.NoSuchPaddingException;
 import javax.security.auth.DestroyFailedException;
+import javax.security.auth.login.LoginException;
 
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
@@ -37,6 +38,7 @@ import edu.hm.cs.ig.passbutler.util.ArrayUtil;
 import edu.hm.cs.ig.passbutler.util.CryptoUtil;
 import edu.hm.cs.ig.passbutler.util.FileUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
+import edu.hm.cs.ig.passbutler.util.PreferencesUtil;
 import edu.hm.cs.ig.passbutler.util.ServiceUtil;
 
 import static android.os.SystemClock.elapsedRealtime;
@@ -58,6 +60,8 @@ public class UnlockActivity extends PreAuthActivity {
     private SharedPreferences sharedPreferences;
     private int attemptCount;
     private long lastAttemptTime;
+    private int attemptPref;
+    private int timePref;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,9 +81,7 @@ public class UnlockActivity extends PreAuthActivity {
         mNfcAdapter = NfcAdapter.getDefaultAdapter(this);
 
         if (mNfcAdapter == null) {
-            // TODO: nfcAvailable nutzen um Persistencezeug ohne NFC zu machen
-            // TODO: Strings durch Resourcestrings ersetzen
-            Toast.makeText(this, "This device doesn't support NFC.", Toast.LENGTH_LONG).show();
+            //Toast.makeText(this, "This device does not support NFC.", Toast.LENGTH_LONG).show();
         } else {
             nfcAvailable = true;
             if (!mNfcAdapter.isEnabled()) {
@@ -111,6 +113,14 @@ public class UnlockActivity extends PreAuthActivity {
 
         // Setup a tech list for all NfcF tags
         mTechLists = new String[][] { new String[] { NfcF.class.getName() } };
+
+        attemptPref = PreferencesUtil.getStringPrefAsInt(this,
+            this.getString(R.string.pref_number_of_attempts_key),
+            this.getString(R.string.pref_number_of_attempts_default));
+        timePref = PreferencesUtil.getStringPrefAsInt(this,
+            this.getString(R.string.pref_attempt_lock_time_key),
+            this.getString(R.string.pref_attempt_lock_time_default)) * 60;
+        Log.d(TAG, "onCreate: timePref" + timePref);
     }
 
     @Override
@@ -140,13 +150,15 @@ public class UnlockActivity extends PreAuthActivity {
             Log.i(TAG, "Login is temporarily disabled.");
             return;
         }
+
+        attemptCount++;
+        lastAttemptTime = elapsedRealtime();
+        setUnlockCountPref(attemptCount, lastAttemptTime);
+
         try {
             if (!isPasswordCorrect()) {
                 Toast.makeText(this, getString(R.string.wrong_password_error_msg), Toast.LENGTH_SHORT).show();
                 Log.i(TAG, "Wrong password was entered.");
-                attemptCount++;
-                lastAttemptTime = elapsedRealtime();
-                setUnlockCountPref(attemptCount, lastAttemptTime);
                 return;
             }
         }
@@ -230,6 +242,8 @@ public class UnlockActivity extends PreAuthActivity {
             moveTaskToBack(true);
         }
         Log.i("Foreground dispatch", "Discovered tag in activity " + TAG);
+        Toast wrongTagToast = Toast.makeText(this, "This is the wrong tag or it's corrupted!", Toast.LENGTH_LONG);
+
         String action = intent.getAction();
         if(action != null && action.equals(NfcAdapter.ACTION_NDEF_DISCOVERED)) {
             Tag tag = intent.getParcelableExtra(NfcAdapter.EXTRA_TAG);
@@ -251,10 +265,17 @@ public class UnlockActivity extends PreAuthActivity {
 
                     } catch (IOException | FormatException e) {
                         e.printStackTrace();
-                        Toast.makeText(this, "This is the wrong tag or it's corrupted!", Toast.LENGTH_LONG).show();
+                        wrongTagToast.show();
                     }
+                } else {
+                    wrongTagToast.show();
                 }
+            } else {
+                wrongTagToast.show();
             }
+        } else {
+            wrongTagToast.show();
+            Log.i(TAG, "onNewIntent: Action not NDEF but: " + action);
         }
     }
 
@@ -267,13 +288,19 @@ public class UnlockActivity extends PreAuthActivity {
 
     private Boolean isDisabled() {
         Boolean isDisabled = false;
+
+        // Restart since last attempt
+        if(lastAttemptTime > elapsedRealtime()) {
+            lastAttemptTime = 0;
+        }
+
         int timeDif = (int) ((elapsedRealtime() - lastAttemptTime)/1000);
         Log.d(TAG, "isDisabled: attemptCount:" + attemptCount);
         Log.d(TAG, "isDisabled: timeDif:" + timeDif);
-        if(attemptCount >= getResources().getInteger(R.integer.unlock_max_attempts) &&
-                timeDif <= getResources().getInteger(R.integer.unlock_default_lock_duration)) {
+        if(attemptCount >= attemptPref &&
+                timeDif <= timePref) {
             isDisabled = true;
-        } else if (timeDif > getResources().getInteger(R.integer.unlock_default_lock_duration)) {
+        } else if (timeDif > timePref) {
             attemptCount = 0;
             setUnlockCountPref(attemptCount, lastAttemptTime);
         }

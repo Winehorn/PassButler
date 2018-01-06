@@ -1,6 +1,8 @@
 package edu.hm.cs.ig.passbutler.account_detail;
 
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.support.v7.widget.PopupMenu;
 import android.support.v7.widget.RecyclerView;
 import android.util.Log;
@@ -28,7 +30,7 @@ import edu.hm.cs.ig.passbutler.util.PasswordUtil;
 
 public class AccountDetailAdapter extends RecyclerView.Adapter<AccountDetailAdapter.AccountDetailAdapterViewHolder> {
 
-    private static final String TAG = AccountDetailAdapter.class.getName();
+    private final String TAG = AccountDetailAdapter.class.getName();
     private Context context;
     private AccountItemHandler accountItemHandler;
     private final AccountDetailAdapterOnMenuItemClickHandler menuItemClickHandler;

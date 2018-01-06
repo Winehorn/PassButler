@@ -8,8 +8,10 @@ import android.support.v7.preference.EditTextPreference;
 import android.support.v7.preference.Preference;
 import android.support.v7.preference.PreferenceFragmentCompat;
 import android.support.v7.preference.PreferenceScreen;
+import android.util.Log;
 import android.widget.Toast;
 
+import afu.org.checkerframework.checker.oigj.qual.O;
 import edu.hm.cs.ig.passbutler.R;
 import edu.hm.cs.ig.passbutler.security.AutoLocker;
 
@@ -18,6 +20,7 @@ import edu.hm.cs.ig.passbutler.security.AutoLocker;
  */
 
 public class SettingsFragment extends PreferenceFragmentCompat implements SharedPreferences.OnSharedPreferenceChangeListener, Preference.OnPreferenceChangeListener {
+    private String TAG = this.getClass().getName();
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -35,11 +38,29 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     public void onCreatePreferences(Bundle savedInstanceState, String rootKey) {
         addPreferencesFromResource(R.xml.prefs_settings);
         findPreference(getString(R.string.shared_prefs_auto_lock_time_key)).setOnPreferenceChangeListener(this);
+        findPreference(getString(R.string.pref_number_of_attempts_key)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                return onChangeNumberOfAttempts(preference, newValue);
+            }
+        });
+        findPreference(getString(R.string.pref_attempt_lock_time_key)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                return onChangeAttemptTime(preference, newValue);
+            }
+        });
+        findPreference(getString(R.string.pref_overdue_key)).setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+            @Override
+            public boolean onPreferenceChange(Preference preference, Object newValue) {
+                return onChangeOverdueTime(preference, newValue);
+            }
+        });
         PreferenceScreen preferenceScreen = getPreferenceScreen();
         int count = preferenceScreen.getPreferenceCount();
-        for(int i = 0; i < count; i++) {
+        for (int i = 0; i < count; i++) {
             Preference preference = preferenceScreen.getPreference(i);
-            if(!(preference instanceof CheckBoxPreference)) {
+            if (preference.getTitle().equals(getString(R.string.shared_prefs_auto_lock_time_title))) {
                 String value = preferenceScreen.getSharedPreferences().getString(
                         preference.getKey(),
                         getString(R.string.shared_prefs_auto_lock_time_summary_default));
@@ -49,10 +70,9 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     }
 
     private void updatePreferenceSummary(Preference preference, String summary) {
-        if(preference instanceof EditTextPreference) {
+        if (preference instanceof EditTextPreference) {
             preference.setSummary(summary);
-        }
-        else {
+        } else {
             throw new IllegalArgumentException("The preference must have a valid type");
         }
     }
@@ -89,21 +109,19 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
         Preference preference = findPreference(key);
-        if(key.equals(getString(R.string.shared_prefs_auto_lock_enabled_key))) {
+        if (key.equals(getString(R.string.shared_prefs_auto_lock_enabled_key))) {
             boolean autoLockEnabled = sharedPreferences.getBoolean(
                     key,
                     getResources().getBoolean(R.bool.shared_prefs_auto_lock_enabled_default));
-            if(autoLockEnabled) {
+            if (autoLockEnabled) {
                 final int autoLockTimeInMinutes = Integer.parseInt(sharedPreferences.getString(
                         getString(R.string.shared_prefs_auto_lock_time_key),
                         getString(R.string.shared_prefs_auto_lock_time_default)));
                 AutoLocker.getInstance().start(getContext(), autoLockTimeInMinutes);
-            }
-            else {
+            } else {
                 AutoLocker.getInstance().cancel();
             }
-        }
-        else if(key.equals(getString(R.string.shared_prefs_auto_lock_time_key))) {
+        } else if (key.equals(getString(R.string.shared_prefs_auto_lock_time_key))) {
 
             boolean isAutoLockEnabled = PreferenceManager.getDefaultSharedPreferences(getContext()).getBoolean(
                     getString(R.string.shared_prefs_auto_lock_enabled_key),
@@ -111,10 +129,56 @@ public class SettingsFragment extends PreferenceFragmentCompat implements Shared
             final int autoLockTimeInMinutes = Integer.parseInt(sharedPreferences.getString(
                     key,
                     getString(R.string.shared_prefs_auto_lock_time_default)));
-            if(isAutoLockEnabled) {
+            if (isAutoLockEnabled) {
                 AutoLocker.getInstance().reset(getContext(), autoLockTimeInMinutes);
             }
             updatePreferenceSummary(preference, String.valueOf(autoLockTimeInMinutes));
         }
+    }
+
+    private boolean onChangeNumberOfAttempts(Preference preference, Object newValue) {
+        String numberOfAttemptsString = ((String) (newValue)).trim();
+        try {
+            int numberOfAttempts = Integer.parseInt(numberOfAttemptsString);
+            if (numberOfAttempts < 1) {
+                Toast.makeText(getContext(), "Number of Attempts has to be an integer greater than 1.", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Number of Attempts has to be an integer greater than 1.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean onChangeAttemptTime(Preference preference, Object newValue) {
+        String attemptTimeString = ((String) (newValue)).trim();
+        try {
+            int attemptTime = Integer.parseInt(attemptTimeString);
+            if (attemptTime < 1) {
+                Toast.makeText(getContext(), "Attempt Time has to be an integer greater than 1.", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Attempt Time has to be an integer greater than 1.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
+    }
+
+    private boolean onChangeOverdueTime(Preference preference, Object newValue) {
+        String overdueTimeString = ((String) (newValue)).trim();
+        Log.i(TAG, "onPreferenceChange: overdueTimeString:" + overdueTimeString);
+        try {
+            int overdueTime = Integer.parseInt(overdueTimeString);
+            if (overdueTime < 1) {
+                Toast.makeText(getContext(), "Reminder Time has to be an integer greater than 1.", Toast.LENGTH_LONG).show();
+                return false;
+            }
+        } catch (NumberFormatException e) {
+            Toast.makeText(getContext(), "Reminder Time has to be an integer greater than 1.", Toast.LENGTH_LONG).show();
+            return false;
+        }
+        return true;
     }
 }

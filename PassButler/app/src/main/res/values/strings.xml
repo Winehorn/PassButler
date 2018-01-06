@@ -199,6 +199,15 @@
     <string name="pref_number_of_attempts">Number Of Attempts</string>
     <string name="pref_number_of_attempts_default">3</string>
     <string name="pref_number_of_attempts_key">edu.hm.cs.ig.passbutler.number_of_attempts_key</string>
+    <string name="pref_attempt_lock_time">Lock Time (Minutes)</string>
+    <string name="pref_attempt_lock_time_default">3</string>
+    <string name="pref_attempt_lock_time_key">edu.hm.cs.ig.passbutler.attempt_lock_time</string>
+
+    <!-- Password Overdue Settings -->
+    <string name="pref_header_overdue">Password Change Reminder</string>
+    <string name="pref_overdue_title">Reminder Time (Days)</string>
+    <string name="pref_overdue_default">30</string>
+    <string name="pref_overdue_key">edu.hm.cs.ig.passbutler.overdue</string>
 
     <!-- Example General settings -->
     <string name="pref_header_general">General</string>

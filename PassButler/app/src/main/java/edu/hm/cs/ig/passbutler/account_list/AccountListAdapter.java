@@ -16,17 +16,16 @@ import android.widget.Toast;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import edu.hm.cs.ig.passbutler.R;
-import edu.hm.cs.ig.passbutler.account_detail.AccountDetailActivity;
 import edu.hm.cs.ig.passbutler.data.AccountItemHandler;
 import edu.hm.cs.ig.passbutler.data.AccountListHandler;
 import edu.hm.cs.ig.passbutler.security.KeyHolder;
 import edu.hm.cs.ig.passbutler.security.MissingKeyException;
 import edu.hm.cs.ig.passbutler.util.DateUtil;
 import edu.hm.cs.ig.passbutler.util.NavigationUtil;
+import edu.hm.cs.ig.passbutler.util.PreferencesUtil;
 
 /**
  * Created by dennis on 15.11.17.
@@ -64,25 +63,7 @@ public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.
         AccountItemHandler account = accountListHandler.getAccount(context, accountName);
         holder.accountNameTextView.setText(accountName);
 
-        if (account.attributeExists(context, context.getString(R.string.account_attribute_password_key))) {
-            Date lastModified = null;
-            try {
-                lastModified = accountListHandler.getAccount(context, accountName)
-                        .getAttributeLastModified(context, context.getString(R.string.account_attribute_password_key));
-            } catch (MissingKeyException e) {
-                Toast.makeText(context, context.getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
-                Log.wtf(TAG, "Could not check password for too high age because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
-                NavigationUtil.goToUnlockActivity(context);
-                return;
-            }
-            int daysBetween = DateUtil.absoluteDayDif(lastModified, new Date());
-            // TODO: replace with settings value
-            if (daysBetween >= 1) {
-                holder.accountTimerImageView.setVisibility(View.VISIBLE);
-            } else {
-                holder.accountTimerImageView.setVisibility(View.GONE);
-            }
-        }
+        checkPasswordAge(holder, accountName, account);
 
         if (passwordRepetitionAccounts.contains(accountName)) {
             holder.accountRepetitionImageView.setVisibility(View.VISIBLE);
@@ -102,6 +83,29 @@ public class AccountListAdapter extends RecyclerView.Adapter<AccountListAdapter.
     public void setAccountListHandler(AccountListHandler accountListHandler) {
         this.accountListHandler = accountListHandler;
         notifyDataSetChanged();
+    }
+
+    private void checkPasswordAge(AccountListAdapterViewHolder holder, String accountName, AccountItemHandler account) {
+        if (account.attributeExists(context, context.getString(R.string.account_attribute_password_key))) {
+            Date lastModified;
+            try {
+                lastModified = accountListHandler.getAccount(context, accountName)
+                        .getAttributeLastModified(context, context.getString(R.string.account_attribute_password_key));
+            } catch (MissingKeyException e) {
+                Toast.makeText(context, context.getString(R.string.missing_key_error_msg), Toast.LENGTH_SHORT).show();
+                Log.wtf(TAG, "Could not check password for too high age because " + KeyHolder.class.getSimpleName() + " contains no key for decryption.");
+                NavigationUtil.goToUnlockActivity(context);
+                return;
+            }
+            int daysBetween = DateUtil.absoluteDayDif(lastModified, new Date());
+            if (daysBetween >= PreferencesUtil.getStringPrefAsInt(context,
+                    context.getString(R.string.pref_overdue_key),
+                    context.getString(R.string.pref_overdue_default))) {
+                holder.accountTimerImageView.setVisibility(View.VISIBLE);
+            } else {
+                holder.accountTimerImageView.setVisibility(View.GONE);
+            }
+        }
     }
 
     public void checkPasswordDuplicates() {

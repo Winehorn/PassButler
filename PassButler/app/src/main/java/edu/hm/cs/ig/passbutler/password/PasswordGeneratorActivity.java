@@ -164,7 +164,6 @@ public class PasswordGeneratorActivity extends PostAuthActivity {
         Editable password = passwordEditText.getText();
         clipboardUtil.copyAndDelete(getString(R.string.nfc_app_mime_type),
                 password, getResources().getInteger(R.integer.copy_delete_duration));
-        password.clear();
     }
 
 

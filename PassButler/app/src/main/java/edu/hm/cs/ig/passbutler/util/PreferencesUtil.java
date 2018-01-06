@@ -53,4 +53,9 @@ public class PreferencesUtil {
         editor.putBoolean(context.getString(R.string.shared_prefs_auto_sync_enabled_key), newIsEnabled);
         editor.apply();
     }
+
+    public static int getStringPrefAsInt(Context context, String key, String defaultVal) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        return Integer.valueOf(prefs.getString(key, defaultVal));
+    }
 }
