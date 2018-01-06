@@ -273,7 +273,7 @@ public class UnlockActivity extends PreAuthActivity {
             } else {
                 wrongTagToast.show();
             }
-        } else {
+        } else if (action != null && (action.equals(NfcAdapter.ACTION_TAG_DISCOVERED) || action.equals(NfcAdapter.ACTION_TECH_DISCOVERED))){
             wrongTagToast.show();
             Log.i(TAG, "onNewIntent: Action not NDEF but: " + action);
         }
